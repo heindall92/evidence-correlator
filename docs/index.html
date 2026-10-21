@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="PROYECTO: consola local de correlación de evidencias ofensivas, telemetría DFIR y no conformidades GRC (ENS, ISO/IEC 27001, NIS2).">
+<title>PROYECTO · Consola de evidencias</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/theme-boot.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" data-icon="radar" aria-hidden="true"></span>
+    <span class="brand-name">PROYECTO</span>
+    <span class="brand-ver" id="brand-version"></span>
+  </div>
+  <div class="search" role="search">
+    <label for="q" class="sr-only">Buscar incidentes, eventos, controles o hashes</label>
+    <span class="search-icon" data-icon="search" aria-hidden="true"></span>
+    <input id="q" type="search" placeholder="Buscar incidente, evento, control, hash…" autocomplete="off" spellcheck="false">
+    <kbd class="search-kbd" aria-hidden="true">/</kbd>
+  </div>
+  <div class="tools">
+    <span class="net" id="net-status" role="status" title="Todo se procesa en este equipo">
+      <span data-icon="wifi-off" aria-hidden="true"></span><span class="net-label">Local</span>
+    </span>
+    <button class="icon-btn" type="button" id="btn-open" aria-label="Abrir paquete de evidencias (O)" title="Abrir paquete (O)"><span data-icon="folder-open" aria-hidden="true"></span></button>
+    <button class="icon-btn" type="button" id="btn-theme" aria-label="Cambiar a tema oscuro (T)" title="Tema (T)"><span data-icon="moon" aria-hidden="true"></span></button>
+    <button class="icon-btn" type="button" data-dialog="dlg-shortcuts" aria-label="Atajos de teclado (?)" title="Atajos (?)"><span data-icon="keyboard" aria-hidden="true"></span></button>
+    <button class="icon-btn" type="button" data-dialog="dlg-help" aria-label="Ayuda" title="Ayuda"><span data-icon="circle-help" aria-hidden="true"></span></button>
+    <button class="icon-btn" type="button" data-dialog="dlg-privacy" aria-label="Privacidad" title="Privacidad"><span data-icon="lock" aria-hidden="true"></span></button>
+    <button class="icon-btn" type="button" data-dialog="dlg-settings" aria-label="Ajustes" title="Ajustes"><span data-icon="settings" aria-hidden="true"></span></button>
+    <input type="file" id="file-input" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Secciones">
+    <ul>
+      <li><a href="#resumen" data-view="resumen"><span data-icon="layout-dashboard" aria-hidden="true"></span><span>Resumen</span><kbd aria-hidden="true">1</kbd></a></li>
+      <li><a href="#incidentes" data-view="incidentes"><span data-icon="siren" aria-hidden="true"></span><span>Incidentes</span><kbd aria-hidden="true">2</kbd></a></li>
+      <li><a href="#cumplimiento" data-view="cumplimiento"><span data-icon="scale" aria-hidden="true"></span><span>Cumplimiento</span><kbd aria-hidden="true">3</kbd></a></li>
+      <li><a href="#custodia" data-view="custodia"><span data-icon="link" aria-hidden="true"></span><span>Custodia</span><kbd aria-hidden="true">4</kbd></a></li>
+      <li><a href="#eventos" data-view="eventos"><span data-icon="list" aria-hidden="true"></span><span>Eventos</span><kbd aria-hidden="true">5</kbd></a></li>
+      <li><a href="#grafo" data-view="grafo"><span data-icon="network" aria-hidden="true"></span><span>Grafo</span><kbd aria-hidden="true">6</kbd></a></li>
+    </ul>
+    <p class="nav-foot" id="bundle-meta"></p>
+  </nav>
+
+  <main id="main" tabindex="-1">
+    <div id="drop-hint" class="drop-hint" hidden>Suelta aquí el paquete JSON</div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <section class="view" id="view-resumen" aria-labelledby="h-resumen">
+      <header class="view-head">
+        <h1 id="h-resumen">Resumen del análisis</h1>
+        <p class="lede" id="summary-lede"></p>
+      </header>
+      <dl class="stats" id="stats"></dl>
+      <div class="split">
+        <section class="panel" aria-labelledby="h-timeline">
+          <h2 id="h-timeline">Cronología del ataque</h2>
+          <p class="panel-sub">Eventos ingeridos en orden temporal. Los que forman parte de un incidente aparecen enlazados.</p>
+          <ol class="timeline" id="timeline"></ol>
+        </section>
+        <section class="panel" aria-labelledby="h-frameworks">
+          <h2 id="h-frameworks">Marcos afectados</h2>
+          <p class="panel-sub">No conformidades derivadas de los incidentes.</p>
+          <ul class="fw-list" id="fw-list"></ul>
+          <h2 id="h-tactics" class="mt">Tácticas MITRE ATT&amp;CK</h2>
+          <ul class="chips" id="tactics" aria-labelledby="h-tactics"></ul>
+        </section>
+      </div>
+    </section>
+
+    <section class="view" id="view-incidentes" aria-labelledby="h-incidentes" hidden>
+      <header class="view-head">
+        <h1 id="h-incidentes">Incidentes correlacionados</h1>
+        <p class="lede">Secuencias multi-etapa que cumplen una regla dentro de su ventana temporal.</p>
+      </header>
+      <div class="master-detail">
+        <ul class="inc-list" id="inc-list" aria-label="Lista de incidentes"></ul>
+        <article class="panel inc-detail" id="inc-detail" aria-live="polite"></article>
+      </div>
+    </section>
+
+    <section class="view" id="view-cumplimiento" aria-labelledby="h-cumplimiento" hidden>
+      <header class="view-head row">
+        <div>
+          <h1 id="h-cumplimiento">No conformidades</h1>
+          <p class="lede">Controles afectados por marco, con la evidencia que sustenta cada dictamen.</p>
+        </div>
+        <button class="btn" type="button" id="btn-csv"><span data-icon="file-spreadsheet" aria-hidden="true"></span>Exportar CSV</button>
+      </header>
+      <div class="tabs" role="tablist" aria-label="Marco normativo" id="fw-tabs"></div>
+      <div class="panel flush" id="fw-panel" role="tabpanel"></div>
+    </section>
+
+    <section class="view" id="view-custodia" aria-labelledby="h-custodia" hidden>
+      <header class="view-head row">
+        <div>
+          <h1 id="h-custodia">Cadena de custodia</h1>
+          <p class="lede">Cada evento crudo se sella con SHA-256 y se encadena al anterior. La raíz de Merkle resume el conjunto.</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn ghost" type="button" id="btn-tamper" aria-pressed="false"><span data-icon="flask-conical" aria-hidden="true"></span>Simular manipulación</button>
+          <button class="btn primary" type="button" id="btn-verify"><span data-icon="shield-check" aria-hidden="true"></span>Verificar ahora</button>
+        </div>
+      </header>
+      <div class="verdict" id="verdict" role="status" aria-live="polite"></div>
+      <dl class="hashes" id="hashes"></dl>
+      <div class="panel flush">
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Bloques de la cadena">
+          <table class="data" id="chain-table">
+            <caption class="sr-only">Bloques de la cadena de custodia</caption>
+            <thead><tr><th scope="col">#</th><th scope="col">Origen</th><th scope="col">Registro</th><th scope="col">SHA-256 del evento</th><th scope="col">Sello</th><th scope="col">Estado</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-eventos" aria-labelledby="h-eventos" hidden>
+      <header class="view-head">
+        <h1 id="h-eventos">Eventos normalizados</h1>
+        <p class="lede">Esquema UnifiedEvidenceEvent v1 (inspirado en OCSF/ECS) con el contexto ofensivo del activo.</p>
+      </header>
+      <div class="filters">
+        <label for="src-filter">Origen</label>
+        <select id="src-filter"><option value="">Todos</option></select>
+        <span class="count" id="ev-count" aria-live="polite"></span>
+      </div>
+      <div class="panel flush">
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Eventos">
+          <table class="data" id="ev-table">
+            <caption class="sr-only">Eventos normalizados</caption>
+            <thead><tr><th scope="col">Hora (UTC)</th><th scope="col">Origen</th><th scope="col">Acción</th><th scope="col">Actor</th><th scope="col">Destino</th><th scope="col">Exposición</th><th scope="col"><span class="sr-only">Detalle</span></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-grafo" aria-labelledby="h-grafo" hidden>
+      <header class="view-head">
+        <h1 id="h-grafo">Grafo de entidades</h1>
+        <p class="lede">Origen, actor y destino de cada evento. Los activos con exposición ofensiva conocida se marcan.</p>
+      </header>
+      <div class="panel graph-panel" tabindex="0" role="region" aria-label="Diagrama del grafo"><div id="graph"></div></div>
+      <div class="panel flush mt">
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Relaciones del grafo">
+          <table class="data" id="edge-table">
+            <caption class="sr-only">Relaciones del grafo en forma de tabla</caption>
+            <thead><tr><th scope="col">Hora (UTC)</th><th scope="col">Origen</th><th scope="col">Actor</th><th scope="col">Destino</th><th scope="col">Acción</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-search" aria-labelledby="h-search" hidden>
+      <header class="view-head"><h1 id="h-search">Resultados de búsqueda</h1><p class="lede" id="search-lede"></p></header>
+      <ul class="results" id="results"></ul>
+    </section>
+  </main>
+</div>
+
+<dialog id="dlg-shortcuts" aria-labelledby="t-shortcuts">
+  <div class="dlg-head"><h2 id="t-shortcuts">Atajos de teclado</h2><button class="icon-btn" type="button" data-close aria-label="Cerrar"><span data-icon="x" aria-hidden="true"></span></button></div>
+  <dl class="keys">
+    <dt><kbd>/</kbd></dt><dd>Buscar</dd>
+    <dt><kbd>1</kbd>–<kbd>6</kbd></dt><dd>Ir a una sección</dd>
+    <dt><kbd>J</kbd> / <kbd>K</kbd></dt><dd>Incidente siguiente / anterior</dd>
+    <dt><kbd>V</kbd></dt><dd>Verificar la cadena de custodia</dd>
+    <dt><kbd>T</kbd></dt><dd>Alternar tema claro / oscuro</dd>
+    <dt><kbd>O</kbd></dt><dd>Abrir un paquete JSON</dd>
+    <dt><kbd>?</kbd></dt><dd>Mostrar esta ayuda</dd>
+    <dt><kbd>Esc</kbd></dt><dd>Cerrar diálogo o limpiar búsqueda</dd>
+  </dl>
+</dialog>
+
+<dialog id="dlg-help" aria-labelledby="t-help">
+  <div class="dlg-head"><h2 id="t-help">Cómo se usa</h2><button class="icon-btn" type="button" data-close aria-label="Cerrar"><span data-icon="x" aria-hidden="true"></span></button></div>
+  <ol class="prose">
+    <li>Ejecuta la CLI: <code>python3 -m proyecto run --dashboard-js docs/data/bundle.js</code>.</li>
+    <li>Abre <code>docs/index.html</code> directamente (funciona en <code>file://</code>) o publícalo en GitHub Pages.</li>
+    <li>Para revisar otro paquete, pulsa <strong>Abrir</strong> o arrastra el fichero <code>correlated_evidence_bundle.json</code> a la ventana.</li>
+    <li>En <strong>Custodia</strong>, <strong>Verificar ahora</strong> recalcula en el navegador todos los sellos SHA-256 y la raíz de Merkle.</li>
+  </ol>
+  <p class="note">La verificación de referencia es la de la CLI: <code>python3 -m proyecto verify paquete.json</code>.</p>
+</dialog>
+
+<dialog id="dlg-privacy" aria-labelledby="t-privacy">
+  <div class="dlg-head"><h2 id="t-privacy">Privacidad</h2><button class="icon-btn" type="button" data-close aria-label="Cerrar"><span data-icon="x" aria-hidden="true"></span></button></div>
+  <ul class="prose">
+    <li>La consola no hace ninguna petición de red: la política de seguridad de contenidos (CSP) bloquea cualquier conexión externa.</li>
+    <li>Fuentes, iconos y scripts están incluidos en el repositorio. No hay CDN, analítica ni cookies.</li>
+    <li>Los paquetes que abres se leen en memoria y no se guardan.</li>
+    <li>Solo se guardan tus preferencias (tema, acento, densidad) en el almacenamiento local del navegador.</li>
+  </ul>
+</dialog>
+
+<dialog id="dlg-settings" aria-labelledby="t-settings">
+  <div class="dlg-head"><h2 id="t-settings">Ajustes</h2><button class="icon-btn" type="button" data-close aria-label="Cerrar"><span data-icon="x" aria-hidden="true"></span></button></div>
+  <form class="settings" id="settings-form">
+    <fieldset><legend>Tema</legend>
+      <label><input type="radio" name="theme" value="system"> Sistema</label>
+      <label><input type="radio" name="theme" value="light"> Claro</label>
+      <label><input type="radio" name="theme" value="dark"> Oscuro</label>
+    </fieldset>
+    <fieldset><legend>Color de acento</legend>
+      <label><input type="radio" name="accent" value="blue"> Azul eléctrico</label>
+      <label><input type="radio" name="accent" value="violet"> Violeta</label>
+      <label><input type="radio" name="accent" value="teal"> Verde azulado</label>
+    </fieldset>
+    <fieldset><legend>Densidad</legend>
+      <label><input type="radio" name="density" value="comfortable"> Cómoda</label>
+      <label><input type="radio" name="density" value="compact"> Compacta</label>
+    </fieldset>
+  </form>
+</dialog>
+
+<script src="assets/vendor/lucide-icons.js"></script>
+<script src="assets/sha256.js"></script>
+<script src="data/bundle.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
