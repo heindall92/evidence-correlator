@@ -1,0 +1,215 @@
+[
+  {
+    "event_id": "evt-web-1001",
+    "timestamp_utc": "2026-10-21T08:15:10.120Z",
+    "source_type": "web_access_log",
+    "source_file": "nginx_access_web_prod_01.log",
+    "record_number": 9821,
+    "event": {
+      "category": "web_request",
+      "action": "http_post_login",
+      "http_status": 200,
+      "outcome": "success",
+      "severity_base": 75
+    },
+    "actor": {
+      "user_name": "unauthenticated_web",
+      "domain": "EXTERNAL"
+    },
+    "source": {
+      "ip": "10.10.14.22",
+      "port": 49122,
+      "hostname": "KALI-PENTEST"
+    },
+    "target": {
+      "hostname": "WEB-PROD-01",
+      "ip": "10.10.10.80",
+      "port": 443,
+      "resource_path": "/api/v1/login"
+    },
+    "process_or_artifact": {
+      "process_name": "nginx",
+      "command_line": "POST /api/v1/login username=admin' UNION SELECT 1,username,password FROM users-- (User-Agent: sqlmap/1.8)"
+    }
+  },
+  {
+    "event_id": "evt-lnx-1002",
+    "timestamp_utc": "2026-10-21T08:17:45.300Z",
+    "source_type": "linux_auditd",
+    "source_file": "/var/log/audit/audit.log",
+    "record_number": 44102,
+    "event": {
+      "category": "process_creation",
+      "action": "execve_syscall",
+      "outcome": "success",
+      "severity_base": 80
+    },
+    "actor": {
+      "user_name": "www-data",
+      "uid": "33",
+      "euid": "33",
+      "domain": "WEB-PROD-01"
+    },
+    "source": {
+      "ip": "10.10.14.22",
+      "hostname": "WEB-PROD-01"
+    },
+    "target": {
+      "hostname": "WEB-PROD-01",
+      "ip": "10.10.10.80"
+    },
+    "process_or_artifact": {
+      "process_name": "/bin/bash",
+      "command_line": "/bin/bash -c id; whoami; uname -a"
+    }
+  },
+  {
+    "event_id": "evt-lnx-1003",
+    "timestamp_utc": "2026-10-21T08:20:12.004Z",
+    "source_type": "linux_auditd",
+    "source_file": "/var/log/audit/audit.log",
+    "record_number": 44189,
+    "event": {
+      "category": "process_creation",
+      "action": "execve_syscall",
+      "outcome": "success",
+      "severity_base": 65
+    },
+    "actor": {
+      "user_name": "www-data",
+      "uid": "33",
+      "euid": "33",
+      "domain": "WEB-PROD-01"
+    },
+    "source": {
+      "ip": "10.10.10.80",
+      "hostname": "WEB-PROD-01"
+    },
+    "target": {
+      "hostname": "WEB-PROD-01",
+      "ip": "10.10.10.80"
+    },
+    "process_or_artifact": {
+      "process_name": "/usr/sbin/getcap",
+      "command_line": "find / -perm -4000 2>/dev/null && getcap -r / 2>/dev/null"
+    }
+  },
+  {
+    "event_id": "evt-lnx-1004",
+    "timestamp_utc": "2026-10-21T08:21:55.890Z",
+    "source_type": "linux_auditd",
+    "source_file": "/var/log/audit/audit.log",
+    "record_number": 44210,
+    "event": {
+      "category": "privilege_escalation",
+      "action": "setuid_root_transition",
+      "outcome": "success",
+      "severity_base": 95
+    },
+    "actor": {
+      "user_name": "www-data",
+      "uid": "33",
+      "euid": "0",
+      "domain": "WEB-PROD-01",
+      "privileges": [
+        "root"
+      ]
+    },
+    "source": {
+      "ip": "10.10.10.80",
+      "hostname": "WEB-PROD-01"
+    },
+    "target": {
+      "hostname": "WEB-PROD-01",
+      "ip": "10.10.10.80"
+    },
+    "process_or_artifact": {
+      "process_name": "/usr/bin/python3",
+      "command_line": "/usr/bin/python3 -c import os; os.setuid(0); os.system('/bin/bash')",
+      "suid_bit": false,
+      "capabilities": [
+        "cap_setuid"
+      ]
+    }
+  },
+  {
+    "event_id": "evt-ad-1005",
+    "timestamp_utc": "2026-10-21T08:42:11.412Z",
+    "source_type": "windows_evtx",
+    "source_file": "Security_DC01_20261021.evtx",
+    "record_number": 148920,
+    "event": {
+      "category": "authentication",
+      "action": "kerberos_tgs_request",
+      "NativeEventID": 4769,
+      "outcome": "success",
+      "severity_base": 70
+    },
+    "actor": {
+      "user_name": "j.garcia",
+      "user_sid": "S-1-5-21-384920192-192837465-918273645-1104",
+      "domain": "CORP.LOCAL",
+      "session_id": "0x24a8f1",
+      "privileges": [
+        "Domain Users"
+      ]
+    },
+    "source": {
+      "ip": "10.10.14.22",
+      "port": 54312,
+      "hostname": "WKSTN-FIN-04"
+    },
+    "target": {
+      "hostname": "DC01.CORP.LOCAL",
+      "ip": "10.10.10.5",
+      "port": 88,
+      "service_name": "MSSQLSvc/db01.corp.local:1433",
+      "target_user_or_spn": "svc_sql"
+    },
+    "process_or_artifact": {
+      "EffectiveTicketEncryption": "0x17"
+    }
+  },
+  {
+    "event_id": "evt-ad-1006",
+    "timestamp_utc": "2026-10-21T08:54:03.771Z",
+    "source_type": "windows_evtx",
+    "source_file": "Security_DC01_20261021.evtx",
+    "record_number": 149310,
+    "event": {
+      "category": "lateral_movement",
+      "action": "winrm_network_logon",
+      "NativeEventID": 4624,
+      "LogonType": 3,
+      "outcome": "success",
+      "severity_base": 95
+    },
+    "actor": {
+      "user_name": "svc_sql",
+      "user_sid": "S-1-5-21-384920192-192837465-918273645-2109",
+      "domain": "CORP.LOCAL",
+      "session_id": "0x99b1c4",
+      "privileges": [
+        "SeBackupPrivilege",
+        "Remote Management Users"
+      ]
+    },
+    "source": {
+      "ip": "10.10.14.22",
+      "port": 55190,
+      "hostname": "WKSTN-FIN-04"
+    },
+    "target": {
+      "hostname": "DC01.CORP.LOCAL",
+      "ip": "10.10.10.5",
+      "port": 5985,
+      "service_name": "HTTP/DC01.CORP.LOCAL (WinRM)",
+      "target_user_or_spn": "svc_sql",
+      "resource_path": "\\\\DC01.CORP.LOCAL\\C$"
+    },
+    "process_or_artifact": {
+      "process_name": "wsmprovhost.exe",
+      "command_line": "evil-winrm -i 10.10.10.5 -u svc_sql -p [REDACTED]"
+    }
+  }
+]

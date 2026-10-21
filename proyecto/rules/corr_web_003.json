@@ -1,0 +1,100 @@
+{
+  "id": "CORR-WEB-003",
+  "title": "Explotación de SQL Injection en Login seguida de Ejecución de Comandos Web",
+  "status": "production",
+  "author": "Yoandy Ramírez Delgado",
+  "severity": "HIGH",
+  "confidence": 0.92,
+  "description": "Correlaciona vectores de inyección SQL (SQLMap / payloads UNION o OR 1=1) en endpoints de autenticación seguidos de extracción masiva o ejecución de procesos por el usuario del servidor web.",
+  "correlation": {
+    "type": "temporal_sequence",
+    "window": "15m",
+    "group_by": [
+      "target.hostname"
+    ],
+    "stages": [
+      {
+        "stage_id": "stage_1_sqli_payload",
+        "source_type": "web_access_log",
+        "match": {
+          "event.category": "web_request",
+          "event.http_status": 200
+        },
+        "predicates": {
+          "field_contains_any": {
+            "process_or_artifact.command_line": [
+              "UNION SELECT",
+              "' OR 1=1--",
+              "sqlmap",
+              "SLEEP(5)"
+            ]
+          }
+        },
+        "extract": {
+          "web_host": "target.hostname",
+          "attacker_ip": "source.ip"
+        }
+      },
+      {
+        "stage_id": "stage_2_web_shell_spawn",
+        "source_type": "linux_auditd",
+        "match": {
+          "event.category": "process_creation",
+          "actor.user_name": "www-data",
+          "target.hostname": "$stage_1_sqli_payload.web_host"
+        },
+        "predicates": {
+          "field_contains_any": {
+            "process_or_artifact.command_line": [
+              "whoami",
+              "id",
+              "/bin/bash -c",
+              "nc -e"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "mitre_attack": [
+    {
+      "tactic": "Initial Access",
+      "technique_id": "T1190",
+      "technique_name": "Exploit Public-Facing Application (SQL Injection)"
+    },
+    {
+      "tactic": "Execution",
+      "technique_id": "T1059.004",
+      "technique_name": "Command and Scripting Interpreter: Unix Shell"
+    }
+  ],
+  "grc_compliance_mapping": {
+    "ens_rd_311_2022": [
+      {
+        "control_id": "mp.s.2",
+        "control_name": "Protección de aplicaciones web (Prevención de Inyección SQL)",
+        "impact_level": "ALTO",
+        "audit_verdict": "NO_CONFORME_CRITICO",
+        "evidence_summary": "Falta de parametrización de consultas SQL en el endpoint de login permitiendo bypass de autenticación e intrusión."
+      }
+    ],
+    "iso_27001_2022": [
+      {
+        "control_id": "A.8.26",
+        "control_name": "Application security requirements",
+        "audit_verdict": "NON_CONFORMITY_MAJOR"
+      },
+      {
+        "control_id": "A.8.28",
+        "control_name": "Secure coding",
+        "audit_verdict": "NON_CONFORMITY_MAJOR"
+      }
+    ],
+    "nis2_directive": [
+      {
+        "article": "Art. 21.2(e)",
+        "topic": "Gestión y divulgación de vulnerabilidades en aplicaciones expuestas"
+      }
+    ]
+  }
+}

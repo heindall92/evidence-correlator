@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proyecto"
+dynamic = ["version"]
+description = "Correlador local de evidencias ofensivas, telemetría DFIR y no conformidades GRC (ENS, ISO/IEC 27001, NIS2) con cadena de custodia SHA-256/Merkle"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "GPL-2.0-only" }
+authors = [{ name = "Yoandy Ramírez Delgado", email = "yoandyramirezdelgado@gmail.com" }]
+keywords = ["dfir", "pentesting", "grc", "ens", "iso27001", "nis2", "mitre-attack", "chain-of-custody", "merkle"]
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+  "Topic :: Security",
+  "Environment :: Console",
+  "Natural Language :: Spanish",
+]
+dependencies = []
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6"]
+browser = ["playwright>=1.40"]
+
+[project.scripts]
+proyecto = "proyecto.cli:main"
+
+[tool.setuptools]
+packages = ["proyecto"]
+
+[tool.setuptools.dynamic]
+version = { attr = "proyecto.__version__" }
+
+[tool.setuptools.package-data]
+proyecto = ["rules/*.json", "sample_data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

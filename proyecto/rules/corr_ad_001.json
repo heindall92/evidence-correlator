@@ -1,0 +1,105 @@
+{
+  "id": "CORR-AD-001",
+  "title": "Explotación exitosa de Kerberoasting seguida de Movimiento Lateral WinRM/SMB",
+  "status": "production",
+  "author": "Yoandy Ramírez Delgado",
+  "severity": "CRITICAL",
+  "confidence": 0.96,
+  "description": "Correlaciona una solicitud de ticket TGS con cifrado débil RC4 (0x17) sobre una cuenta con SPN vulnerable, seguida de autenticación de red (LogonType 3) sobre C$ o WinRM.",
+  "correlation": {
+    "type": "temporal_sequence",
+    "window": "45m",
+    "group_by": [
+      "target_service_account"
+    ],
+    "stages": [
+      {
+        "stage_id": "stage_1_tgs_request",
+        "source_type": "windows_evtx",
+        "match": {
+          "event.NativeEventID": 4769,
+          "process_or_artifact.EffectiveTicketEncryption": "0x17"
+        },
+        "posture_condition": {
+          "offensive_posture_context.known_exposures.finding_id": "AD-SPN-RC4-001"
+        },
+        "extract": {
+          "attacker_ip": "source.ip",
+          "target_service_account": "target.target_user_or_spn"
+        }
+      },
+      {
+        "stage_id": "stage_2_lateral_movement",
+        "source_type": "windows_evtx",
+        "match": {
+          "event.NativeEventID": [
+            4624,
+            5140
+          ],
+          "event.LogonType": 3,
+          "actor.user_name": "$stage_1_tgs_request.target_service_account"
+        },
+        "predicates": {
+          "equals_ref": {
+            "source.ip": "$stage_1_tgs_request.attacker_ip"
+          },
+          "field_in_list": {
+            "target.port": [
+              5985,
+              5986,
+              445
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "mitre_attack": [
+    {
+      "tactic": "Credential Access",
+      "technique_id": "T1558.003",
+      "technique_name": "Steal or Forge Kerberos Tickets: Kerberoasting"
+    },
+    {
+      "tactic": "Lateral Movement",
+      "technique_id": "T1021.006",
+      "technique_name": "Remote Services: Windows Remote Management"
+    }
+  ],
+  "grc_compliance_mapping": {
+    "ens_rd_311_2022": [
+      {
+        "control_id": "op.acc.5",
+        "control_name": "Mecanismo de autenticación (cuentas de servicio)",
+        "impact_level": "ALTO",
+        "audit_verdict": "NO_CONFORME_CRITICO",
+        "evidence_summary": "Uso activo de cifrado obsoleto RC4-HMAC (0x17) en Kerberos permitiendo extracción y crackeo offline del hash de cuenta de servicio."
+      },
+      {
+        "control_id": "op.acc.6",
+        "control_name": "Acceso local y remoto (WinRM / Administración remota)",
+        "impact_level": "ALTO",
+        "audit_verdict": "NO_CONFORME",
+        "evidence_summary": "Cuenta de servicio utilizada interactivamente por red (LogonType 3) sobre WinRM (5985) y recurso administrativo C$."
+      }
+    ],
+    "iso_27001_2022": [
+      {
+        "control_id": "A.8.5",
+        "control_name": "Secure authentication",
+        "audit_verdict": "NON_CONFORMITY_MAJOR"
+      },
+      {
+        "control_id": "A.8.2",
+        "control_name": "Privileged access rights",
+        "audit_verdict": "NON_CONFORMITY_MAJOR"
+      }
+    ],
+    "nis2_directive": [
+      {
+        "article": "Art. 21.2(i) & (j)",
+        "topic": "Control de acceso, higiene de privilegios y autenticación segura"
+      }
+    ]
+  }
+}

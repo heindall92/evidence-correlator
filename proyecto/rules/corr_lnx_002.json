@@ -1,0 +1,114 @@
+{
+  "id": "CORR-LNX-002",
+  "title": "Escalada de Privilegios en Linux mediante abuso de Binario SUID o Capabilities",
+  "status": "production",
+  "author": "Yoandy Ramírez Delgado",
+  "severity": "CRITICAL",
+  "confidence": 0.94,
+  "description": "Detecta cuando un usuario sin privilegios enumera permisos SUID o capabilities (o ejecuta LinPEAS) y posteriormente ejecuta un binario GTFOBins obteniendo euid=0 (root).",
+  "correlation": {
+    "type": "temporal_sequence",
+    "window": "10m",
+    "group_by": [
+      "target.hostname",
+      "actor.user_name"
+    ],
+    "stages": [
+      {
+        "stage_id": "stage_1_privesc_enum",
+        "source_type": "linux_auditd",
+        "match": {
+          "event.category": "process_creation"
+        },
+        "predicates": {
+          "field_contains_any": {
+            "process_or_artifact.command_line": [
+              "find / -perm -4000",
+              "find / -perm -u=s",
+              "getcap -r /",
+              "linpeas"
+            ]
+          },
+          "not_equals": {
+            "actor.uid": "0"
+          }
+        },
+        "extract": {
+          "low_priv_uid": "actor.uid",
+          "compromised_host": "target.hostname"
+        }
+      },
+      {
+        "stage_id": "stage_2_suid_or_cap_exploitation",
+        "source_type": "linux_auditd",
+        "match": {
+          "event.category": "privilege_escalation",
+          "actor.uid": "$stage_1_privesc_enum.low_priv_uid",
+          "actor.euid": "0",
+          "target.hostname": "$stage_1_privesc_enum.compromised_host"
+        },
+        "predicates": {
+          "require_suid_or_capabilities": true,
+          "field_in_list": {
+            "process_or_artifact.process_name": [
+              "/usr/bin/python3",
+              "/usr/bin/perl",
+              "/usr/bin/vim",
+              "/usr/bin/find",
+              "/usr/bin/bash",
+              "/usr/sbin/tar"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "mitre_attack": [
+    {
+      "tactic": "Discovery",
+      "technique_id": "T1083",
+      "technique_name": "File and Directory Discovery"
+    },
+    {
+      "tactic": "Privilege Escalation",
+      "technique_id": "T1548.001",
+      "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid"
+    }
+  ],
+  "grc_compliance_mapping": {
+    "ens_rd_311_2022": [
+      {
+        "control_id": "op.exp.2",
+        "control_name": "Configuración de seguridad (Hardening de SO Linux)",
+        "impact_level": "ALTO",
+        "audit_verdict": "NO_CONFORME_CRITICO",
+        "evidence_summary": "Presencia y explotación confirmada de binario GTFOBins (/usr/bin/python3) con capability cap_setuid+ep permitiendo escalada directa a root (euid=0)."
+      },
+      {
+        "control_id": "mp.sw.2",
+        "control_name": "Aceptación y puesta en servicio (Mínimo privilegio en binarios)",
+        "impact_level": "MEDIO",
+        "audit_verdict": "NO_CONFORME",
+        "evidence_summary": "Ausencia de validación de capabilities y bits SUID durante el despliegue del servidor de aplicaciones."
+      }
+    ],
+    "iso_27001_2022": [
+      {
+        "control_id": "A.8.9",
+        "control_name": "Configuration management",
+        "audit_verdict": "NON_CONFORMITY_MAJOR"
+      },
+      {
+        "control_id": "A.8.18",
+        "control_name": "Use of privileged utility programs",
+        "audit_verdict": "NON_CONFORMITY_MAJOR"
+      }
+    ],
+    "nis2_directive": [
+      {
+        "article": "Art. 21.2(d) & (e)",
+        "topic": "Seguridad en la adquisición, desarrollo y mantenimiento de sistemas y gestión de vulnerabilidades"
+      }
+    ]
+  }
+}
