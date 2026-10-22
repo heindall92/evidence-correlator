@@ -560,7 +560,8 @@ dl.gloss dd { margin: 0; color: var(--ink-2); font-size: 13.5px; }
 @media (max-width: 560px) {
   .row-item:has(> .end) { flex-wrap: wrap; }
   .row-item:has(> .end) > .grow { flex-basis: calc(100% - 42px); }
-  .row-item > .end { flex-direction: row; align-items: center; margin-left: 30px; text-align: left; }
+  /* flex: 1 y ajuste de línea: con flex: none la fila medía lo que su contenido y ensanchaba la página. */
+  .row-item > .end { flex: 1 1 auto; max-width: calc(100% - 30px); min-width: 0; flex-direction: row; flex-wrap: wrap; align-items: center; margin-left: 30px; text-align: left; }
 }
 
 /* Pantallas muy estrechas: las vistas de «Más» pasan a filas para que ningún nombre se corte. */

@@ -72,6 +72,9 @@ Una PR por versión (`version/X.Y.Z` → `main`), con las pruebas y axe en verde
 - [x] Hojas ancladas abajo, con la altura de su contenido y asa de arrastre.
 - [x] `?v=<versión>` en estilos y scripts para que cada publicación invalide la caché.
 
+### v0.2.4 · Ancho en móvil
+- [x] La perspectiva pentester ya no ensancha la página; prueba con las cinco perspectivas.
+
 ### v0.3.0 · Firma del paquete y ejercicios guiados
 - [ ] **Firma Ed25519** (RFC 8032) en Python puro, sin dependencias: `trama keygen`, `trama sign` y `trama verify --pubkey`. La cadena prueba la integridad; la firma prueba la autoría. Verificación también en la consola con WebCrypto cuando el navegador la ofrezca.
 - [ ] Verificación de firmas externas de `minisign` y `gpg --detach-sign` si las herramientas están instaladas.

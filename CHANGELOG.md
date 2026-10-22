@@ -2,6 +2,14 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versiones según [SemVer](https://semver.org/lang/es/).
 
+## 0.2.4 · octubre de 2026
+
+### Corregido
+- **En móvil, la perspectiva pentester ensanchaba la página a 624 px.** El navegador la encogía para que cupiera y todo se veía estrecho, con textos fuera de la pantalla. Lo introdujo la 0.2.2: la fila con severidad, estado, incidentes y hora pasaba debajo del texto pero conservaba `flex: none`, así que medía lo que su contenido. Ahora ocupa el ancho disponible y reparte sus elementos en varias líneas.
+
+### Añadido
+- La prueba móvil recorre Inicio con las cinco perspectivas y exige que la página mida exactamente el ancho de la pantalla. Antes solo probaba la de Blue Team, por eso no detectó el fallo.
+
 ## 0.2.3 · octubre de 2026
 
 ### Corregido

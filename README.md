@@ -362,7 +362,8 @@ Detalle y criterios de aceptación en [ROADMAP.md](ROADMAP.md).
 | 0.2.0 ✅ | Nombre definitivo, consola nueva con cinco perspectivas, vista de trazabilidad, plazos NIS2 y verificación en el navegador sin falsos positivos con decimales |
 | 0.2.1 ✅ | Redacción profesional de toda la interfaz y la documentación, marca propia y prueba de estilo |
 | 0.2.2 ✅ | Menú «Más» del móvil reorganizado según las pautas de iOS |
-| **0.2.3** ✅ | Hojas del móvil ancladas abajo y versión en los ficheros de la consola |
+| 0.2.3 ✅ | Hojas del móvil ancladas abajo y versión en los ficheros de la consola |
+| **0.2.4** ✅ | Ancho correcto de todas las perspectivas en móvil |
 | 0.3.0 | Firma Ed25519 del paquete (Python puro) y ejercicios guiados por perspectiva |
 | 0.4.0 | Importar hallazgos de CTEM-Nexus y ENS AD Auditor y exportar a Rosetta con el sobre `yrd-ecosistema` |
 | 0.5.0 | Entregables por rol: dossier de auditoría, informe de impacto, IOC en STIX 2.1 y borradores Sigma |
@@ -386,6 +387,7 @@ TRAMA forma parte de un conjunto de herramientas GRC y de seguridad de código a
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.2.4 | octubre de 2026 | Corrige el ancho de la perspectiva pentester en móvil (ensanchaba la página a 624 px); la prueba móvil recorre las cinco perspectivas. |
 | 0.2.3 | octubre de 2026 | Hojas del móvil ancladas abajo con asa de arrastre; versión en los ficheros de la consola para que el navegador no muestre una publicación anterior. |
 | 0.2.2 | octubre de 2026 | Menú «Más» del móvil reorganizado: vistas en rejilla, cuenta y ayuda en lista agrupada, idioma segmentado y acentos repartidos; filas por debajo de 360 px. |
 | 0.2.1 | octubre de 2026 | Textos de la consola (ES y EN) y de la documentación reescritos con registro profesional, sin preguntas retóricas ni tuteo; «El Hilo» pasa a «Trazabilidad» y «lentes», a «perspectivas»; logotipo propio; prueba automática de redacción. |
