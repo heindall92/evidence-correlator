@@ -9,7 +9,7 @@ import os
 import re
 import sys
 
-ICONS = """house waypoints siren scale link list network panel-left search sun moon circle-question-mark
+ICONS = """house chart-no-axes-gantt siren scale link list network panel-left search sun moon circle-question-mark
 settings user-round ellipsis palette folder-open wifi-off x check chevron-right chevron-down copy download
 file-spreadsheet shield-check circle-check circle-x flask-conical fingerprint hash clock target triangle-alert
 crosshair swords shield-half blend clipboard-check timer hourglass server user globe terminal key-round radar

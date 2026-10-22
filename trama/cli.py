@@ -68,7 +68,7 @@ def cmd_run(args, c, out):
         out.write("  └─ Merkle del paquete    : %s%s%s\n\n" % (c.dim, inc["evidence_merkle_root_sha256"], c.reset))
     out.write("%s[✓]%s Paquete exportado: %s\n" % (c.ok, c.reset, args.output))
     if args.dashboard_js:
-        out.write("%s[✓]%s Datos del dashboard: %s\n" % (c.ok, c.reset, args.dashboard_js))
+        out.write("%s[✓]%s Datos de la consola: %s\n" % (c.ok, c.reset, args.dashboard_js))
     return 0 if integ["valid"] else 2
 
 
@@ -114,7 +114,7 @@ def build_parser():
     r.add_argument("--rules", help="directorio o fichero de reglas (por defecto: reglas incluidas)")
     r.add_argument("-o", "--output", default=os.path.join("output", "correlated_evidence_bundle.json"))
     r.add_argument("--dashboard-js", metavar="RUTA",
-                   help="escribe además el paquete como .js para el dashboard (p. ej. docs/data/bundle.js)")
+                   help="escribe además el paquete como .js para la consola (p. ej. docs/data/bundle.js)")
     r.add_argument("--no-raw", action="store_true", help="no incrustar los eventos crudos en el paquete")
     r.add_argument("--json", action="store_true", help="resumen en JSON (para scripts)")
 

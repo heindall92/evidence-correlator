@@ -1,7 +1,8 @@
-"""Comprobaciones estáticas del dashboard y del repositorio."""
+"""Comprobaciones estáticas de la consola y del repositorio."""
 import json
 import os
 import re
+import sys
 import unittest
 
 from trama import NAME
@@ -141,6 +142,52 @@ class DashboardStaticTest(unittest.TestCase):
         self.assertEqual(fingerprint(committed), fingerprint(fresh),
                          "regenera con: python3 -m trama run --dashboard-js docs/data/bundle.js")
         self.assertEqual(committed.get("dataset"), "demo")
+
+
+class ProfessionalCopyTest(unittest.TestCase):
+    """Redacción de producto: reglas de linkedin-humanizer adaptadas al español (scripts/redaccion.py)."""
+
+    @classmethod
+    def setUpClass(cls):
+        sys.path.insert(0, os.path.join(ROOT, "scripts"))
+        import redaccion
+        cls.R = redaccion
+
+    def test_platform_copy_has_no_ai_tells(self):
+        fails, _ = self.R.audit()
+        self.assertEqual(["%s · %s · %s" % f for f in fails], [])
+
+    def test_detector_catches_known_tells(self):
+        cases = [
+            ("Hasta que te vieron", True, "es"), ("Qué viste y qué se te escapó", True, "es"),
+            ("¿Mis hallazgos se explotaron en el mundo real?", True, "es"), ("Sigue el hilo", True, "es"),
+            ("No se trata solo de cumplir, sino de demostrarlo.", False, "es"),
+            ("El resultado: cero sorpresas.", False, "es"),
+            ("Sin red, sin analítica y sin cookies.", False, "es"),
+            ("Una solución integral que permite gestionar evidencias de forma sencilla y eficiente.", False, "es"),
+            ("Además, garantiza la trazabilidad. Asimismo, facilita la auditoría.", False, "es"),
+            ("Aprovechando la telemetría, el equipo optimiza la detección y potencia la respuesta.", False, "es"),
+            ("Seamos sinceros: nadie lee los informes.", False, "es"),
+            ("Preferencias y perfil. Nada más.", True, "es"),
+            ("What you saw and what you missed", True, "en"), ("It's not just a tool, it's a workflow.", False, "en"),
+            ("Here's the thing: custody matters.", False, "en"), ("Lanzamos la versión 🚀", False, "es"),
+        ]
+        for text, ui, lang in cases:
+            with self.subTest(texto=text):
+                self.assertTrue(self.R.audit_paragraph(text, ui=ui, lang=lang)[0], "no detectado")
+
+    def test_detector_leaves_plain_technical_copy(self):
+        for text in ("Cada evento crudo se sella con SHA-256 y se encadena al anterior.",
+                     "Incidentes detectados con su tiempo de detección.",
+                     "La CLI registró la cadena como íntegra. «Verificar ahora» recalcula cada sello en este navegador.",
+                     "Fuera las frases del tipo «no es X, es Y»."):
+            with self.subTest(texto=text):
+                self.assertEqual(self.R.audit_paragraph(text, ui=True)[0], [])
+
+    def test_own_logo_not_a_shared_icon(self):
+        html = read(os.path.join(DOCS, "index.html"))
+        self.assertNotIn("waypoints", html, "el icono waypoints es el logotipo de CTEM-Nexus")
+        self.assertEqual(html.count('<svg class="mark"'), 2, "marca propia en el lateral y en la barra móvil")
 
 
 class RepositoryHygieneTest(unittest.TestCase):

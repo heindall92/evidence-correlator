@@ -158,7 +158,8 @@ class ConsoleBrowserTest(unittest.TestCase):
             const input = document.getElementById('file-input');
             input.files = dt.files; input.dispatchEvent(new Event('change'));
         }""")
-        page.wait_for_function("document.querySelector('.inc-btn .title') && document.querySelector('.inc-btn .title').textContent.includes('<img')")
+        # Localizador en lugar de wait_for_function con cadena: la CSP de la consola bloquea eval.
+        page.locator(".inc-btn .title", has_text="<img").first.wait_for()
         self.assertIn("<img src=x", page.inner_text("#main"))
         self.go(page, "inicio")
         page.click('.lens-opt[data-lens="pentest"]')
@@ -172,7 +173,7 @@ class ConsoleBrowserTest(unittest.TestCase):
             page.evaluate("""(c) => { const f = new File([c], 'x.json', {type: 'application/json'});
                 const dt = new DataTransfer(); dt.items.add(f); const i = document.getElementById('file-input');
                 i.files = dt.files; i.dispatchEvent(new Event('change')); }""", content)
-            page.wait_for_function("(m) => document.getElementById('toasts').textContent.includes(m)", arg=msg)
+            page.locator("#toasts", has_text=msg).wait_for()
         self.assertIn("Paquete de ejemplo", page.inner_text("#pkg-btn"))
 
     # ------------------------------------------------------------ custodia
@@ -202,16 +203,16 @@ class ConsoleBrowserTest(unittest.TestCase):
         page.evaluate("""(c) => { const f = new File([c], 'decimales.json', {type: 'application/json'});
             const dt = new DataTransfer(); dt.items.add(f); const i = document.getElementById('file-input');
             i.files = dt.files; i.dispatchEvent(new Event('change')); }""", json.dumps(bundle))
-        page.wait_for_function("document.getElementById('pkg-btn').textContent.includes('decimales.json')")
+        page.locator("#pkg-btn", has_text="decimales.json").wait_for()
         page.click("#btn-verify")
         self.assertIn("Cadena íntegra", page.inner_text("#verdict"))
 
     # ------------------------------------------------------------ lentes
     def test_each_lens_answers_its_question(self):
-        expect = {"pentest": ("Explotados en el mundo real", "Copiar bloque"),
+        expect = {"pentest": ("Hallazgos frente a telemetría", "Copiar bloque"),
                   "red": ("Tiempo de permanencia", "Detectado:"),
                   "blue": ("Exposiciones sin detección", "Copiar IOC"),
-                  "purple": ("Cobertura ejercitada", "Siguiente ejercicio"),
+                  "purple": ("Cobertura ejercitada", "Ejercicio recomendado"),
                   "grc": ("Plazos de notificación NIS2", "Alerta temprana")}
         page = self.open()
         self.go(page, "inicio")
@@ -255,7 +256,7 @@ class ConsoleBrowserTest(unittest.TestCase):
         self.assertGreater(on, 3)
         self.assertGreater(page.locator("svg.hilo .thread").count(), on)
         page.locator(".inc-pick button").nth(2).click()
-        self.assertIn("El hilo de INC-CORR-WEB-003-01", page.inner_text("#main"))
+        self.assertIn("Recorrido de INC-CORR-WEB-003-01", page.inner_text("#main"))
         self.assertIn("WEB-SQLI-LOGIN-003", page.inner_text(".steps"))
         self.assertEqual(page.get_attribute(".inc-pick button >> nth=2", "aria-pressed"), "true")
         self.assertTrue(page.get_attribute("svg.hilo", "aria-label"))
@@ -293,7 +294,7 @@ class ConsoleBrowserTest(unittest.TestCase):
                 self.assertEqual(page.inner_text("h1"), page.evaluate("document.querySelector('h1').textContent"))
                 self.assertTrue(page.title().startswith(I18N["en"]["view." + view]))
                 chrome = page.inner_text("#nav") + page.inner_text("#top") + page.inner_text("#foot") + page.inner_text(".vhead")
-                for word in ("Inicio", "Incidentes", "Custodia", "Cumplimiento", "Buscar", "Sigue el hilo", "Lente"):
+                for word in ("Inicio", "Incidentes", "Custodia", "Cumplimiento", "Buscar", "Correlación de evidencias", "Perspectiva"):
                     self.assertNotIn(word, chrome)
 
     def test_profile_sets_name_and_lens(self):

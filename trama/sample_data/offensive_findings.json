@@ -1,25 +1,25 @@
 [
   {
     "finding_id": "AD-SPN-RC4-001",
-    "source_tool": "DarkSpear / BloodHound AD Auditor",
+    "source_tool": "BloodHound CE",
     "hostname": "DC01.CORP.LOCAL",
     "target_spn": "svc_sql",
     "severity": "HIGH",
-    "description": "Cuenta de servicio 'svc_sql' con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado débil RC4-HMAC (0x17) habilitado."
+    "description": "Cuenta de servicio «svc_sql» con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado RC4-HMAC (0x17) habilitado en Kerberos."
   },
   {
     "finding_id": "LNX-CAP-SETUID-002",
-    "source_tool": "LinPEAS / Offensive Audit",
+    "source_tool": "LinPEAS",
     "hostname": "WEB-PROD-01",
     "binary_path": "/usr/bin/python3",
     "severity": "CRITICAL",
-    "description": "Binario /usr/bin/python3 cuenta con Linux Capability 'cap_setuid+ep', permitiendo cambio arbitrario de UID a 0 (root)."
+    "description": "El binario /usr/bin/python3 tiene la capability «cap_setuid+ep», que permite cambiar el UID a 0 (root)."
   },
   {
     "finding_id": "WEB-SQLI-LOGIN-003",
-    "source_tool": "Burp Suite Pro / SQLMap",
+    "source_tool": "Burp Suite Professional / SQLMap",
     "hostname": "WEB-PROD-01",
     "severity": "CRITICAL",
-    "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+    "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
   }
 ]

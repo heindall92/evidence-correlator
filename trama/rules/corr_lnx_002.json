@@ -1,11 +1,11 @@
 {
   "id": "CORR-LNX-002",
-  "title": "Escalada de Privilegios en Linux mediante abuso de Binario SUID o Capabilities",
+  "title": "Escalada de privilegios en Linux mediante un binario SUID o con capabilities",
   "status": "production",
   "author": "Yoandy Ramírez Delgado",
   "severity": "CRITICAL",
   "confidence": 0.94,
-  "description": "Detecta cuando un usuario sin privilegios enumera permisos SUID o capabilities (o ejecuta LinPEAS) y posteriormente ejecuta un binario GTFOBins obteniendo euid=0 (root).",
+  "description": "Detecta la enumeración de permisos SUID o capabilities por un usuario sin privilegios (o la ejecución de LinPEAS) seguida de la ejecución de un binario de GTFOBins que obtiene euid=0 (root).",
   "correlation": {
     "type": "temporal_sequence",
     "window": "10m",
@@ -79,28 +79,28 @@
     "ens_rd_311_2022": [
       {
         "control_id": "op.exp.2",
-        "control_name": "Configuración de seguridad (Hardening de SO Linux)",
+        "control_name": "Configuración de seguridad (bastionado del sistema Linux)",
         "impact_level": "ALTO",
         "audit_verdict": "NO_CONFORME_CRITICO",
-        "evidence_summary": "Presencia y explotación confirmada de binario GTFOBins (/usr/bin/python3) con capability cap_setuid+ep permitiendo escalada directa a root (euid=0)."
+        "evidence_summary": "Explotación confirmada del binario /usr/bin/python3, incluido en GTFOBins, con la capability cap_setuid+ep, que permite la escalada directa a root (euid=0)."
       },
       {
         "control_id": "mp.sw.2",
-        "control_name": "Aceptación y puesta en servicio (Mínimo privilegio en binarios)",
+        "control_name": "Aceptación y puesta en servicio (mínimo privilegio en binarios)",
         "impact_level": "MEDIO",
         "audit_verdict": "NO_CONFORME",
-        "evidence_summary": "Ausencia de validación de capabilities y bits SUID durante el despliegue del servidor de aplicaciones."
+        "evidence_summary": "No se validaron las capabilities ni los bits SUID durante el despliegue del servidor de aplicaciones."
       }
     ],
     "iso_27001_2022": [
       {
         "control_id": "A.8.9",
-        "control_name": "Configuration management",
+        "control_name": "Gestión de la configuración",
         "audit_verdict": "NON_CONFORMITY_MAJOR"
       },
       {
         "control_id": "A.8.18",
-        "control_name": "Use of privileged utility programs",
+        "control_name": "Uso de programas de utilidad privilegiados",
         "audit_verdict": "NON_CONFORMITY_MAJOR"
       }
     ],

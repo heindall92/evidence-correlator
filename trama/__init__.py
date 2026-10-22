@@ -2,6 +2,6 @@
 
 from .branding import NAME, SLUG, TAGLINE, AUTHOR
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 __all__ = ["NAME", "SLUG", "TAGLINE", "AUTHOR", "__version__"]

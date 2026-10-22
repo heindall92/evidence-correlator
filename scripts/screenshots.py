@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capturas de la consola de TRAMA (claro, oscuro y móvil, y una por lente) con Playwright.
+"""Capturas de la consola de TRAMA (claro, oscuro y móvil, y una por perspectiva) con Playwright.
 
 Uso: python3 scripts/screenshots.py [--out docs/img]
 Requiere: pip install playwright && python3 -m playwright install chromium
@@ -66,7 +66,7 @@ def main():
             page.goto(url + "#inicio")
             page.click('.lens-opt[data-lens="%s"]' % lens)
             settle(page)
-            path = os.path.join(args.out, "lente-%s.png" % lens)
+            path = os.path.join(args.out, "perspectiva-%s.png" % lens)
             page.screenshot(path=path)
             written.append(path)
         ctx.close()

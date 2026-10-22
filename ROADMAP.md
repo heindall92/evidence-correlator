@@ -1,30 +1,31 @@
 # TRAMA · Roadmap
 
-> **Sigue el hilo.** Del hallazgo del pentest a la alerta del SOC y a la no conformidad, con una cadena de custodia que nadie puede cortar sin que se note.
+> Correlación de hallazgos de pentest, telemetría del SOC y no conformidades en un único paquete, con cadena de custodia verificable.
 
-TRAMA es la **trama** de un ataque (el plan que hay detrás) y la **trama** de un tejido: el punto donde se cruzan los hilos de la ofensiva, la detección y el cumplimiento. Herramienta local, en español e inglés, de código abierto (GPLv2), del ecosistema de Yoandy Ramírez Delgado.
+TRAMA alude a la trama de un tejido, donde se cruzan los hilos de la ofensiva, la detección y el cumplimiento. Herramienta local, en español e inglés y de código abierto (GPLv2), del ecosistema de Yoandy Ramírez Delgado.
 
 ---
 
-## 1. La idea: una evidencia, cinco lecturas
+## 1. Perspectivas por rol
 
-Un mismo paquete de evidencias responde preguntas distintas según quién lo mire. La consola se abre con la **lente** del rol de la persona (se elige en el perfil) y cada lente pone delante lo que ese perfil necesita y hoy no tiene.
+Un mismo paquete de evidencias admite lecturas distintas según el perfil. La consola abre la **perspectiva** del rol configurado en el perfil, y cada una presenta primero la información que ese perfil necesita.
 
-| Lente | La pregunta que responde | Qué enseña |
+| Perspectiva | Uso | Contenido |
 |---|---|---|
-| **Pentester** | ¿Mis hallazgos se explotaron en el mundo real? | Cada hallazgo con su estado: explotado (incidente, etapa y hora), sin explotación observada. Evidencia sellada lista para el informe: hash del evento y raíz de Merkle. |
-| **Red Team** | ¿Cómo fue mi ruta y cuánto tardaron en verme? | Ruta de ataque ordenada con tácticas ATT&CK, tiempo de permanencia (primera a última etapa) y tiempo hasta la detección. |
-| **Blue Team** | ¿Qué vi, qué se me escapó y qué IOC tengo? | Incidentes detectados y su tiempo de detección, exposiciones conocidas sin detección asociada (huecos) e indicadores (IP, cuentas, hosts, binarios) para copiar o exportar. |
-| **Purple** | ¿Qué técnicas ejercitamos y cuáles detectamos? | Cobertura ATT&CK: técnicas con regla y con detección, técnicas expuestas sin regla y siguiente ejercicio sugerido. |
-| **GRC** | ¿Qué incumplo, con qué prueba y cuánto me queda para notificar? | No conformidades ENS, ISO/IEC 27001 y NIS2 con su evidencia sellada, y los **plazos del art. 23 de NIS2** desde la detección: alerta temprana (24 h), notificación (72 h) e informe final (1 mes). |
+| **Pentester** · Impacto de los hallazgos | Demostrar en el informe qué hallazgos se explotaron | Estado de cada hallazgo (explotado, con incidente, etapa y hora, o sin explotación observada) y evidencia sellada: hash del evento y raíz de Merkle. |
+| **Red Team** · Ruta de ataque | Reconstruir la ruta y medir la detección | Etapas ordenadas con tácticas ATT&CK, tiempo de permanencia (de la primera a la última etapa) y tiempo hasta la detección. |
+| **Blue Team** · Detección y exposición | Localizar huecos de detección y obtener IOC | Incidentes detectados con su tiempo de detección, exposiciones conocidas sin detección asociada e indicadores (IP, cuentas, hosts y comandos) para copiar o exportar. |
+| **Purple Team** · Cobertura ATT&CK | Planificar el siguiente ejercicio | Técnicas con regla y con detección, técnicas expuestas sin regla y ejercicio recomendado. |
+| **GRC y auditoría** · Cumplimiento y notificación | Sustentar el dictamen y cumplir los plazos | No conformidades del ENS, la ISO/IEC 27001 y NIS2 con su evidencia sellada, y los **plazos del art. 23 de NIS2** desde la detección: alerta temprana (24 h), notificación (72 h) e informe final (1 mes). |
 
 ## 2. Identidad
 
-- **Nombre:** TRAMA. Comprobado que no choca con productos de seguridad. *QUIMERA* se descartó: QuimeraX es un producto de ciberseguridad, Chimera es un ofuscador ofensivo de PowerShell y G0114 «Chimera» es un grupo de amenazas en MITRE ATT&CK.
-- **Logo:** cuadrado con el icono Lucide `waypoints` (nodos unidos por un hilo) en el acento.
-- **Submarca:** `SIGUE EL HILO` en monoespaciada mayúscula.
-- **Firma visual: El Hilo.** Tres carriles horizontales (Ofensiva, Detección y Cumplimiento) sobre el eje del tiempo. Cada incidente es un hilo que baja del hallazgo a sus eventos y de ahí a los controles que incumple. El hilo seleccionado se dibuja en el acento y con trazo animado, y el resto queda en tinta tenue. No usa anillos (Rosetta), franjas por activo (CTEM-Nexus), la matriz (LemonByte) ni la constelación (Astrolabio).
-- **Custodia como eslabones:** cada bloque sellado es un eslabón. Al verificar, un pulso recorre la cadena; al simular una manipulación, el eslabón alterado se rompe.
+- **Nombre:** TRAMA. Se comprobó que no coincide con productos de seguridad. *QUIMERA* se descartó: QuimeraX es un producto de ciberseguridad, Chimera es un ofuscador ofensivo de PowerShell y G0114 «Chimera» es un grupo de amenazas en MITRE ATT&CK.
+- **Logotipo:** marca propia, no un icono de Lucide (`waypoints` es el logotipo de CTEM-Nexus). Una «T» cuyo trazo vertical cruza tres carriles, como la urdimbre de un tejido; se dibuja en el color de acento.
+- **Submarca:** «Correlación de evidencias».
+- **Visualización propia: Trazabilidad.** Tres carriles horizontales (ofensiva, detección y cumplimiento) sobre el orden de los eventos. Cada incidente se traza desde el hallazgo, por sus eventos, hasta los controles afectados. El incidente seleccionado se resalta en el acento con trazo animado y el resto queda atenuado. No usa anillos (Rosetta), franjas por activo (CTEM-Nexus), la matriz (LemonByte) ni la constelación (Astrolabio).
+- **Custodia bloque a bloque:** al verificar, un pulso recorre la cadena; al simular una manipulación, el bloque alterado se marca como roto.
+- **Redacción:** registro profesional e impersonal, títulos nominales, sin preguntas retóricas, tuteo, revelaciones («El resultado:») ni fórmulas del tipo «no es X, es Y». `scripts/redaccion.py` lo audita en la interfaz, la documentación, las reglas, los datos y la CLI, y forma parte de las pruebas.
 
 ## 3. Diseño (estilo del ecosistema)
 
@@ -39,7 +40,7 @@ Un mismo paquete de evidencias responde preguntas distintas según quién lo mir
   - cambio de tema con un único fundido coordinado (0,32 s);
   - movimiento reducido = fundido.
 - **Ajustes:** tema, acento, densidad, idioma y movimiento.
-- **Perfil:** nombre, rol (que fija la lente) y organización (va como autor en los informes).
+- **Perfil:** nombre, rol (fija la perspectiva inicial) y organización (figura como autor en los informes).
 - **Centro de ayuda:** pestañas de guía, método (generado desde las constantes de la consola), datos y CLI, atajos, glosario y acerca de (autor, independencia, ecosistema y soporte).
 - **Accesibilidad:** WCAG 2.2 AA verificado con axe (0 infracciones) en claro, oscuro, 1440 y 390 px.
 - **Seguridad:** CSP estricta (`default-src 'none'`, sin `unsafe-inline`), sin red y datos del paquete siempre como texto.
@@ -53,22 +54,28 @@ Una PR por versión (`version/X.Y.Z` → `main`), con las pruebas y axe en verde
 - [x] Paquete marcado como `demo` o `real` (`dataset`) para que los plazos de la demo no aparezcan vencidos.
 - [x] Serialización canónica con los números como en JavaScript: la verificación del navegador ya no da un falso positivo con decimales como `1.0`.
 - [x] Consola desde cero:
-  - shell del ecosistema, ES/EN, tema, 7 acentos, Ajustes, Perfil y centro de ayuda con Acerca de y ecosistema;
-  - vistas: Inicio por lente, El Hilo, Incidentes, Cumplimiento con plazos NIS2, Custodia en eslabones, Eventos y Entidades;
+  - estructura de interfaz común a las demás herramientas del autor, ES/EN, tema, 7 acentos, ajustes, perfil y centro de ayuda con «Acerca de» y herramientas relacionadas;
+  - vistas: Inicio por perspectiva, Trazabilidad, Incidentes, Cumplimiento con plazos NIS2, Custodia, Eventos y Entidades;
   - móvil con barra inferior y «Más».
-- [x] Pruebas de navegador nuevas (axe en todas las vistas, temas y móvil, lentes, hilo, custodia, idioma, teclado y XSS) y capturas.
+- [x] Pruebas de navegador nuevas (axe en todas las vistas, temas y móvil, perspectivas, trazabilidad, custodia, idioma, teclado y XSS) y capturas.
 
-### v0.3.0 · Firma del paquete y sesiones interactivas
+### v0.2.1 · Redacción y marca
+- [x] Textos de la consola (ES y EN), README, hoja de ruta, CLI y metadatos reescritos con registro profesional.
+- [x] «El Hilo» pasa a «Trazabilidad» y «lentes», a «perspectivas».
+- [x] Logotipo y favicon propios en lugar del icono `waypoints` de CTEM-Nexus.
+- [x] Auditor de redacción `scripts/redaccion.py` con las reglas de `linkedin-humanizer` en español e inglés, integrado en las pruebas y en la CI.
+
+### v0.3.0 · Firma del paquete y ejercicios guiados
 - [ ] **Firma Ed25519** (RFC 8032) en Python puro, sin dependencias: `trama keygen`, `trama sign` y `trama verify --pubkey`. La cadena prueba la integridad; la firma prueba la autoría. Verificación también en la consola con WebCrypto cuando el navegador la ofrezca.
 - [ ] Verificación de firmas externas de `minisign` y `gpg --detach-sign` si las herramientas están instaladas.
 
-Ejercicios guiados que se resuelven **con los datos del paquete abierto**, uno por lente, con pasos, pistas, comprobación de la respuesta y progreso guardado en el navegador.
-- [ ] Pentester: «Demuestra el impacto»: encuentra qué hallazgo se explotó y aporta su hash sellado.
-- [ ] Red Team: «Reconstruye tu ruta»: ordena las etapas y calcula el tiempo de permanencia.
-- [ ] Blue Team: «Encuentra el hueco»: qué exposición no tiene detección y qué IOC bloquearías.
-- [ ] Purple: «Cierra la cobertura»: qué técnica necesita regla nueva.
-- [ ] GRC: «Notifica a tiempo»: qué plazo de NIS2 vence primero y con qué evidencia notificas.
-- [ ] Sesión de custodia: manipula un bloque y explica por qué falla la verificación.
+Ejercicios guiados que se resuelven **con los datos del paquete abierto**, uno por perspectiva, con pasos, pistas, comprobación de la respuesta y progreso guardado en el navegador.
+- [ ] Pentester · Validación de impacto: identificar el hallazgo explotado y aportar su hash sellado.
+- [ ] Red Team · Reconstrucción de la ruta: ordenar las etapas y calcular el tiempo de permanencia.
+- [ ] Blue Team · Análisis de huecos: determinar qué exposición carece de detección y qué IOC procede bloquear.
+- [ ] Purple Team · Cierre de cobertura: determinar qué técnica requiere una regla nueva.
+- [ ] GRC · Notificación en plazo: identificar el primer plazo de NIS2 que vence y la evidencia que acompaña la notificación.
+- [ ] Custodia · Análisis de manipulación: alterar un bloque y explicar por qué falla la verificación.
 
 ### v0.4.0 · Correlación con el ecosistema
 - [ ] Importar hallazgos ofensivos de **CTEM-Nexus** y **ENS AD Auditor** desde el sobre `yrd-ecosistema` (tipo `hallazgos`), en la CLI y en la consola.
@@ -86,7 +93,7 @@ Ejercicios guiados que se resuelven **con los datos del paquete abierto**, uno p
 - [ ] Plazos de **DORA** para banca y seguros (además de NIS2).
 
 ### v1.0.0 · Lanzamiento
-- [ ] Cifras reales en el README, capturas, GIF de El Hilo y dossier de ejemplo en PDF.
+- [ ] Cifras reales en el README, capturas, GIF de la vista Trazabilidad y dossier de ejemplo en PDF.
 - [ ] Revisión con perfiles reales: un pentester, un analista SOC y un auditor.
 - [ ] Publicación en LinkedIn, espaciada al menos 3 o 4 días de otros lanzamientos y mencionando banca y LATAM.
 

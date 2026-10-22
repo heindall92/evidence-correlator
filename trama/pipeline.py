@@ -39,7 +39,7 @@ def summarize_grc(incidents):
 
 def rule_summary(rule):
     """Lo que la consola necesita de cada regla: identidad, técnicas ATT&CK que
-    detecta y hallazgos ofensivos que exige (para la cobertura de la lente Purple)."""
+    detecta y hallazgos ofensivos que exige (para la cobertura de la perspectiva Purple)."""
     findings = set()
     for stage in rule.get("correlation", {}).get("stages", []):
         for value in (stage.get("posture_condition") or {}).values():
@@ -115,7 +115,7 @@ def write_bundle(bundle, path):
 
 
 def write_dashboard_js(bundle, path):
-    """Escribe el paquete como script para que el dashboard funcione en file://
+    """Escribe el paquete como script para que la consola funcione en file://
     (los navegadores bloquean fetch() de ficheros locales)."""
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     payload = json.dumps(bundle, ensure_ascii=False, indent=1).replace("</", "<\\/")

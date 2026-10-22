@@ -2,6 +2,33 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versiones según [SemVer](https://semver.org/lang/es/).
 
+## 0.2.1 · octubre de 2026
+
+Revisión editorial de toda la plataforma para un registro de producto profesional, y marca propia.
+
+### Cambiado
+- **Textos de la consola en español e inglés** reescritos con registro impersonal y títulos nominales. Se eliminan las preguntas retóricas y el tuteo, y frases como «Hasta que te vieron», «Qué viste y qué se te escapó», «Explotados en el mundo real» o «Sigue el hilo». Criterio: catálogo de marcadores de texto generado de `linkedin-humanizer` (sergebulaev/linkedin-skills), adaptado al español.
+- «El Hilo» pasa a llamarse **Trazabilidad**; las «lentes», **perspectivas**; y la submarca, «Correlación de evidencias».
+- Reglas y hallazgos de ejemplo: títulos en minúscula según la norma española, sin gerundios de posterioridad ni anglicismos («crackeo», «Hardening»), nombres de controles ISO/IEC 27001 en español y herramientas de origen reales (BloodHound CE, LinPEAS, Burp Suite Professional).
+- README, hoja de ruta, CONTRIBUTING, lema de la CLI y metadatos alineados con la nueva redacción. El caso de uso del README usa las cifras reales de los datos de ejemplo (11 min 52 s entre la petición TGS y el inicio de sesión WinRM).
+- Tríadas escalonadas eliminadas («Sin red, sin analítica y sin cookies», «sin servidor, sin red y sin servicios de terceros»), frases cortadas al final de un texto («Ningún otro dato.») y el anglicismo «dashboard» en la CLI, que pasa a «consola».
+- En móvil, los metadatos de cada fila (severidad y tiempo de detección) pasan debajo del texto en lugar de estrecharlo.
+
+### Añadido
+- **Logotipo propio**: una «T» cuyo trazo cruza tres carriles, en SVG y sin depender de un icono de Lucide. Sustituye a `waypoints`, que es el logotipo de CTEM-Nexus. Nuevo favicon.
+- **Auditor de redacción** `scripts/redaccion.py`, sin dependencias. Traslada al español y al inglés las reglas de `linkedin-humanizer`:
+  - vocabulario puntuado por densidad por párrafo («significativo», «robusto», «aprovechar», «optimizar», «garantiza», «de forma sencilla», «permite + infinitivo», conectores como «Además,» o «Asimismo,» al inicio de frase…);
+  - con una sola aparición: revelaciones («El resultado:»), paralelismo negativo («no es X, es Y», «no solo…, sino…»), tríadas escalonadas («sin X, sin Y y sin Z»), frases cortadas, clichés, falsa sinceridad, fugas de herramientas y emojis típicos;
+  - en la interfaz, además: sin preguntas, exclamaciones, tuteo ni «you».
+
+  Recorre la consola, los documentos, las reglas, los datos de ejemplo y los mensajes de la CLI, y sobre los textos de la 0.2.0 detecta 71 cadenas.
+- `ProfessionalCopyTest` (4 pruebas): la plataforma no tiene fallos, el detector sigue encontrando giros conocidos, deja pasar la redacción técnica normal y el logotipo no vuelve a ser `waypoints`. 120 pruebas en total.
+- Paso de la CI que imprime el informe de redacción.
+
+### Corregido
+- Prueba de navegador inestable en la CI: tres esperas usaban `wait_for_function`, que Playwright evalúa dentro de la página y que la CSP de la consola bloquea («unsafe-eval»). Ahora usan localizadores, que no ejecutan código en la página.
+- Desajuste entre el texto visible y el nombre accesible del destino Trazabilidad en la barra inferior móvil (axe `label-content-name-mismatch`).
+
 ## 0.2.0 · octubre de 2026
 
 Nombre definitivo y consola rediseñada desde cero en torno a cinco perfiles: pentester, Red Team, Blue Team, Purple y GRC.

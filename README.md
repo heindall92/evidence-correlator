@@ -1,17 +1,19 @@
+<p align="center"><img src="docs/assets/favicon.svg" width="72" alt="Logotipo de TRAMA"/></p>
+
 <h1 align="center">TRAMA</h1>
 
-<p align="center"><b>Sigue el hilo: ofensiva, detección y cumplimiento con cadena de custodia.</b></p>
+<p align="center"><b>Correlación de evidencias ofensivas, de detección y de cumplimiento con cadena de custodia.</b></p>
 
 <p align="center">
-  Une los hallazgos de un pentest, la telemetría del SOC y las no conformidades del ENS, la ISO/IEC 27001 y NIS2 en un único paquete sellado con SHA-256 y árboles de Merkle. Cinco lentes para cinco perfiles: pentester, Red Team, Blue Team, Purple y GRC.
+  TRAMA reúne en un único paquete los hallazgos de un pentest, la telemetría del SOC y las no conformidades del ENS, la ISO/IEC 27001 y NIS2. Cada evento queda sellado con SHA-256 y cada incidente, con la raíz de Merkle de sus evidencias. La consola ofrece cinco perspectivas de análisis: pentester, Red Team, Blue Team, Purple Team y GRC.
 </p>
 
 <p align="center">
-  <a href="https://heindall92.github.io/evidence-correlator/"><img alt="Demo en vivo" src="https://img.shields.io/badge/demo-en%20vivo-1A4FE0?style=flat"/></a>
+  <a href="https://heindall92.github.io/evidence-correlator/"><img alt="Demo" src="https://img.shields.io/badge/demo-GitHub%20Pages-1A4FE0?style=flat"/></a>
   <a href="LICENSE"><img alt="Licencia GPLv2" src="https://img.shields.io/badge/licencia-GPLv2-4169A1?style=flat"/></a>
   <img alt="Python 3.8 a 3.12" src="https://img.shields.io/badge/Python-3.8%E2%80%933.12-1A3DB8?style=flat&logo=python&logoColor=white"/>
   <img alt="Sin dependencias" src="https://img.shields.io/badge/dependencias-0-2E8B57?style=flat"/>
-  <img alt="116 pruebas" src="https://img.shields.io/badge/pruebas-116-2E8B57?style=flat"/>
+  <img alt="120 pruebas" src="https://img.shields.io/badge/pruebas-120-2E8B57?style=flat"/>
   <img alt="axe-core: 0 infracciones" src="https://img.shields.io/badge/axe--core-0%20infracciones-2E8B57?style=flat"/>
   <img alt="MITRE ATT&CK" src="https://img.shields.io/badge/MITRE-ATT%26CK-B42318?style=flat"/>
   <img alt="ENS RD 311/2022" src="https://img.shields.io/badge/ENS-RD%20311%2F2022-E07B39?style=flat"/>
@@ -20,18 +22,22 @@
 </p>
 
 <p align="center">
-  <img src="docs/img/hilo-dark.png" alt="El Hilo: tres carriles (Ofensiva, Detección y Cumplimiento) con el incidente seleccionado dibujado en azul eléctrico" width="880"/>
+  <img src="docs/img/hilo-dark.png" alt="Vista Trazabilidad: carriles de ofensiva, detección y cumplimiento con el incidente seleccionado resaltado en azul eléctrico" width="880"/>
 </p>
 
-Un pentest encuentra una cuenta de servicio con RC4 habilitado. Semanas después el SOC ve una petición TGS y un inicio de sesión WinRM desde la misma IP. Auditoría pregunta si se cumple el op.acc.5 del ENS y el CISO, si hay que notificar por NIS2. Normalmente son tres informes que nadie cruza. **TRAMA los ata en un hilo**:
+## Caso de uso
+
+Un pentest detecta que la cuenta de servicio `svc_sql` admite tickets Kerberos con RC4 (`AD-SPN-RC4-001`). Más tarde, el SOC registra una petición TGS con RC4 sobre esa cuenta desde 10.10.14.22 y, 11 minutos y 52 segundos después, un inicio de sesión WinRM de `svc_sql` desde la misma IP. Auditoría necesita saber si se cumple la medida op.acc.5 del ENS, y el responsable de seguridad, si el incidente obliga a notificar conforme a NIS2. Sin correlación, esas tres piezas acaban en tres informes distintos.
+
+TRAMA las une en un incidente con tres capas:
 
 1. **Ofensiva.** Hallazgos de auditoría (BloodHound, LinPEAS, Burp Suite, SQLMap) que describen la exposición conocida de cada activo.
-2. **Detección.** Eventos de Windows (EVTX), Linux (auditd) y servidores web, normalizados al esquema `UnifiedEvidenceEvent` v1 (inspirado en OCSF/ECS) y correlacionados con reglas multietapa.
-3. **Cumplimiento.** Cada incidente genera no conformidades sobre el **ENS (RD 311/2022)**, la **ISO/IEC 27001:2022** y la **Directiva NIS2**, con la evidencia sellada que las sustenta y los plazos de notificación del art. 23.
+2. **Detección.** Eventos de Windows (EVTX), Linux (auditd) y servidores web, normalizados al esquema `UnifiedEvidenceEvent` v1 (inspirado en OCSF y ECS) y correlacionados con reglas multietapa.
+3. **Cumplimiento.** No conformidades sobre el **ENS (RD 311/2022)**, la **ISO/IEC 27001:2022** y la **Directiva NIS2**, con la evidencia sellada que las sustenta y los plazos de notificación del artículo 23.
 
-Cada evento crudo se sella con SHA-256 y se encadena al anterior; cada incidente lleva la raíz de Merkle de sus evidencias. Si alguien modifica un log, un sello o el paquete, la verificación lo detecta (en la CLI y en el navegador) y señala el eslabón roto.
+Cada evento crudo se sella con SHA-256 y se encadena al anterior. Si se modifica un registro, un sello o el paquete exportado, la verificación (en la CLI y en el navegador) lo detecta e indica el bloque afectado.
 
-Funciona con **Python 3.8+ y solo la librería estándar**. La consola es HTML estático: se abre con doble clic (`file://`), sin servidor, sin red y sin terceros.
+Requiere **Python 3.8 o superior y solo la librería estándar**. La consola es HTML estático: se abre con doble clic (`file://`) y funciona sin servidor ni conexión a servicios externos.
 
 > **Demo:** <https://heindall92.github.io/evidence-correlator/> (datos de laboratorio ficticios).
 
@@ -39,7 +45,7 @@ Funciona con **Python 3.8+ y solo la librería estándar**. La consola es HTML e
 
 ## Índice
 
-- [Una evidencia, cinco lecturas](#una-evidencia-cinco-lecturas)
+- [Perspectivas por rol](#perspectivas-por-rol)
 - [Arranque rápido](#arranque-rápido)
 - [Consola](#consola)
 - [Capturas](#capturas)
@@ -59,21 +65,21 @@ Funciona con **Python 3.8+ y solo la librería estándar**. La consola es HTML e
 
 ---
 
-## Una evidencia, cinco lecturas
+## Perspectivas por rol
 
-El mismo paquete responde preguntas distintas según quién lo mire. La consola se abre con la **lente** del rol elegido en el perfil (se cambia con `L` o desde Inicio).
+Un mismo paquete admite cinco lecturas. La consola abre la perspectiva del rol configurado en el perfil; se cambia desde Inicio o con la tecla `L`.
 
-| Lente | La pregunta | Qué enseña |
-|---|---|---|
-| **Pentester** | ¿Mis hallazgos se explotaron en el mundo real? | Cada hallazgo con su estado (explotado, con incidente, etapa y hora, o sin explotación observada) y la evidencia sellada para el informe: hash del evento y raíz de Merkle, con un clic para copiarla. |
-| **Red Team** | ¿Cómo fue mi ruta y cuánto tardaron en verme? | Ruta de ataque con tácticas ATT&CK, tiempo de permanencia y tiempo hasta la detección por incidente. |
-| **Blue Team** | ¿Qué vi, qué se me escapó y qué IOC tengo? | Incidentes detectados, exposiciones conocidas sin detección (huecos) e indicadores (IP, cuentas, hosts y comandos) para copiar o exportar a CSV. |
-| **Purple** | ¿Qué técnicas ejercitamos y cuáles detectamos? | Cobertura ATT&CK: técnicas con regla y detección, técnicas expuestas sin regla y el siguiente ejercicio sugerido. |
-| **GRC** | ¿Qué incumplo, con qué prueba y cuánto me queda para notificar? | No conformidades por marco con su evidencia sellada y los **plazos del art. 23 de NIS2** desde la detección: alerta temprana (24 h), notificación (72 h) e informe final (un mes después de la notificación). |
+| Perspectiva | Contenido |
+|---|---|
+| **Pentester** · Impacto de los hallazgos | Estado de cada hallazgo (explotado, con incidente, etapa y hora, o sin explotación observada) y un bloque de evidencia en Markdown con hashes y raíz de Merkle, listo para el informe. |
+| **Red Team** · Ruta de ataque | Cronología de las etapas con su táctica ATT&CK, tiempo de permanencia y tiempo hasta la detección de cada incidente. |
+| **Blue Team** · Detección y exposición | Incidentes detectados con su tiempo de detección, exposiciones conocidas sin detección asociada e indicadores (IP, cuentas, hosts y comandos) exportables a CSV. |
+| **Purple Team** · Cobertura ATT&CK | Técnicas con regla de correlación, técnicas detectadas en el paquete, hallazgos sin regla asociada y ejercicio recomendado. |
+| **GRC y auditoría** · Cumplimiento y notificación | No conformidades por marco con su evidencia sellada y los **plazos del artículo 23 de NIS2** desde la detección: alerta temprana (24 h), notificación (72 h) e informe final (un mes después de la notificación). |
 
-| Pentester | Red Team | Blue Team | Purple | GRC |
+| Pentester | Red Team | Blue Team | Purple Team | GRC y auditoría |
 |---|---|---|---|---|
-| <img src="docs/img/lente-pentest.png" width="170" alt="Lente pentester: hallazgos explotados con su evidencia sellada"/> | <img src="docs/img/lente-red.png" width="170" alt="Lente Red Team: ruta de ataque y tiempos de detección"/> | <img src="docs/img/lente-blue.png" width="170" alt="Lente Blue Team: detecciones, huecos e IOC"/> | <img src="docs/img/lente-purple.png" width="170" alt="Lente Purple: cobertura ATT&CK"/> | <img src="docs/img/lente-grc.png" width="170" alt="Lente GRC: no conformidades y plazos NIS2"/> |
+| <img src="docs/img/perspectiva-pentest.png" width="170" alt="Perspectiva pentester: hallazgos explotados y evidencia sellada"/> | <img src="docs/img/perspectiva-red.png" width="170" alt="Perspectiva Red Team: ruta de ataque y tiempos de detección"/> | <img src="docs/img/perspectiva-blue.png" width="170" alt="Perspectiva Blue Team: detecciones, exposiciones sin detección e IOC"/> | <img src="docs/img/perspectiva-purple.png" width="170" alt="Perspectiva Purple Team: cobertura ATT&CK"/> | <img src="docs/img/perspectiva-grc.png" width="170" alt="Perspectiva GRC: no conformidades y plazos NIS2"/> |
 
 ## Arranque rápido
 
@@ -94,7 +100,7 @@ open docs/index.html            # macOS
 python3 -m unittest discover -s tests -t .
 ```
 
-Con tus propios datos:
+Con datos propios:
 
 ```bash
 python3 -m trama run \
@@ -109,30 +115,30 @@ También se instala como comando: `pip install .` y después `trama run`.
 
 ## Consola
 
-`docs/index.html` carga `docs/data/bundle.js` (los navegadores bloquean `fetch()` en `file://`, por eso la CLI escribe también el paquete como script). Para revisar otro paquete: **Abrir** (`O`) o arrastrarlo a la ventana. Nada sale del navegador.
+`docs/index.html` carga `docs/data/bundle.js`. Los navegadores bloquean `fetch()` en `file://`, de modo que la CLI escribe también el paquete como script. Otro paquete se abre con **Abrir** (`O`) o arrastrándolo a la ventana; los datos no salen del navegador.
 
 | Vista | Qué muestra |
 |---|---|
-| **Inicio** | La lente del rol: lo que ese perfil necesita ver primero. |
-| **El Hilo** | La firma visual de TRAMA: tres carriles (Ofensiva, Detección y Cumplimiento) sobre el orden de los eventos. Cada incidente es un hilo que baja del hallazgo a sus eventos y de ahí a los controles. El seleccionado se dibuja en el acento con trazo animado. |
+| **Inicio** | Perspectiva del rol configurado en el perfil. |
+| **Trazabilidad** | Visualización propia de TRAMA: tres carriles (ofensiva, detección y cumplimiento) sobre el orden de los eventos. Cada incidente se traza desde el hallazgo, por sus eventos, hasta los controles afectados; el seleccionado se resalta con el color de acento. |
 | **Incidentes** | Etapas encadenadas con comando, exposición ofensiva y hash de cada evento; técnicas ATT&CK; dictamen por marco; raíz de Merkle. `J` / `K` para recorrerlos. |
 | **Cumplimiento** | No conformidades por marco (ENS, ISO/IEC 27001, NIS2) con evidencia e incidentes, plazos NIS2 en una pista lineal y exportación a CSV protegida contra inyección de fórmulas. |
-| **Custodia** | La cadena como eslabones. **Verificar** (`V`) recalcula en el navegador cada sello, el hash de cada evento crudo y las raíces de Merkle; **Simular manipulación** rompe un eslabón para ver cómo se detecta. |
+| **Custodia** | La cadena bloque a bloque. **Verificar** (`V`) recalcula en el navegador cada sello, el hash de cada evento crudo y las raíces de Merkle; **Simular manipulación** altera un bloque en memoria para mostrar cómo se detecta. |
 | **Eventos** | Tabla filtrable de eventos normalizados con el JSON completo de cada uno. |
 | **Entidades** | Origen → actor → destino de cada evento, con los activos expuestos marcados. |
 
-**Shell.** Lateral con el paquete abierto, navegación, los 7 acentos (azul eléctrico por defecto) y el perfil; barra superior de cristal con búsqueda `Ctrl K`, `ES | EN`, interruptor de tema, ajustes y ayuda. En móvil, barra inferior con cuatro destinos y «Más».
+**Estructura de la interfaz.** Lateral con el paquete abierto, la navegación, los 7 colores de acento (azul eléctrico por defecto) y el perfil; barra superior con búsqueda `Ctrl K`, selector `ES | EN`, tema, ajustes y ayuda. En móvil, barra inferior con cuatro destinos y menú «Más».
 
 - **Ajustes:** tema, acento, densidad, movimiento (sistema o reducido), abrir paquete, volver a la demo y borrado de preferencias en dos pasos.
-- **Perfil:** nombre, organización y rol (fija la lente). Se guarda solo en este navegador.
+- **Perfil:** nombre, organización y rol, que fija la perspectiva inicial. Se guarda solo en este navegador.
 - **Ayuda:** guía, método (generado desde las constantes de la consola, como los plazos NIS2), datos y CLI, atajos, glosario y acerca de (autor, avisos de independencia, ecosistema y soporte).
-- **Movimiento:** estilo Apple según Emil Kowalski: escala 0,97 al pulsar, muelles sin rebote, el cambio de tema es un único fundido coordinado de 0,32 s y con movimiento reducido todo pasa a fundido.
+- **Movimiento:** criterios de Emil Kowalski para interfaces de Apple. Escala 0,97 al pulsar, muelles sin rebote y un único fundido coordinado de 0,32 s al cambiar de tema. Con movimiento reducido, todas las transiciones pasan a fundido.
 
 | Atajo | Acción |
 |---|---|
 | `Ctrl K` · `/` | Buscar incidentes, eventos, controles, técnicas o hashes |
 | `1`–`7` | Ir a una vista |
-| `L` | Cambiar de lente |
+| `L` | Cambiar de perspectiva |
 | `J` / `K` | Incidente siguiente / anterior |
 | `V` | Verificar la cadena de custodia |
 | `T` | Alternar tema |
@@ -140,7 +146,7 @@ También se instala como comando: `pip install .` y después `trama run`.
 | `[` | Plegar el lateral |
 | `?` | Ayuda |
 
-**GitHub Pages.** La consola está en `docs/`: en *Settings → Pages* elige la rama principal y la carpeta `/docs`. Publica solo paquetes de ejemplo; un paquete real contiene logs de la organización.
+**GitHub Pages.** La consola está en `docs/`: en *Settings → Pages* se selecciona la rama principal y la carpeta `/docs`. Solo deben publicarse paquetes de ejemplo, ya que un paquete real contiene registros de la organización.
 
 ## Capturas
 
@@ -149,7 +155,7 @@ Generadas con `python3 scripts/screenshots.py` (Playwright, Chromium headless, 1
 | Vista | Claro | Oscuro | Móvil |
 |---|---|---|---|
 | Inicio | <img src="docs/img/inicio-light.png" width="300" alt="Inicio en tema claro"/> | <img src="docs/img/inicio-dark.png" width="300" alt="Inicio en tema oscuro"/> | <img src="docs/img/inicio-mobile.png" width="110" alt="Inicio en móvil"/> |
-| El Hilo | <img src="docs/img/hilo-light.png" width="300" alt="El Hilo en tema claro"/> | <img src="docs/img/hilo-dark.png" width="300" alt="El Hilo en tema oscuro"/> | <img src="docs/img/hilo-mobile.png" width="110" alt="El Hilo en móvil"/> |
+| Trazabilidad | <img src="docs/img/hilo-light.png" width="300" alt="Trazabilidad en tema claro"/> | <img src="docs/img/hilo-dark.png" width="300" alt="Trazabilidad en tema oscuro"/> | <img src="docs/img/hilo-mobile.png" width="110" alt="Trazabilidad en móvil"/> |
 | Incidentes | <img src="docs/img/incidentes-light.png" width="300" alt="Incidentes en tema claro"/> | <img src="docs/img/incidentes-dark.png" width="300" alt="Incidentes en tema oscuro"/> | <img src="docs/img/incidentes-mobile.png" width="110" alt="Incidentes en móvil"/> |
 | Cumplimiento | <img src="docs/img/cumplimiento-light.png" width="300" alt="Cumplimiento en tema claro"/> | <img src="docs/img/cumplimiento-dark.png" width="300" alt="Cumplimiento en tema oscuro"/> | <img src="docs/img/cumplimiento-mobile.png" width="110" alt="Cumplimiento en móvil"/> |
 | Custodia | <img src="docs/img/custodia-light.png" width="300" alt="Custodia en tema claro"/> | <img src="docs/img/custodia-dark.png" width="300" alt="Custodia en tema oscuro"/> | <img src="docs/img/custodia-mobile.png" width="110" alt="Custodia en móvil"/> |
@@ -216,7 +222,7 @@ Una regla por fichero JSON en `trama/rules/` (o el directorio que pases con `--r
 ```json
 {
   "id": "CORR-AD-001",
-  "title": "Kerberoasting seguido de movimiento lateral WinRM/SMB",
+  "title": "Kerberoasting seguido de movimiento lateral por WinRM o SMB",
   "severity": "CRITICAL",
   "confidence": 0.96,
   "correlation": {
@@ -246,7 +252,7 @@ Una regla por fichero JSON en `trama/rules/` (o el directorio que pases con `--r
   "mitre_attack": [{ "tactic": "Credential Access", "technique_id": "T1558.003", "technique_name": "Kerberoasting" }],
   "grc_compliance_mapping": {
     "ens_rd_311_2022": [{ "control_id": "op.acc.5", "control_name": "Mecanismo de autenticación", "audit_verdict": "NO_CONFORME_CRITICO", "evidence_summary": "…" }],
-    "iso_27001_2022": [{ "control_id": "A.8.5", "control_name": "Secure authentication", "audit_verdict": "NON_CONFORMITY_MAJOR" }],
+    "iso_27001_2022": [{ "control_id": "A.8.5", "control_name": "Autenticación segura", "audit_verdict": "NON_CONFORMITY_MAJOR" }],
     "nis2_directive": [{ "article": "Art. 21.2(i) y (j)", "topic": "Control de acceso y autenticación segura" }]
   }
 }
@@ -284,21 +290,23 @@ python3 -m trama rules   [--rules DIR|F]
 - Códigos de salida: `0` correcto, `1` error de entrada (fichero, JSON o regla no válidos), `2` integridad comprometida.
 - El color se desactiva fuera de una terminal y con `NO_COLOR`.
 - `--no-raw` exporta el paquete sin los eventos crudos (más ligero, pero `verify` ya no puede comprobarlos).
-- El paquete lleva `dataset: "demo"` cuando se generó con los datos de ejemplo y `"real"` con los tuyos. En la demo, el reloj de los plazos NIS2 se fija 5 horas después de la última detección para que no aparezcan vencidos; con datos reales se usa la hora actual.
-- El paquete incluye también un resumen de cada regla (`rules`: técnicas ATT&CK y hallazgos de postura que exige) para las lentes Purple y Blue.
+- El paquete lleva `dataset: "demo"` cuando se generó con los datos de ejemplo y `"real"` con datos propios. En la demo, el reloj de los plazos NIS2 se fija 5 horas después de la última detección para que no aparezcan vencidos; con datos reales se usa la hora actual.
+- El paquete incluye también un resumen de cada regla (`rules`: técnicas ATT&CK y hallazgos de postura que exige) para las perspectivas Purple y Blue.
 
 ## Calidad
 
-**116 pruebas** con `unittest` (compatible con pytest), 17 de ellas en un Chromium real con axe-core.
+**120 pruebas** con `unittest` (compatible con pytest), 17 de ellas en un Chromium real con axe-core.
 
 | Conjunto | Pruebas | Qué cubre |
 |---|---:|---|
 | `tests/test_custody.py` | 23 | Merkle (vacío, orden, nodo impar, separación de dominio), enlaces, sellos, manipulación, truncado y **números canónicos** como en JavaScript (`1.0`, `1e-7`, `1e16`, `1e21`, `5e-324`) sin cambiar los hashes anteriores |
 | `tests/test_correlator.py` | 24 | Las tres reglas, ventana, orden, zonas horarias, referencias, postura, cifrado fuerte, puertos como texto, SUID y capabilities, sin duplicados, grupos independientes |
 | `tests/test_pipeline_cli.py` | 15 | Paquete, `verify` con manipulaciones, script del dashboard seguro, CLI y `python -m` sin avisos |
-| `tests/test_static.py` | 16 | Consola sin recursos remotos ni `fetch`, CSP estricta, `innerHTML` solo para iconos vendorizados, iconos existentes, tokens claro/oscuro y 7 acentos, movimiento reducido, paridad y cobertura ES/EN (más de 150 claves), constantes NIS2 24/72/1, datos de ejemplo al día |
+| `tests/test_static.py` | 20 | Redacción profesional con `scripts/redaccion.py` sobre interfaz, documentos, reglas, datos de ejemplo y CLI (y su sensibilidad frente a giros conocidos), logotipo propio, consola sin recursos remotos ni `fetch`, CSP estricta, `innerHTML` solo para iconos vendorizados, iconos existentes, tokens claro/oscuro y 7 acentos, movimiento reducido, paridad y cobertura ES/EN (más de 150 claves), constantes NIS2 24/72/1, datos de ejemplo al día |
 | `tests/test_normalizer.py` · `test_rules.py` · `test_timeutil.py` | 21 | Esquema y contexto ofensivo, carga y validación de reglas, tiempo compatible con 3.8 |
-| `tests/browser/` | 17 | axe (0 infracciones) en las 7 vistas, las 5 lentes y todos los diálogos, en claro, oscuro y 390 px; sin desbordamiento horizontal ni iconos vacíos; solo peticiones locales; un paquete con HTML no se ejecuta; paquetes no válidos rechazados; verificación y manipulación; decimales verificados en el navegador; reloj NIS2 de la demo; portapapeles; hilo resaltado; teclado y búsqueda; inglés; perfil; ajustes; fundido de tema coordinado; movimiento reducido |
+| `tests/browser/` | 17 | axe (0 infracciones) en las 7 vistas, las 5 perspectivas y todos los diálogos, en claro, oscuro y 390 px; sin desbordamiento horizontal ni iconos vacíos; solo peticiones locales; un paquete con HTML no se ejecuta; paquetes no válidos rechazados; verificación y manipulación; decimales verificados en el navegador; reloj NIS2 de la demo; portapapeles; incidente resaltado en Trazabilidad; teclado y búsqueda; inglés; perfil; ajustes; fundido de tema coordinado; movimiento reducido |
+
+**Redacción.** `scripts/redaccion.py` aplica las reglas de `linkedin-humanizer` adaptadas al español: vocabulario puntuado por densidad (3 marcadores en un párrafo obligan a reescribirlo), revelaciones, paralelismo negativo, tríadas escalonadas, frases cortadas para dar efecto, clichés, falsa sinceridad, rayas y emojis. Recorre la interfaz en ES y EN, los documentos, las reglas, los datos de ejemplo y los mensajes de la CLI; `python3 scripts/redaccion.py --avisos` muestra el informe completo.
 
 Las pruebas de navegador se omiten si Playwright no está instalado (`pip install playwright && python3 -m playwright install chromium`). La CI ejecuta el resto en Python 3.8, 3.9, 3.10, 3.11 y 3.12 y las de navegador en un trabajo aparte, con acciones fijadas por SHA.
 
@@ -307,7 +315,7 @@ Las pruebas de navegador se omiten si Playwright no está instalado (`pip instal
 - **Sin red.** La consola declara `default-src 'none'` sin `unsafe-inline`; scripts, estilos, fuentes (Geist, OFL) e iconos (Lucide, ISC) están en el repositorio. Sin CDN, analítica ni cookies.
 - **Datos no confiables.** Todo lo que viene de un paquete se inserta con `textContent`; el único `innerHTML` es para los SVG de Lucide vendorizados, y una prueba lo comprueba. El paquete incrustado escapa `</` para no cerrar la etiqueta `<script>`.
 - **CSV.** Las celdas que empiezan por `=`, `+`, `-`, `@`, tabulador o retorno se neutralizan.
-- **Almacenamiento.** Solo preferencias (tema, acento, densidad, movimiento, idioma, lente) y el perfil, en `localStorage` de este navegador.
+- **Almacenamiento.** Solo preferencias (tema, acento, densidad, movimiento, idioma, perspectiva) y el perfil, en `localStorage` de este navegador.
 
 Más detalles y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.md).
 
@@ -315,7 +323,7 @@ Más detalles y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.m
 
 - La correlación trabaja sobre ficheros JSON ya exportados; no hay conectores en vivo con SIEM ni EDR.
 - El sello registra el instante de ingesta: dos ejecuciones sobre los mismos datos producen sellos distintos (las raíces de Merkle sí coinciden).
-- La cadena demuestra integridad, no autoría: aún no hay firma asimétrica del paquete (llega en la 0.3.0 con Ed25519). Mientras tanto, firma el JSON con `minisign` o `gpg --detach-sign`, o ancla el sello final en un registro externo.
+- La cadena demuestra integridad, no autoría: aún no hay firma asimétrica del paquete (llega en la 0.3.0 con Ed25519). Mientras tanto, se recomienda firmar el JSON con `minisign` o `gpg --detach-sign`, o anclar el sello final en un registro externo.
 - Los plazos NIS2 solo aplican a incidentes significativos de entidades esenciales o importantes; la consola los calcula desde la detección como orientación, no como dictamen jurídico.
 - Los mapeos a ENS, ISO/IEC 27001 y NIS2 de las reglas de ejemplo son orientativos y deben revisarse con el auditor.
 
@@ -339,7 +347,7 @@ Más detalles y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.m
 │   ├── data/bundle.js            # paquete de ejemplo generado por la CLI
 │   └── img/                      # capturas
 ├── tests/                        # unittest + tests/browser (Playwright y axe-core)
-├── scripts/                      # screenshots.py, vendor_icons.py
+├── scripts/                      # redaccion.py (auditor de estilo), screenshots.py, vendor_icons.py
 ├── ROADMAP.md
 └── .github/workflows/ci.yml
 ```
@@ -350,8 +358,9 @@ Detalle y criterios de aceptación en [ROADMAP.md](ROADMAP.md).
 
 | Versión | Contenido |
 |---|---|
-| **0.2.0** ✅ | Nombre definitivo, consola nueva con cinco lentes, El Hilo, plazos NIS2 y verificación en el navegador sin falsos positivos con decimales |
-| 0.3.0 | Firma Ed25519 del paquete (Python puro) y sesiones interactivas por lente |
+| 0.2.0 ✅ | Nombre definitivo, consola nueva con cinco perspectivas, vista de trazabilidad, plazos NIS2 y verificación en el navegador sin falsos positivos con decimales |
+| **0.2.1** ✅ | Redacción profesional de toda la interfaz y la documentación, marca propia y prueba de estilo |
+| 0.3.0 | Firma Ed25519 del paquete (Python puro) y ejercicios guiados por perspectiva |
 | 0.4.0 | Importar hallazgos de CTEM-Nexus y ENS AD Auditor y exportar a Rosetta con el sobre `yrd-ecosistema` |
 | 0.5.0 | Entregables por rol: dossier de auditoría, informe de impacto, IOC en STIX 2.1 y borradores Sigma |
 | 0.6.0 | Más fuentes (Sysmon, auditd, nginx/Apache), reglas de AD y web, plazos DORA |
@@ -374,7 +383,8 @@ TRAMA forma parte de un conjunto de herramientas GRC y de seguridad de código a
 
 | Versión | Fecha | Cambios |
 |---|---|---|
-| 0.2.0 | octubre de 2026 | Nombre definitivo TRAMA; consola desde cero con cinco lentes por rol, El Hilo, plazos NIS2, custodia en eslabones, ES/EN, 7 acentos, ajustes, perfil y ayuda; serialización canónica con números como JavaScript (adiós al falso positivo con `1.0`); `dataset` y resumen de reglas en el paquete; 116 pruebas, 17 de navegador. |
+| 0.2.1 | octubre de 2026 | Textos de la consola (ES y EN) y de la documentación reescritos con registro profesional, sin preguntas retóricas ni tuteo; «El Hilo» pasa a «Trazabilidad» y «lentes», a «perspectivas»; logotipo propio; prueba automática de redacción. |
+| 0.2.0 | octubre de 2026 | Nombre definitivo TRAMA; consola nueva con cinco perspectivas por rol, vista de trazabilidad, plazos NIS2, custodia bloque a bloque, ES/EN, 7 acentos, ajustes, perfil y ayuda; serialización canónica con números como en JavaScript, que elimina el falso positivo con `1.0`; `dataset` y resumen de reglas en el paquete. |
 | 0.1.0 | octubre de 2026 | Primera versión pública: paquete instalable, CLI con `run`, `verify` y `rules`, Merkle RFC 6962, verificación de eventos crudos y truncado, `group_by` efectivo. |
 
 Detalle en [CHANGELOG.md](CHANGELOG.md).
@@ -400,4 +410,4 @@ Proyecto independiente, sin relación con ISO, IEC, el CCN, la Comisión Europea
 </tr>
 </table>
 
-Las contribuciones son bienvenidas: lee [CONTRIBUTING.md](CONTRIBUTING.md) antes de abrir una *pull request*.
+Las contribuciones son bienvenidas. Antes de abrir una *pull request*, conviene leer [CONTRIBUTING.md](CONTRIBUTING.md).
