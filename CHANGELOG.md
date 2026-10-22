@@ -2,18 +2,44 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versiones según [SemVer](https://semver.org/lang/es/).
 
-## 0.1.0 · octubre de 2026
+## 0.2.0 · octubre de 2026
 
-Primera versión pública, a partir del prototipo inicial del motor (nombre provisional `PROYECTO`).
+Nombre definitivo y consola rediseñada desde cero en torno a cinco perfiles: pentester, Red Team, Blue Team, Purple y GRC.
 
 ### Añadido
-- Paquete instalable (`pyproject.toml`) con comando `proyecto` y `python3 -m proyecto`.
+- **Nombre definitivo TRAMA** («sigue el hilo»): paquete y comando `trama`, lema en `trama/branding.py`. Se descartó QUIMERA por coincidir con QuimeraX (producto de ciberseguridad), Chimera (ofuscador ofensivo de PowerShell) y el grupo G0114 de MITRE ATT&CK.
+- **Consola nueva** (`docs/`), sin dependencias ni red:
+  - **Cinco lentes por rol** en Inicio: hallazgos explotados con evidencia sellada (pentester), ruta y tiempos de detección (Red Team), detecciones, huecos e IOC exportables (Blue Team), cobertura ATT&CK y siguiente ejercicio (Purple), no conformidades y plazos NIS2 (GRC).
+  - **El Hilo**, la visualización propia: tres carriles (Ofensiva, Detección y Cumplimiento) con cada incidente como un hilo y el seleccionado dibujado en el acento.
+  - **Plazos del art. 23 de NIS2** (24 h, 72 h y un mes tras la notificación) en una pista lineal; en la demo el reloj se fija 5 h después de la última detección.
+  - **Custodia en eslabones** con pulso de verificación y simulación de manipulación.
+  - Vistas Incidentes, Cumplimiento, Eventos y Entidades; búsqueda `Ctrl K` ordenada por relevancia; atajos `1`–`7`, `L`, `J`/`K`, `V`, `T`, `O`, `[` y `?`.
+  - Interfaz completa en español e inglés; tema claro y oscuro con fundido coordinado; 7 acentos con azul eléctrico por defecto; ajustes (densidad, movimiento, abrir paquete, volver a la demo, borrado en dos pasos); perfil (nombre, organización y rol); centro de ayuda con guía, método, datos y CLI, atajos, glosario y acerca de con el ecosistema.
+  - Móvil con barra inferior y menú «Más» (acentos e idioma incluidos).
+- Campo `dataset` (`demo` o `real`) y resumen de reglas (`rules`: técnicas ATT&CK y hallazgos de postura) en el paquete.
+- `ROADMAP.md` con las fases hasta la 1.0.0.
+- 17 pruebas de navegador nuevas (axe en todas las vistas, lentes, diálogos, temas y móvil; desbordamiento; iconos; XSS; teclado; idioma; perfil; ajustes; fundido de tema; movimiento reducido). 116 pruebas en total.
+
+### Corregido
+- **Falso positivo en la verificación del navegador con decimales** (`1.0`, `1e-7`, `1e21`): la serialización canónica escribe ahora los números como `Number.prototype.toString` de JavaScript, así que Python y el navegador calculan el mismo hash. Para datos sin decimales los hashes no cambian.
+- Contraste insuficiente del acento verde azulado de la consola anterior: la paleta nueva cumple WCAG 2.2 AA, verificado con axe en claro y oscuro.
+
+### Eliminado
+- `scripts/rename.sh` y su prueba: el nombre ya es definitivo.
+- La consola anterior (secciones Resumen y Grafo, sustituidas por Inicio y Entidades) y sus capturas.
+
+## 0.1.0 · octubre de 2026
+
+Primera versión pública, a partir del prototipo inicial del motor (con nombre provisional).
+
+### Añadido
+- Paquete instalable (`pyproject.toml`) con comando `trama` y `python3 -m trama`.
 - CLI con subcomandos `run`, `verify` y `rules`; opciones `--events`, `--findings`, `--rules`, `--output`, `--dashboard-js`, `--no-raw`, `--json` y `--color` (respeta `NO_COLOR`); códigos de salida 0, 1 y 2.
 - `verify` sobre paquetes exportados: sellos, enlaces, hash de cada evento crudo, sello final (detecta truncado), raíz global y raíz de Merkle de cada incidente.
 - Validación de reglas al cargarlas (campos, severidad, confianza, ventana, etapas y predicados).
 - Resumen GRC por marco con los incidentes que sustentan cada no conformidad.
 - Consola web nueva: seis secciones, búsqueda global, atajos, ajustes, privacidad, temas claro y oscuro, diseño adaptable, verificación de la custodia en el navegador y simulación de manipulación. CSP estricta, sin recursos remotos, iconos Lucide y fuente Geist vendorizados.
-- `scripts/rename.sh` para fijar el nombre definitivo en un paso; `scripts/screenshots.py`; `scripts/vendor_icons.py`.
+- Script de cambio de nombre (retirado en la 0.2.0); `scripts/screenshots.py`; `scripts/vendor_icons.py`.
 - 94 pruebas con `unittest` y 6 de navegador (axe-core, Playwright). CI en Python 3.8 a 3.12 con acciones fijadas por SHA.
 
 ### Corregido

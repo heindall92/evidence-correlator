@@ -3,14 +3,14 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "proyecto"
+name = "trama"
 dynamic = ["version"]
-description = "Correlador local de evidencias ofensivas, telemetría DFIR y no conformidades GRC (ENS, ISO/IEC 27001, NIS2) con cadena de custodia SHA-256/Merkle"
+description = "TRAMA: sigue el hilo de un ataque del pentest al SOC y al cumplimiento (ENS, ISO/IEC 27001, NIS2) con cadena de custodia SHA-256/Merkle"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "GPL-2.0-only" }
 authors = [{ name = "Yoandy Ramírez Delgado", email = "yoandyramirezdelgado@gmail.com" }]
-keywords = ["dfir", "pentesting", "grc", "ens", "iso27001", "nis2", "mitre-attack", "chain-of-custody", "merkle"]
+keywords = ["dfir", "pentesting", "red-team", "blue-team", "purple-team", "grc", "ens", "iso27001", "nis2", "mitre-attack", "chain-of-custody", "merkle"]
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.8",
@@ -30,16 +30,16 @@ yaml = ["PyYAML>=6"]
 browser = ["playwright>=1.40"]
 
 [project.scripts]
-proyecto = "proyecto.cli:main"
+trama = "trama.cli:main"
 
 [tool.setuptools]
-packages = ["proyecto"]
+packages = ["trama"]
 
 [tool.setuptools.dynamic]
-version = { attr = "proyecto.__version__" }
+version = { attr = "trama.__version__" }
 
 [tool.setuptools.package-data]
-proyecto = ["rules/*.json", "sample_data/*.json"]
+trama = ["rules/*.json", "sample_data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -37,6 +37,20 @@ def summarize_grc(incidents):
     return {k: list(v.values()) for k, v in out.items()}
 
 
+def rule_summary(rule):
+    """Lo que la consola necesita de cada regla: identidad, técnicas ATT&CK que
+    detecta y hallazgos ofensivos que exige (para la cobertura de la lente Purple)."""
+    findings = set()
+    for stage in rule.get("correlation", {}).get("stages", []):
+        for value in (stage.get("posture_condition") or {}).values():
+            findings.update(value if isinstance(value, list) else [value])
+    out = {k: rule.get(k) for k in ("id", "title", "severity", "confidence", "description")}
+    out["mitre_attack"] = [{k: m.get(k) for k in ("tactic", "technique_id", "technique_name")}
+                           for m in rule.get("mitre_attack", [])]
+    out["posture_findings"] = sorted(str(f) for f in findings)
+    return out
+
+
 def run_pipeline(raw_events, offensive_findings, rules, clock=None, embed_raw=True):
     chain = CustodyChain(clock=clock)
     normalizer = EvidenceNormalizer(chain, offensive_findings)
@@ -49,8 +63,7 @@ def run_pipeline(raw_events, offensive_findings, rules, clock=None, embed_raw=Tr
         "forensic_custody_verification": integrity,
         "custody_chain": chain.chain,
         "offensive_findings": offensive_findings,
-        "rules": [{k: r.get(k) for k in ("id", "title", "severity", "confidence", "description")}
-                  for r in rules],
+        "rules": [rule_summary(r) for r in rules],
         "normalized_events": normalized,
         "correlation_results": correlation,
         "grc_summary": summarize_grc(correlation["incidents"]),
@@ -63,7 +76,11 @@ def run_pipeline(raw_events, offensive_findings, rules, clock=None, embed_raw=Tr
 def run_files(events_path=None, findings_path=None, rules_path=None, **kw):
     raw = load_json_list(events_path or SAMPLE_EVENTS, "eventos")
     findings = load_json_list(findings_path or SAMPLE_FINDINGS, "hallazgos")
-    return run_pipeline(raw, findings, load_rules(rules_path), **kw)
+    bundle = run_pipeline(raw, findings, load_rules(rules_path), **kw)
+    # La consola usa la marca para fijar un reloj de referencia en los plazos
+    # (NIS2) en vez de mostrar como vencidos los de unos datos de ejemplo.
+    bundle["dataset"] = "demo" if events_path is None and findings_path is None else "real"
+    return bundle
 
 
 def verify_bundle(bundle):

@@ -27,13 +27,13 @@ jobs:
         run: python -W error::SyntaxWarning -m unittest discover -s tests -t . -v
       - name: CLI de extremo a extremo
         run: |
-          python -m proyecto run -o output/bundle.json --dashboard-js /tmp/bundle.js
-          python -m proyecto verify output/bundle.json
-          python -m proyecto rules
+          python -m trama run -o output/bundle.json --dashboard-js /tmp/bundle.js
+          python -m trama verify output/bundle.json
+          python -m trama rules
       - name: Instalación como paquete
         run: |
           python -m pip install --quiet .
-          cd /tmp && proyecto --version
+          cd /tmp && trama --version
 
   browser:
     name: Dashboard · axe-core y Chromium

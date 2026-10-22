@@ -70,7 +70,7 @@
     return out;
   }
 
-  /* Misma construcción que proyecto/custody.py (RFC 6962). */
+  /* Misma construcción que trama/custody.py (RFC 6962). */
   function merkleRoot(hashes) {
     if (!hashes.length) return hex(digest(new Uint8Array(0)));
     var level = hashes.map(function (h) { return digest(concat(0, fromHex(h))); });

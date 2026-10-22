@@ -3,7 +3,7 @@ import os
 import tempfile
 import unittest
 
-from proyecto.rules import RULES_DIR, RuleError, load_rules, validate_rule
+from trama.rules import RULES_DIR, RuleError, load_rules, validate_rule
 from tests.helpers import deep, sample_rules
 
 
