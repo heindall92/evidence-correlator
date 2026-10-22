@@ -36,7 +36,7 @@ Fuera: ataques que requieren acceso al equipo desbloqueado, extensiones malicios
 | Activo | Amenaza | Defensa actual |
 |---|---|---|
 | Paquete exportado | Alteración de un evento, un sello o un incidente | Cadena SHA-256, raíz de Merkle RFC 6962, `verify` en CLI y navegador |
-| Paquete exportado | Sustitución completa por otro paquete coherente | **No cubierto aún** (firma Ed25519 prevista en la 0.3.0): firmar el JSON (minisign, GPG) o anclar el sello final en un registro externo |
+| Paquete exportado | Sustitución completa por otro paquete coherente | **No cubierto aún** (firma Ed25519 prevista en la 0.4.0): firmar el JSON (minisign, GPG) o anclar el sello final en un registro externo |
 | Verificación en el navegador | Discrepancia de serialización entre Python y JavaScript | Números canónicos como en JavaScript; prueba con `1.0`, `1e-7` y `1e21` en Chromium |
 | Consola web | Paquete malicioso con HTML o scripts | `textContent` en todo dato del paquete (el único `innerHTML` es para iconos Lucide vendorizados), CSP `default-src 'none'` sin `unsafe-inline`, sin `eval`; prueba de XSS en Chromium |
 | Consola web | Paquete con forma no válida | Validación de la estructura antes de mostrarlo; se rechaza con un aviso |
@@ -48,5 +48,7 @@ Fuera: ataques que requieren acceso al equipo desbloqueado, extensiones malicios
 
 - No publicar en GitHub Pages paquetes con datos reales.
 - El perfil (nombre, organización, rol) y las preferencias se guardan solo en `localStorage` del navegador y se borran desde Ajustes.
+- El último análisis importado (que puede contener registros reales de la organización) se guarda en IndexedDB solo si se marca «Recordar este análisis» al importar; Ajustes → «Olvidar el último análisis» lo elimina. En equipos compartidos conviene desmarcarlo.
+- Los ficheros importados se tratan como hostiles: XML sin DTD ni entidades, textos recortados, límite de 50 MB por fichero y de 200 000 eventos y 20 000 hallazgos, y todo su contenido se muestra con `textContent`.
 - Conservar el sello final y la raíz de Merkle del paquete en un registro independiente (ticket, acta o correo firmado).
 - Ejecutar `verify` antes de entregar un paquete como evidencia.

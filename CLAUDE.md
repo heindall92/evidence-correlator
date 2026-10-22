@@ -15,6 +15,7 @@
 ## Reglas
 
 - `trama/`: solo librería estándar, Python 3.8+.
+- **Paridad CLI ↔ consola.** `docs/assets/importers.js` y `engine.js` son traducciones de `trama/importers/` y del motor. Cualquier cambio se hace en los dos lados y `tests/test_parity.py` (Node) debe seguir en verde. Si cambian las reglas: `python3 -m trama rules-js`. Los fixtures de `tests/fixtures/nativo/` son benignos; no se añaden datos de ataques simulados.
 - Consola: sin red, funciona en `file://`, CSP estricta sin `unsafe-inline`, datos del paquete solo con `textContent`, todo texto en `docs/assets/i18n.js` (ES y EN).
 - Diseño del ecosistema (skill `estilo-yoandy`): iconos solo Lucide, 7 acentos con azul eléctrico por defecto, movimiento de Emil Kowalski (escala 0,97, muelles, movimiento reducido = fundido), WCAG 2.2 AA verificado con axe. La visualización propia es **Trazabilidad**; nada de anillos (Rosetta) ni franjas por activo (CTEM-Nexus). El logotipo es una marca SVG propia: no usar `waypoints` (CTEM-Nexus).
 - Redacción de producto premium: registro profesional e impersonal, títulos nominales, sin preguntas retóricas, tuteo, exclamaciones, revelaciones («El resultado:»), «no es X, es Y» ni frases cortadas para dar efecto. Referencia: skill `linkedin-humanizer` (sergebulaev/linkedin-skills). `python3 scripts/redaccion.py --avisos` audita toda la plataforma y `ProfessionalCopyTest` lo exige en las pruebas.

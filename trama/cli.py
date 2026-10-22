@@ -49,10 +49,10 @@ def _report(report, c, out):
             continue
         extra = (" · activo %s" % r["asset"]) if r.get("asset") else ""
         warn = (" %s(%s)%s" % (c.warn, r["warning"], c.reset)) if r.get("warning") else ""
-        skipped = (" · %d omitidos" % r["skipped"]) if r.get("skipped") else ""
+        skipped = (" · omitidos: %d" % r["skipped"]) if r.get("skipped") else ""
         kind = "eventos" if r["kind"] == "events" else "hallazgos"
-        out.write("%s[✓]%s %s · %s · %d %s%s%s%s\n" % (c.ok, c.reset, r["file"], r["label"], r["count"], kind,
-                                                       skipped, extra, warn))
+        out.write("%s[✓]%s %s · %s · %s: %d%s%s%s\n" % (c.ok, c.reset, r["file"], r["label"], kind, r["count"],
+                                                        skipped, extra, warn))
 
 
 def cmd_import(args, c, out):

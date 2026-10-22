@@ -2,6 +2,35 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versiones según [SemVer](https://semver.org/lang/es/).
 
+## 0.3.0 · octubre de 2026
+
+TRAMA trabaja con datos reales: los ficheros que cada equipo genera a diario se importan en la consola o en la CLI y producen el mismo paquete sellado.
+
+### Añadido
+- **Importadores de 13 formatos**, detectados por el contenido (no por la extensión):
+  - ofensiva: Nmap XML, Nessus, Nuclei (JSONL o JSON), Burp Suite XML, BloodHound (`users.json`) y LinPEAS, `getcap` o `find -perm`;
+  - detección: eventos de Windows y Sysmon (evtx_dump, Winlogbeat o XML de `wevtutil`), auditd (incluido `ENRICHED`), logs de acceso de nginx o Apache y Suricata EVE JSON;
+  - además, los JSON de eventos y hallazgos en formato TRAMA.
+- **«Importar datos» en la consola** (tecla `I`, botón del lateral o arrastrar): varios ficheros a la vez, formato y recuento por fichero, registros omitidos, activo deducido del nombre del fichero o indicado a mano, guía de exportación por formato y avance por fases.
+- **Motor en el navegador** (`importers.js`, `engine.js`, `rules.js`): traducción línea a línea del importador, el normalizador, la custodia y el correlador de Python.
+- **Prueba de paridad** (`tests/test_parity.py`): ejecuta el código de la consola con Node y exige el mismo resultado que la CLI, campo a campo, en los fixtures, la demo, la mezcla y casos límite; `trama verify` acepta los paquetes generados en el navegador.
+- El último análisis se guarda en IndexedDB si se elige al importar; Ajustes lo olvida.
+- **Exportar paquete** desde Custodia y Ajustes.
+- Procedencia por fichero en Eventos y en el paquete (`imports`): formato, importados, omitidos y activo. Cada evento conserva su registro original en `raw.native`, dentro de lo sellado.
+- CLI: ficheros posicionales en `run`, `--asset FICHERO=HOST`, subcomando `import` (revisión sin correlacionar) y `rules-js`.
+- Equivalencias nombre-IP entre informes (Nmap y Nessus traen los dos) y hallazgos de dominio de BloodHound aplicados a todo el dominio.
+
+### Cambiado
+- **Las reglas leen la clase del hallazgo** (`finding_class`) en lugar de identificadores fijos, así que funcionan con cualquier escáner. CORR-AD-001 acepta inicios de sesión de red y accesos a recursos compartidos; CORR-LNX-002 toma las capabilities y el bit SUID del hallazgo de LinPEAS que describe el binario (o su proceso padre).
+- La columna Exposición de Eventos muestra el primer hallazgo y cuántos más hay; la lista completa queda en el título.
+- La carga de un JSON que no es un paquete lo lleva a Importar en lugar de rechazarlo.
+
+### Corregido
+- **`pip install .` no incluía `trama/importers`.** La CI instala el paquete y ahora importa y correlaciona ficheros con el comando instalado.
+- Una fecha imposible (mes 13, 31 de febrero) invalidaba el fichero entero en Python y se desbordaba a otro día en JavaScript. Ahora se omite solo ese registro, también los de antes de 1970 (las fechas nulas de Windows).
+- `python3.11` y otros binarios con versión no se reconocían como GTFOBins por una expresión regular mal formada.
+- `sha256.js` ordenaba las claves por unidades UTF-16 y Python por punto de código: con claves fuera del plano básico el hash difería.
+
 ## 0.2.4 · octubre de 2026
 
 ### Corregido

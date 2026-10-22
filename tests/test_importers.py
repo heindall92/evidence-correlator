@@ -258,7 +258,7 @@ class EndToEndTest(unittest.TestCase):
                          os.path.join(FIX, "access_srv01.log"), os.path.join(FIX, "eve.json"),
                          "--asset", "access_srv01.log=SRV01"], out=out)
             self.assertEqual(code, 0, out.getvalue())
-            self.assertIn("access_srv01.log · Log de acceso web (nginx, Apache) · 3 eventos · 1 omitidos · activo SRV01",
+            self.assertIn("access_srv01.log · Log de acceso web (nginx, Apache) · eventos: 3 · omitidos: 1 · activo SRV01",
                           out.getvalue())
             with open(os.path.join(tmp, "b.json"), encoding="utf-8") as fh:
                 self.assertEqual(len(json.load(fh)["normalized_events"]), 5)
