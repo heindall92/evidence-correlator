@@ -126,6 +126,13 @@ class ConsoleBrowserTest(unittest.TestCase):
                     return r.right > innerWidth + 1; }).map(e => e.tagName + '.' + e.className).slice(0, 3)""")
                 self.assertEqual(cut, [])
                 self.assertEqual(self.overflowing(page), [])
+        # Inicio con cada perspectiva: la de pentester ensanchaba la página a 624 px en la 0.2.2.
+        self.go(page, "inicio")
+        for lens in LENSES:
+            page.click('.lens-opt[data-lens="%s"]' % lens)
+            with self.subTest(perspectiva=lens):
+                self.assertEqual(page.evaluate("[innerWidth, document.documentElement.scrollWidth]"), [390, 390])
+                self.assertEqual(self.overflowing(page), [])
         self.assertTrue(page.is_visible("#bnav"))
         self.assertFalse(page.is_visible("#side"))
         page.click("#more-btn")
