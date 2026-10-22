@@ -39,7 +39,7 @@ def summarize_grc(incidents):
 
 def rule_summary(rule):
     """Lo que la consola necesita de cada regla: identidad, técnicas ATT&CK que
-    detecta y hallazgos ofensivos que exige (para la cobertura de la lente Purple)."""
+    detecta y hallazgos ofensivos que exige (para la cobertura de la perspectiva Purple)."""
     findings = set()
     for stage in rule.get("correlation", {}).get("stages", []):
         for value in (stage.get("posture_condition") or {}).values():

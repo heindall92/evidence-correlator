@@ -2,15 +2,15 @@
 window.EVIDENCE_BUNDLE = {
  "generator": {
   "name": "TRAMA",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "schema_version": "1.0.0"
  },
- "generated_at_utc": "2026-10-22T10:55:45Z",
+ "generated_at_utc": "2026-10-22T13:14:28Z",
  "forensic_custody_verification": {
   "valid": true,
   "total_sealed_events": 6,
   "genesis_hash": "49a9e3bd86bde19d6e5da00ffcd2f05e9dcb4f9aa14d551738cb8d6f7e9abeef",
-  "head_seal_hash": "5076b1d50d6333992c6997c45d65fa039a1edb1e90d47e09b702017c4e2ea1f0",
+  "head_seal_hash": "4142ebaf2bc11e1ee9724b3702bc12901453335a3d3371807cd6e4ecc2128631",
   "merkle_root_sha256": "1d67694014cc76fb3a882519af58a36577f283fbd66b7f099157e5f92bf9e377",
   "broken_at_index": null,
   "reason": null
@@ -23,8 +23,8 @@ window.EVIDENCE_BUNDLE = {
    "record_number": 9821,
    "raw_log_sha256": "dae557080bea81fe7556dccddf643cb0873c0bf6697674c6bff2bbf0490af2b4",
    "previous_node_hash": "49a9e3bd86bde19d6e5da00ffcd2f05e9dcb4f9aa14d551738cb8d6f7e9abeef",
-   "chain_seal_sha256": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
-   "ingested_at_utc": "2026-10-22T10:55:45.107042Z"
+   "chain_seal_sha256": "b3b52a25d840f60fe5b01cd5f26dae062f0ab4b7047b2f3f83acba9b7f8e7831",
+   "ingested_at_utc": "2026-10-22T13:14:28.397426Z"
   },
   {
    "index": 1,
@@ -32,9 +32,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "/var/log/audit/audit.log",
    "record_number": 44102,
    "raw_log_sha256": "8116d84c889a3170500ddfda1eb94a332ff2d55dc36fb8845ff98610fe6fadb9",
-   "previous_node_hash": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
-   "chain_seal_sha256": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
-   "ingested_at_utc": "2026-10-22T10:55:45.107214Z"
+   "previous_node_hash": "b3b52a25d840f60fe5b01cd5f26dae062f0ab4b7047b2f3f83acba9b7f8e7831",
+   "chain_seal_sha256": "18a9764a7ce502342229f27c93c4511f87bf7b7d602cbf9f4944b75537a7eb8c",
+   "ingested_at_utc": "2026-10-22T13:14:28.397653Z"
   },
   {
    "index": 2,
@@ -42,9 +42,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "/var/log/audit/audit.log",
    "record_number": 44189,
    "raw_log_sha256": "874b4c400c0247aad98d7722822099a05989a0eff11e4f926adc9ac2bf901726",
-   "previous_node_hash": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
-   "chain_seal_sha256": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
-   "ingested_at_utc": "2026-10-22T10:55:45.107303Z"
+   "previous_node_hash": "18a9764a7ce502342229f27c93c4511f87bf7b7d602cbf9f4944b75537a7eb8c",
+   "chain_seal_sha256": "39a12793d4802aba4ef467d3b6504eb1a091d655f31656ae7a6ac358e54bacb9",
+   "ingested_at_utc": "2026-10-22T13:14:28.397831Z"
   },
   {
    "index": 3,
@@ -52,9 +52,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "/var/log/audit/audit.log",
    "record_number": 44210,
    "raw_log_sha256": "0651763d90ad160534311d8054aac92f98c3945e3c1f214ca3e48583e56d6e96",
-   "previous_node_hash": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
-   "chain_seal_sha256": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
-   "ingested_at_utc": "2026-10-22T10:55:45.107401Z"
+   "previous_node_hash": "39a12793d4802aba4ef467d3b6504eb1a091d655f31656ae7a6ac358e54bacb9",
+   "chain_seal_sha256": "e8c5dbf20ff4fe7c57edb12af1c33d0ceec44c2e6b8e322cb6301eb20ec1ae21",
+   "ingested_at_utc": "2026-10-22T13:14:28.398069Z"
   },
   {
    "index": 4,
@@ -62,9 +62,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "Security_DC01_20261021.evtx",
    "record_number": 148920,
    "raw_log_sha256": "f1e0aa944a7dbd19a66888e370dc68fc6b5f3654c5bbebb9b48d699db60a00f1",
-   "previous_node_hash": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
-   "chain_seal_sha256": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
-   "ingested_at_utc": "2026-10-22T10:55:45.107500Z"
+   "previous_node_hash": "e8c5dbf20ff4fe7c57edb12af1c33d0ceec44c2e6b8e322cb6301eb20ec1ae21",
+   "chain_seal_sha256": "ec5dee3b97609ca434b2783b785902c7a9ecb9f9b6689d0e16f924a345e68968",
+   "ingested_at_utc": "2026-10-22T13:14:28.398274Z"
   },
   {
    "index": 5,
@@ -72,43 +72,43 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "Security_DC01_20261021.evtx",
    "record_number": 149310,
    "raw_log_sha256": "f8b7ba4423b16a10f2d9abe89525ef58a4f8dd6fb470f68d38bb0b0fcd697eb6",
-   "previous_node_hash": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
-   "chain_seal_sha256": "5076b1d50d6333992c6997c45d65fa039a1edb1e90d47e09b702017c4e2ea1f0",
-   "ingested_at_utc": "2026-10-22T10:55:45.107614Z"
+   "previous_node_hash": "ec5dee3b97609ca434b2783b785902c7a9ecb9f9b6689d0e16f924a345e68968",
+   "chain_seal_sha256": "4142ebaf2bc11e1ee9724b3702bc12901453335a3d3371807cd6e4ecc2128631",
+   "ingested_at_utc": "2026-10-22T13:14:28.398497Z"
   }
  ],
  "offensive_findings": [
   {
    "finding_id": "AD-SPN-RC4-001",
-   "source_tool": "DarkSpear / BloodHound AD Auditor",
+   "source_tool": "BloodHound CE",
    "hostname": "DC01.CORP.LOCAL",
    "target_spn": "svc_sql",
    "severity": "HIGH",
-   "description": "Cuenta de servicio 'svc_sql' con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado débil RC4-HMAC (0x17) habilitado."
+   "description": "Cuenta de servicio «svc_sql» con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado RC4-HMAC (0x17) habilitado en Kerberos."
   },
   {
    "finding_id": "LNX-CAP-SETUID-002",
-   "source_tool": "LinPEAS / Offensive Audit",
+   "source_tool": "LinPEAS",
    "hostname": "WEB-PROD-01",
    "binary_path": "/usr/bin/python3",
    "severity": "CRITICAL",
-   "description": "Binario /usr/bin/python3 cuenta con Linux Capability 'cap_setuid+ep', permitiendo cambio arbitrario de UID a 0 (root)."
+   "description": "El binario /usr/bin/python3 tiene la capability «cap_setuid+ep», que permite cambiar el UID a 0 (root)."
   },
   {
    "finding_id": "WEB-SQLI-LOGIN-003",
-   "source_tool": "Burp Suite Pro / SQLMap",
+   "source_tool": "Burp Suite Professional / SQLMap",
    "hostname": "WEB-PROD-01",
    "severity": "CRITICAL",
-   "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+   "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
   }
  ],
  "rules": [
   {
    "id": "CORR-AD-001",
-   "title": "Explotación exitosa de Kerberoasting seguida de Movimiento Lateral WinRM/SMB",
+   "title": "Kerberoasting seguido de movimiento lateral por WinRM o SMB",
    "severity": "CRITICAL",
    "confidence": 0.96,
-   "description": "Correlaciona una solicitud de ticket TGS con cifrado débil RC4 (0x17) sobre una cuenta con SPN vulnerable, seguida de autenticación de red (LogonType 3) sobre C$ o WinRM.",
+   "description": "Correlaciona una solicitud de ticket TGS con cifrado RC4 (0x17) sobre una cuenta con SPN expuesta y un inicio de sesión de red posterior (LogonType 3) por WinRM o sobre C$ desde la misma IP.",
    "mitre_attack": [
     {
      "tactic": "Credential Access",
@@ -127,10 +127,10 @@ window.EVIDENCE_BUNDLE = {
   },
   {
    "id": "CORR-LNX-002",
-   "title": "Escalada de Privilegios en Linux mediante abuso de Binario SUID o Capabilities",
+   "title": "Escalada de privilegios en Linux mediante un binario SUID o con capabilities",
    "severity": "CRITICAL",
    "confidence": 0.94,
-   "description": "Detecta cuando un usuario sin privilegios enumera permisos SUID o capabilities (o ejecuta LinPEAS) y posteriormente ejecuta un binario GTFOBins obteniendo euid=0 (root).",
+   "description": "Detecta la enumeración de permisos SUID o capabilities por un usuario sin privilegios (o la ejecución de LinPEAS) seguida de la ejecución de un binario de GTFOBins que obtiene euid=0 (root).",
    "mitre_attack": [
     {
      "tactic": "Discovery",
@@ -147,10 +147,10 @@ window.EVIDENCE_BUNDLE = {
   },
   {
    "id": "CORR-WEB-003",
-   "title": "Explotación de SQL Injection en Login seguida de Ejecución de Comandos Web",
+   "title": "Inyección SQL en el inicio de sesión seguida de ejecución de comandos en el servidor web",
    "severity": "HIGH",
    "confidence": 0.92,
-   "description": "Correlaciona vectores de inyección SQL (SQLMap / payloads UNION o OR 1=1) en endpoints de autenticación seguidos de extracción masiva o ejecución de procesos por el usuario del servidor web.",
+   "description": "Correlaciona cargas de inyección SQL (SQLMap, UNION u OR 1=1) contra endpoints de autenticación con la ejecución posterior de procesos por el usuario del servidor web.",
    "mitre_attack": [
     {
      "tactic": "Initial Access",
@@ -178,8 +178,8 @@ window.EVIDENCE_BUNDLE = {
     "record_number": 9821,
     "raw_log_sha256": "dae557080bea81fe7556dccddf643cb0873c0bf6697674c6bff2bbf0490af2b4",
     "previous_node_hash": "49a9e3bd86bde19d6e5da00ffcd2f05e9dcb4f9aa14d551738cb8d6f7e9abeef",
-    "chain_seal_sha256": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
-    "ingested_at_utc": "2026-10-22T10:55:45.107042Z"
+    "chain_seal_sha256": "b3b52a25d840f60fe5b01cd5f26dae062f0ab4b7047b2f3f83acba9b7f8e7831",
+    "ingested_at_utc": "2026-10-22T13:14:28.397426Z"
    },
    "event": {
     "category": "web_request",
@@ -225,10 +225,10 @@ window.EVIDENCE_BUNDLE = {
     "known_exposures": [
      {
       "finding_id": "WEB-SQLI-LOGIN-003",
-      "source_tool": "Burp Suite Pro / SQLMap",
+      "source_tool": "Burp Suite Professional / SQLMap",
       "hostname": "WEB-PROD-01",
       "severity": "CRITICAL",
-      "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+      "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
      }
     ]
    },
@@ -248,9 +248,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "/var/log/audit/audit.log",
     "record_number": 44102,
     "raw_log_sha256": "8116d84c889a3170500ddfda1eb94a332ff2d55dc36fb8845ff98610fe6fadb9",
-    "previous_node_hash": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
-    "chain_seal_sha256": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
-    "ingested_at_utc": "2026-10-22T10:55:45.107214Z"
+    "previous_node_hash": "b3b52a25d840f60fe5b01cd5f26dae062f0ab4b7047b2f3f83acba9b7f8e7831",
+    "chain_seal_sha256": "18a9764a7ce502342229f27c93c4511f87bf7b7d602cbf9f4944b75537a7eb8c",
+    "ingested_at_utc": "2026-10-22T13:14:28.397653Z"
    },
    "event": {
     "category": "process_creation",
@@ -296,10 +296,10 @@ window.EVIDENCE_BUNDLE = {
     "known_exposures": [
      {
       "finding_id": "WEB-SQLI-LOGIN-003",
-      "source_tool": "Burp Suite Pro / SQLMap",
+      "source_tool": "Burp Suite Professional / SQLMap",
       "hostname": "WEB-PROD-01",
       "severity": "CRITICAL",
-      "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+      "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
      }
     ]
    },
@@ -319,9 +319,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "/var/log/audit/audit.log",
     "record_number": 44189,
     "raw_log_sha256": "874b4c400c0247aad98d7722822099a05989a0eff11e4f926adc9ac2bf901726",
-    "previous_node_hash": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
-    "chain_seal_sha256": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
-    "ingested_at_utc": "2026-10-22T10:55:45.107303Z"
+    "previous_node_hash": "18a9764a7ce502342229f27c93c4511f87bf7b7d602cbf9f4944b75537a7eb8c",
+    "chain_seal_sha256": "39a12793d4802aba4ef467d3b6504eb1a091d655f31656ae7a6ac358e54bacb9",
+    "ingested_at_utc": "2026-10-22T13:14:28.397831Z"
    },
    "event": {
     "category": "process_creation",
@@ -367,10 +367,10 @@ window.EVIDENCE_BUNDLE = {
     "known_exposures": [
      {
       "finding_id": "WEB-SQLI-LOGIN-003",
-      "source_tool": "Burp Suite Pro / SQLMap",
+      "source_tool": "Burp Suite Professional / SQLMap",
       "hostname": "WEB-PROD-01",
       "severity": "CRITICAL",
-      "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+      "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
      }
     ]
    },
@@ -390,9 +390,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "/var/log/audit/audit.log",
     "record_number": 44210,
     "raw_log_sha256": "0651763d90ad160534311d8054aac92f98c3945e3c1f214ca3e48583e56d6e96",
-    "previous_node_hash": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
-    "chain_seal_sha256": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
-    "ingested_at_utc": "2026-10-22T10:55:45.107401Z"
+    "previous_node_hash": "39a12793d4802aba4ef467d3b6504eb1a091d655f31656ae7a6ac358e54bacb9",
+    "chain_seal_sha256": "e8c5dbf20ff4fe7c57edb12af1c33d0ceec44c2e6b8e322cb6301eb20ec1ae21",
+    "ingested_at_utc": "2026-10-22T13:14:28.398069Z"
    },
    "event": {
     "category": "privilege_escalation",
@@ -442,18 +442,18 @@ window.EVIDENCE_BUNDLE = {
     "known_exposures": [
      {
       "finding_id": "LNX-CAP-SETUID-002",
-      "source_tool": "LinPEAS / Offensive Audit",
+      "source_tool": "LinPEAS",
       "hostname": "WEB-PROD-01",
       "binary_path": "/usr/bin/python3",
       "severity": "CRITICAL",
-      "description": "Binario /usr/bin/python3 cuenta con Linux Capability 'cap_setuid+ep', permitiendo cambio arbitrario de UID a 0 (root)."
+      "description": "El binario /usr/bin/python3 tiene la capability «cap_setuid+ep», que permite cambiar el UID a 0 (root)."
      },
      {
       "finding_id": "WEB-SQLI-LOGIN-003",
-      "source_tool": "Burp Suite Pro / SQLMap",
+      "source_tool": "Burp Suite Professional / SQLMap",
       "hostname": "WEB-PROD-01",
       "severity": "CRITICAL",
-      "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+      "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
      }
     ]
    },
@@ -473,9 +473,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "Security_DC01_20261021.evtx",
     "record_number": 148920,
     "raw_log_sha256": "f1e0aa944a7dbd19a66888e370dc68fc6b5f3654c5bbebb9b48d699db60a00f1",
-    "previous_node_hash": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
-    "chain_seal_sha256": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
-    "ingested_at_utc": "2026-10-22T10:55:45.107500Z"
+    "previous_node_hash": "e8c5dbf20ff4fe7c57edb12af1c33d0ceec44c2e6b8e322cb6301eb20ec1ae21",
+    "chain_seal_sha256": "ec5dee3b97609ca434b2783b785902c7a9ecb9f9b6689d0e16f924a345e68968",
+    "ingested_at_utc": "2026-10-22T13:14:28.398274Z"
    },
    "event": {
     "category": "authentication",
@@ -523,11 +523,11 @@ window.EVIDENCE_BUNDLE = {
     "known_exposures": [
      {
       "finding_id": "AD-SPN-RC4-001",
-      "source_tool": "DarkSpear / BloodHound AD Auditor",
+      "source_tool": "BloodHound CE",
       "hostname": "DC01.CORP.LOCAL",
       "target_spn": "svc_sql",
       "severity": "HIGH",
-      "description": "Cuenta de servicio 'svc_sql' con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado débil RC4-HMAC (0x17) habilitado."
+      "description": "Cuenta de servicio «svc_sql» con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado RC4-HMAC (0x17) habilitado en Kerberos."
      }
     ]
    },
@@ -547,9 +547,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "Security_DC01_20261021.evtx",
     "record_number": 149310,
     "raw_log_sha256": "f8b7ba4423b16a10f2d9abe89525ef58a4f8dd6fb470f68d38bb0b0fcd697eb6",
-    "previous_node_hash": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
-    "chain_seal_sha256": "5076b1d50d6333992c6997c45d65fa039a1edb1e90d47e09b702017c4e2ea1f0",
-    "ingested_at_utc": "2026-10-22T10:55:45.107614Z"
+    "previous_node_hash": "ec5dee3b97609ca434b2783b785902c7a9ecb9f9b6689d0e16f924a345e68968",
+    "chain_seal_sha256": "4142ebaf2bc11e1ee9724b3702bc12901453335a3d3371807cd6e4ecc2128631",
+    "ingested_at_utc": "2026-10-22T13:14:28.398497Z"
    },
    "event": {
     "category": "lateral_movement",
@@ -598,11 +598,11 @@ window.EVIDENCE_BUNDLE = {
     "known_exposures": [
      {
       "finding_id": "AD-SPN-RC4-001",
-      "source_tool": "DarkSpear / BloodHound AD Auditor",
+      "source_tool": "BloodHound CE",
       "hostname": "DC01.CORP.LOCAL",
       "target_spn": "svc_sql",
       "severity": "HIGH",
-      "description": "Cuenta de servicio 'svc_sql' con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado débil RC4-HMAC (0x17) habilitado."
+      "description": "Cuenta de servicio «svc_sql» con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado RC4-HMAC (0x17) habilitado en Kerberos."
      }
     ]
    },
@@ -620,8 +620,8 @@ window.EVIDENCE_BUNDLE = {
    {
     "incident_id": "INC-CORR-AD-001-01",
     "rule_id": "CORR-AD-001",
-    "title": "Explotación exitosa de Kerberoasting seguida de Movimiento Lateral WinRM/SMB",
-    "description": "Correlaciona una solicitud de ticket TGS con cifrado débil RC4 (0x17) sobre una cuenta con SPN vulnerable, seguida de autenticación de red (LogonType 3) sobre C$ o WinRM.",
+    "title": "Kerberoasting seguido de movimiento lateral por WinRM o SMB",
+    "description": "Correlaciona una solicitud de ticket TGS con cifrado RC4 (0x17) sobre una cuenta con SPN expuesta y un inicio de sesión de red posterior (LogonType 3) por WinRM o sobre C$ desde la misma IP.",
     "severity": "CRITICAL",
     "confidence": 0.96,
     "detected_at_utc": "2026-10-21T08:54:03.771Z",
@@ -645,15 +645,15 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "DC01.CORP.LOCAL",
       "command_line": null,
       "raw_log_sha256": "f1e0aa944a7dbd19a66888e370dc68fc6b5f3654c5bbebb9b48d699db60a00f1",
-      "chain_seal_sha256": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
+      "chain_seal_sha256": "ec5dee3b97609ca434b2783b785902c7a9ecb9f9b6689d0e16f924a345e68968",
       "offensive_exposures": [
        {
         "finding_id": "AD-SPN-RC4-001",
-        "source_tool": "DarkSpear / BloodHound AD Auditor",
+        "source_tool": "BloodHound CE",
         "hostname": "DC01.CORP.LOCAL",
         "target_spn": "svc_sql",
         "severity": "HIGH",
-        "description": "Cuenta de servicio 'svc_sql' con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado débil RC4-HMAC (0x17) habilitado."
+        "description": "Cuenta de servicio «svc_sql» con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado RC4-HMAC (0x17) habilitado en Kerberos."
        }
       ]
      },
@@ -668,15 +668,15 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "DC01.CORP.LOCAL",
       "command_line": "evil-winrm -i 10.10.10.5 -u svc_sql -p [REDACTED]",
       "raw_log_sha256": "f8b7ba4423b16a10f2d9abe89525ef58a4f8dd6fb470f68d38bb0b0fcd697eb6",
-      "chain_seal_sha256": "5076b1d50d6333992c6997c45d65fa039a1edb1e90d47e09b702017c4e2ea1f0",
+      "chain_seal_sha256": "4142ebaf2bc11e1ee9724b3702bc12901453335a3d3371807cd6e4ecc2128631",
       "offensive_exposures": [
        {
         "finding_id": "AD-SPN-RC4-001",
-        "source_tool": "DarkSpear / BloodHound AD Auditor",
+        "source_tool": "BloodHound CE",
         "hostname": "DC01.CORP.LOCAL",
         "target_spn": "svc_sql",
         "severity": "HIGH",
-        "description": "Cuenta de servicio 'svc_sql' con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado débil RC4-HMAC (0x17) habilitado."
+        "description": "Cuenta de servicio «svc_sql» con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado RC4-HMAC (0x17) habilitado en Kerberos."
        }
       ]
      }
@@ -700,25 +700,25 @@ window.EVIDENCE_BUNDLE = {
        "control_name": "Mecanismo de autenticación (cuentas de servicio)",
        "impact_level": "ALTO",
        "audit_verdict": "NO_CONFORME_CRITICO",
-       "evidence_summary": "Uso activo de cifrado obsoleto RC4-HMAC (0x17) en Kerberos permitiendo extracción y crackeo offline del hash de cuenta de servicio."
+       "evidence_summary": "Uso de RC4-HMAC (0x17) en Kerberos para la cuenta de servicio, lo que expone su hash a extracción y descifrado fuera de línea."
       },
       {
        "control_id": "op.acc.6",
-       "control_name": "Acceso local y remoto (WinRM / Administración remota)",
+       "control_name": "Acceso local y remoto (WinRM y administración remota)",
        "impact_level": "ALTO",
        "audit_verdict": "NO_CONFORME",
-       "evidence_summary": "Cuenta de servicio utilizada interactivamente por red (LogonType 3) sobre WinRM (5985) y recurso administrativo C$."
+       "evidence_summary": "La cuenta de servicio inicia sesión por red (LogonType 3) mediante WinRM (5985) y el recurso administrativo C$."
       }
      ],
      "iso_27001_2022": [
       {
        "control_id": "A.8.5",
-       "control_name": "Secure authentication",
+       "control_name": "Autenticación segura",
        "audit_verdict": "NON_CONFORMITY_MAJOR"
       },
       {
        "control_id": "A.8.2",
-       "control_name": "Privileged access rights",
+       "control_name": "Derechos de acceso privilegiado",
        "audit_verdict": "NON_CONFORMITY_MAJOR"
       }
      ],
@@ -733,8 +733,8 @@ window.EVIDENCE_BUNDLE = {
    {
     "incident_id": "INC-CORR-LNX-002-01",
     "rule_id": "CORR-LNX-002",
-    "title": "Escalada de Privilegios en Linux mediante abuso de Binario SUID o Capabilities",
-    "description": "Detecta cuando un usuario sin privilegios enumera permisos SUID o capabilities (o ejecuta LinPEAS) y posteriormente ejecuta un binario GTFOBins obteniendo euid=0 (root).",
+    "title": "Escalada de privilegios en Linux mediante un binario SUID o con capabilities",
+    "description": "Detecta la enumeración de permisos SUID o capabilities por un usuario sin privilegios (o la ejecución de LinPEAS) seguida de la ejecución de un binario de GTFOBins que obtiene euid=0 (root).",
     "severity": "CRITICAL",
     "confidence": 0.94,
     "detected_at_utc": "2026-10-21T08:21:55.890Z",
@@ -758,14 +758,14 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "WEB-PROD-01",
       "command_line": "find / -perm -4000 2>/dev/null && getcap -r / 2>/dev/null",
       "raw_log_sha256": "874b4c400c0247aad98d7722822099a05989a0eff11e4f926adc9ac2bf901726",
-      "chain_seal_sha256": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
+      "chain_seal_sha256": "39a12793d4802aba4ef467d3b6504eb1a091d655f31656ae7a6ac358e54bacb9",
       "offensive_exposures": [
        {
         "finding_id": "WEB-SQLI-LOGIN-003",
-        "source_tool": "Burp Suite Pro / SQLMap",
+        "source_tool": "Burp Suite Professional / SQLMap",
         "hostname": "WEB-PROD-01",
         "severity": "CRITICAL",
-        "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+        "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
        }
       ]
      },
@@ -780,22 +780,22 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "WEB-PROD-01",
       "command_line": "/usr/bin/python3 -c import os; os.setuid(0); os.system('/bin/bash')",
       "raw_log_sha256": "0651763d90ad160534311d8054aac92f98c3945e3c1f214ca3e48583e56d6e96",
-      "chain_seal_sha256": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
+      "chain_seal_sha256": "e8c5dbf20ff4fe7c57edb12af1c33d0ceec44c2e6b8e322cb6301eb20ec1ae21",
       "offensive_exposures": [
        {
         "finding_id": "LNX-CAP-SETUID-002",
-        "source_tool": "LinPEAS / Offensive Audit",
+        "source_tool": "LinPEAS",
         "hostname": "WEB-PROD-01",
         "binary_path": "/usr/bin/python3",
         "severity": "CRITICAL",
-        "description": "Binario /usr/bin/python3 cuenta con Linux Capability 'cap_setuid+ep', permitiendo cambio arbitrario de UID a 0 (root)."
+        "description": "El binario /usr/bin/python3 tiene la capability «cap_setuid+ep», que permite cambiar el UID a 0 (root)."
        },
        {
         "finding_id": "WEB-SQLI-LOGIN-003",
-        "source_tool": "Burp Suite Pro / SQLMap",
+        "source_tool": "Burp Suite Professional / SQLMap",
         "hostname": "WEB-PROD-01",
         "severity": "CRITICAL",
-        "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+        "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
        }
       ]
      }
@@ -816,28 +816,28 @@ window.EVIDENCE_BUNDLE = {
      "ens_rd_311_2022": [
       {
        "control_id": "op.exp.2",
-       "control_name": "Configuración de seguridad (Hardening de SO Linux)",
+       "control_name": "Configuración de seguridad (bastionado del sistema Linux)",
        "impact_level": "ALTO",
        "audit_verdict": "NO_CONFORME_CRITICO",
-       "evidence_summary": "Presencia y explotación confirmada de binario GTFOBins (/usr/bin/python3) con capability cap_setuid+ep permitiendo escalada directa a root (euid=0)."
+       "evidence_summary": "Explotación confirmada del binario /usr/bin/python3, incluido en GTFOBins, con la capability cap_setuid+ep, que permite la escalada directa a root (euid=0)."
       },
       {
        "control_id": "mp.sw.2",
-       "control_name": "Aceptación y puesta en servicio (Mínimo privilegio en binarios)",
+       "control_name": "Aceptación y puesta en servicio (mínimo privilegio en binarios)",
        "impact_level": "MEDIO",
        "audit_verdict": "NO_CONFORME",
-       "evidence_summary": "Ausencia de validación de capabilities y bits SUID durante el despliegue del servidor de aplicaciones."
+       "evidence_summary": "No se validaron las capabilities ni los bits SUID durante el despliegue del servidor de aplicaciones."
       }
      ],
      "iso_27001_2022": [
       {
        "control_id": "A.8.9",
-       "control_name": "Configuration management",
+       "control_name": "Gestión de la configuración",
        "audit_verdict": "NON_CONFORMITY_MAJOR"
       },
       {
        "control_id": "A.8.18",
-       "control_name": "Use of privileged utility programs",
+       "control_name": "Uso de programas de utilidad privilegiados",
        "audit_verdict": "NON_CONFORMITY_MAJOR"
       }
      ],
@@ -852,8 +852,8 @@ window.EVIDENCE_BUNDLE = {
    {
     "incident_id": "INC-CORR-WEB-003-01",
     "rule_id": "CORR-WEB-003",
-    "title": "Explotación de SQL Injection en Login seguida de Ejecución de Comandos Web",
-    "description": "Correlaciona vectores de inyección SQL (SQLMap / payloads UNION o OR 1=1) en endpoints de autenticación seguidos de extracción masiva o ejecución de procesos por el usuario del servidor web.",
+    "title": "Inyección SQL en el inicio de sesión seguida de ejecución de comandos en el servidor web",
+    "description": "Correlaciona cargas de inyección SQL (SQLMap, UNION u OR 1=1) contra endpoints de autenticación con la ejecución posterior de procesos por el usuario del servidor web.",
     "severity": "HIGH",
     "confidence": 0.92,
     "detected_at_utc": "2026-10-21T08:17:45.300Z",
@@ -877,14 +877,14 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "WEB-PROD-01",
       "command_line": "POST /api/v1/login username=admin' UNION SELECT 1,username,password FROM users-- (User-Agent: sqlmap/1.8)",
       "raw_log_sha256": "dae557080bea81fe7556dccddf643cb0873c0bf6697674c6bff2bbf0490af2b4",
-      "chain_seal_sha256": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
+      "chain_seal_sha256": "b3b52a25d840f60fe5b01cd5f26dae062f0ab4b7047b2f3f83acba9b7f8e7831",
       "offensive_exposures": [
        {
         "finding_id": "WEB-SQLI-LOGIN-003",
-        "source_tool": "Burp Suite Pro / SQLMap",
+        "source_tool": "Burp Suite Professional / SQLMap",
         "hostname": "WEB-PROD-01",
         "severity": "CRITICAL",
-        "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+        "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
        }
       ]
      },
@@ -899,14 +899,14 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "WEB-PROD-01",
       "command_line": "/bin/bash -c id; whoami; uname -a",
       "raw_log_sha256": "8116d84c889a3170500ddfda1eb94a332ff2d55dc36fb8845ff98610fe6fadb9",
-      "chain_seal_sha256": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
+      "chain_seal_sha256": "18a9764a7ce502342229f27c93c4511f87bf7b7d602cbf9f4944b75537a7eb8c",
       "offensive_exposures": [
        {
         "finding_id": "WEB-SQLI-LOGIN-003",
-        "source_tool": "Burp Suite Pro / SQLMap",
+        "source_tool": "Burp Suite Professional / SQLMap",
         "hostname": "WEB-PROD-01",
         "severity": "CRITICAL",
-        "description": "Parámetro 'username' en /api/v1/login vulnerable a SQL Injection booleana y UNION-based."
+        "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
        }
       ]
      }
@@ -927,21 +927,21 @@ window.EVIDENCE_BUNDLE = {
      "ens_rd_311_2022": [
       {
        "control_id": "mp.s.2",
-       "control_name": "Protección de aplicaciones web (Prevención de Inyección SQL)",
+       "control_name": "Protección de las aplicaciones web (prevención de inyección SQL)",
        "impact_level": "ALTO",
        "audit_verdict": "NO_CONFORME_CRITICO",
-       "evidence_summary": "Falta de parametrización de consultas SQL en el endpoint de login permitiendo bypass de autenticación e intrusión."
+       "evidence_summary": "Las consultas SQL del endpoint de inicio de sesión no están parametrizadas, lo que permite eludir la autenticación y acceder al servidor."
       }
      ],
      "iso_27001_2022": [
       {
        "control_id": "A.8.26",
-       "control_name": "Application security requirements",
+       "control_name": "Requisitos de seguridad de las aplicaciones",
        "audit_verdict": "NON_CONFORMITY_MAJOR"
       },
       {
        "control_id": "A.8.28",
-       "control_name": "Secure coding",
+       "control_name": "Codificación segura",
        "audit_verdict": "NON_CONFORMITY_MAJOR"
       }
      ],
@@ -1064,47 +1064,47 @@ window.EVIDENCE_BUNDLE = {
     "control_name": "Mecanismo de autenticación (cuentas de servicio)",
     "impact_level": "ALTO",
     "audit_verdict": "NO_CONFORME_CRITICO",
-    "evidence_summary": "Uso activo de cifrado obsoleto RC4-HMAC (0x17) en Kerberos permitiendo extracción y crackeo offline del hash de cuenta de servicio.",
+    "evidence_summary": "Uso de RC4-HMAC (0x17) en Kerberos para la cuenta de servicio, lo que expone su hash a extracción y descifrado fuera de línea.",
     "incidents": [
      "INC-CORR-AD-001-01"
     ]
    },
    {
     "control_id": "op.acc.6",
-    "control_name": "Acceso local y remoto (WinRM / Administración remota)",
+    "control_name": "Acceso local y remoto (WinRM y administración remota)",
     "impact_level": "ALTO",
     "audit_verdict": "NO_CONFORME",
-    "evidence_summary": "Cuenta de servicio utilizada interactivamente por red (LogonType 3) sobre WinRM (5985) y recurso administrativo C$.",
+    "evidence_summary": "La cuenta de servicio inicia sesión por red (LogonType 3) mediante WinRM (5985) y el recurso administrativo C$.",
     "incidents": [
      "INC-CORR-AD-001-01"
     ]
    },
    {
     "control_id": "op.exp.2",
-    "control_name": "Configuración de seguridad (Hardening de SO Linux)",
+    "control_name": "Configuración de seguridad (bastionado del sistema Linux)",
     "impact_level": "ALTO",
     "audit_verdict": "NO_CONFORME_CRITICO",
-    "evidence_summary": "Presencia y explotación confirmada de binario GTFOBins (/usr/bin/python3) con capability cap_setuid+ep permitiendo escalada directa a root (euid=0).",
+    "evidence_summary": "Explotación confirmada del binario /usr/bin/python3, incluido en GTFOBins, con la capability cap_setuid+ep, que permite la escalada directa a root (euid=0).",
     "incidents": [
      "INC-CORR-LNX-002-01"
     ]
    },
    {
     "control_id": "mp.sw.2",
-    "control_name": "Aceptación y puesta en servicio (Mínimo privilegio en binarios)",
+    "control_name": "Aceptación y puesta en servicio (mínimo privilegio en binarios)",
     "impact_level": "MEDIO",
     "audit_verdict": "NO_CONFORME",
-    "evidence_summary": "Ausencia de validación de capabilities y bits SUID durante el despliegue del servidor de aplicaciones.",
+    "evidence_summary": "No se validaron las capabilities ni los bits SUID durante el despliegue del servidor de aplicaciones.",
     "incidents": [
      "INC-CORR-LNX-002-01"
     ]
    },
    {
     "control_id": "mp.s.2",
-    "control_name": "Protección de aplicaciones web (Prevención de Inyección SQL)",
+    "control_name": "Protección de las aplicaciones web (prevención de inyección SQL)",
     "impact_level": "ALTO",
     "audit_verdict": "NO_CONFORME_CRITICO",
-    "evidence_summary": "Falta de parametrización de consultas SQL en el endpoint de login permitiendo bypass de autenticación e intrusión.",
+    "evidence_summary": "Las consultas SQL del endpoint de inicio de sesión no están parametrizadas, lo que permite eludir la autenticación y acceder al servidor.",
     "incidents": [
      "INC-CORR-WEB-003-01"
     ]
@@ -1113,7 +1113,7 @@ window.EVIDENCE_BUNDLE = {
   "iso_27001_2022": [
    {
     "control_id": "A.8.5",
-    "control_name": "Secure authentication",
+    "control_name": "Autenticación segura",
     "audit_verdict": "NON_CONFORMITY_MAJOR",
     "incidents": [
      "INC-CORR-AD-001-01"
@@ -1121,7 +1121,7 @@ window.EVIDENCE_BUNDLE = {
    },
    {
     "control_id": "A.8.2",
-    "control_name": "Privileged access rights",
+    "control_name": "Derechos de acceso privilegiado",
     "audit_verdict": "NON_CONFORMITY_MAJOR",
     "incidents": [
      "INC-CORR-AD-001-01"
@@ -1129,7 +1129,7 @@ window.EVIDENCE_BUNDLE = {
    },
    {
     "control_id": "A.8.9",
-    "control_name": "Configuration management",
+    "control_name": "Gestión de la configuración",
     "audit_verdict": "NON_CONFORMITY_MAJOR",
     "incidents": [
      "INC-CORR-LNX-002-01"
@@ -1137,7 +1137,7 @@ window.EVIDENCE_BUNDLE = {
    },
    {
     "control_id": "A.8.18",
-    "control_name": "Use of privileged utility programs",
+    "control_name": "Uso de programas de utilidad privilegiados",
     "audit_verdict": "NON_CONFORMITY_MAJOR",
     "incidents": [
      "INC-CORR-LNX-002-01"
@@ -1145,7 +1145,7 @@ window.EVIDENCE_BUNDLE = {
    },
    {
     "control_id": "A.8.26",
-    "control_name": "Application security requirements",
+    "control_name": "Requisitos de seguridad de las aplicaciones",
     "audit_verdict": "NON_CONFORMITY_MAJOR",
     "incidents": [
      "INC-CORR-WEB-003-01"
@@ -1153,7 +1153,7 @@ window.EVIDENCE_BUNDLE = {
    },
    {
     "control_id": "A.8.28",
-    "control_name": "Secure coding",
+    "control_name": "Codificación segura",
     "audit_verdict": "NON_CONFORMITY_MAJOR",
     "incidents": [
      "INC-CORR-WEB-003-01"

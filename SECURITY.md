@@ -11,19 +11,19 @@ TRAMA procesa logs reales y hallazgos de auditoría: nombres de usuario, IP inte
 
 ## Cómo informar de una vulnerabilidad
 
-**No abras una *issue* pública.** Usa una de estas vías:
+**Las vulnerabilidades no deben comunicarse en una *issue* pública.** Vías disponibles:
 
 1. Aviso de seguridad privado de GitHub (*Security → Report a vulnerability*), preferida.
 2. Correo a **yoandyramirezdelgado@gmail.com** con el asunto `[SEGURIDAD] TRAMA`.
 
-Incluye versión o *commit*, pasos para reproducirlo, impacto y, si lo tienes, un paquete JSON o una regla de ejemplo.
+El informe debe incluir la versión o el *commit*, los pasos para reproducirlo, el impacto y, si existe, un paquete JSON o una regla de ejemplo.
 
 | Plazo | Compromiso |
 |---|---|
 | 72 h | Acuse de recibo |
 | 7 días | Evaluación inicial y severidad (CVSS 4.0) |
 | 30 días | Corrección o mitigación para severidad alta o crítica |
-| Tras la corrección | Divulgación coordinada y reconocimiento, si lo deseas |
+| Tras la corrección | Divulgación coordinada y reconocimiento, si quien informa lo desea |
 
 ## Alcance
 
@@ -36,7 +36,7 @@ Fuera: ataques que requieren acceso al equipo desbloqueado, extensiones malicios
 | Activo | Amenaza | Defensa actual |
 |---|---|---|
 | Paquete exportado | Alteración de un evento, un sello o un incidente | Cadena SHA-256, raíz de Merkle RFC 6962, `verify` en CLI y navegador |
-| Paquete exportado | Sustitución completa por otro paquete coherente | **No cubierto aún** (firma Ed25519 prevista en la 0.3.0): firma el JSON (minisign, GPG) o ancla el sello final fuera |
+| Paquete exportado | Sustitución completa por otro paquete coherente | **No cubierto aún** (firma Ed25519 prevista en la 0.3.0): firmar el JSON (minisign, GPG) o anclar el sello final en un registro externo |
 | Verificación en el navegador | Discrepancia de serialización entre Python y JavaScript | Números canónicos como en JavaScript; prueba con `1.0`, `1e-7` y `1e21` en Chromium |
 | Consola web | Paquete malicioso con HTML o scripts | `textContent` en todo dato del paquete (el único `innerHTML` es para iconos Lucide vendorizados), CSP `default-src 'none'` sin `unsafe-inline`, sin `eval`; prueba de XSS en Chromium |
 | Consola web | Paquete con forma no válida | Validación de la estructura antes de mostrarlo; se rechaza con un aviso |
@@ -46,7 +46,7 @@ Fuera: ataques que requieren acceso al equipo desbloqueado, extensiones malicios
 
 ## Buenas prácticas de uso
 
-- No publiques en GitHub Pages paquetes con datos reales.
-- El perfil (nombre, organización, rol) y las preferencias se guardan solo en `localStorage` de tu navegador; bórralos desde Ajustes.
-- Conserva el sello final y la raíz de Merkle del paquete en un registro independiente (ticket, acta o correo firmado).
-- Ejecuta `verify` antes de entregar un paquete como evidencia.
+- No publicar en GitHub Pages paquetes con datos reales.
+- El perfil (nombre, organización, rol) y las preferencias se guardan solo en `localStorage` del navegador y se borran desde Ajustes.
+- Conservar el sello final y la raíz de Merkle del paquete en un registro independiente (ticket, acta o correo firmado).
+- Ejecutar `verify` antes de entregar un paquete como evidencia.

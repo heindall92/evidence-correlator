@@ -16,5 +16,6 @@
 
 - `trama/`: solo librería estándar, Python 3.8+.
 - Consola: sin red, funciona en `file://`, CSP estricta sin `unsafe-inline`, datos del paquete solo con `textContent`, todo texto en `docs/assets/i18n.js` (ES y EN).
-- Diseño del ecosistema (skill `estilo-yoandy`): iconos solo Lucide, 7 acentos con azul eléctrico por defecto, movimiento de Emil Kowalski (escala 0,97, muelles, movimiento reducido = fundido), WCAG 2.2 AA verificado con axe. La visualización propia es **El Hilo**; nada de anillos (Rosetta) ni franjas por activo (CTEM-Nexus).
+- Diseño del ecosistema (skill `estilo-yoandy`): iconos solo Lucide, 7 acentos con azul eléctrico por defecto, movimiento de Emil Kowalski (escala 0,97, muelles, movimiento reducido = fundido), WCAG 2.2 AA verificado con axe. La visualización propia es **Trazabilidad**; nada de anillos (Rosetta) ni franjas por activo (CTEM-Nexus). El logotipo es una marca SVG propia: no usar `waypoints` (CTEM-Nexus).
+- Redacción de producto premium: registro profesional e impersonal, títulos nominales, sin preguntas retóricas, tuteo, exclamaciones, revelaciones («El resultado:»), «no es X, es Y» ni frases cortadas para dar efecto. Referencia: skill `linkedin-humanizer` (sergebulaev/linkedin-skills). `tests/test_static.py::ProfessionalCopyTest` lo vigila.
 - Nunca texto de normas ISO/IEC: solo número de control. Los mapeos son orientativos.

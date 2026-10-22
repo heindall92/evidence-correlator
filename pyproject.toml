@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "trama"
 dynamic = ["version"]
-description = "TRAMA: sigue el hilo de un ataque del pentest al SOC y al cumplimiento (ENS, ISO/IEC 27001, NIS2) con cadena de custodia SHA-256/Merkle"
+description = "Correlación de hallazgos de pentest, telemetría del SOC y no conformidades (ENS, ISO/IEC 27001, NIS2) con cadena de custodia SHA-256/Merkle"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "GPL-2.0-only" }

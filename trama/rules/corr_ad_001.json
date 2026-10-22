@@ -1,11 +1,11 @@
 {
   "id": "CORR-AD-001",
-  "title": "Explotación exitosa de Kerberoasting seguida de Movimiento Lateral WinRM/SMB",
+  "title": "Kerberoasting seguido de movimiento lateral por WinRM o SMB",
   "status": "production",
   "author": "Yoandy Ramírez Delgado",
   "severity": "CRITICAL",
   "confidence": 0.96,
-  "description": "Correlaciona una solicitud de ticket TGS con cifrado débil RC4 (0x17) sobre una cuenta con SPN vulnerable, seguida de autenticación de red (LogonType 3) sobre C$ o WinRM.",
+  "description": "Correlaciona una solicitud de ticket TGS con cifrado RC4 (0x17) sobre una cuenta con SPN expuesta y un inicio de sesión de red posterior (LogonType 3) por WinRM o sobre C$ desde la misma IP.",
   "correlation": {
     "type": "temporal_sequence",
     "window": "45m",
@@ -73,25 +73,25 @@
         "control_name": "Mecanismo de autenticación (cuentas de servicio)",
         "impact_level": "ALTO",
         "audit_verdict": "NO_CONFORME_CRITICO",
-        "evidence_summary": "Uso activo de cifrado obsoleto RC4-HMAC (0x17) en Kerberos permitiendo extracción y crackeo offline del hash de cuenta de servicio."
+        "evidence_summary": "Uso de RC4-HMAC (0x17) en Kerberos para la cuenta de servicio, lo que expone su hash a extracción y descifrado fuera de línea."
       },
       {
         "control_id": "op.acc.6",
-        "control_name": "Acceso local y remoto (WinRM / Administración remota)",
+        "control_name": "Acceso local y remoto (WinRM y administración remota)",
         "impact_level": "ALTO",
         "audit_verdict": "NO_CONFORME",
-        "evidence_summary": "Cuenta de servicio utilizada interactivamente por red (LogonType 3) sobre WinRM (5985) y recurso administrativo C$."
+        "evidence_summary": "La cuenta de servicio inicia sesión por red (LogonType 3) mediante WinRM (5985) y el recurso administrativo C$."
       }
     ],
     "iso_27001_2022": [
       {
         "control_id": "A.8.5",
-        "control_name": "Secure authentication",
+        "control_name": "Autenticación segura",
         "audit_verdict": "NON_CONFORMITY_MAJOR"
       },
       {
         "control_id": "A.8.2",
-        "control_name": "Privileged access rights",
+        "control_name": "Derechos de acceso privilegiado",
         "audit_verdict": "NON_CONFORMITY_MAJOR"
       }
     ],

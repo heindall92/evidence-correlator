@@ -10,7 +10,7 @@
   var SVGNS = "http://www.w3.org/2000/svg";
   var VIEWS = [
     { id: "inicio", icon: "house" },
-    { id: "hilo", icon: "waypoints" },
+    { id: "hilo", icon: "chart-no-axes-gantt" },
     { id: "incidentes", icon: "siren" },
     { id: "cumplimiento", icon: "scale" },
     { id: "custodia", icon: "link" },
@@ -364,7 +364,7 @@
     var D = state.D, l = lens();
     var wrap = h("div", null);
     wrap.appendChild(vhead(lensDef(l).icon, t("lens.kicker", { rol: t("lens." + l + ".rol") }), t("lens." + l + ".h1"), t("lens." + l + ".lede"),
-      [h("a", { href: "#hilo", class: "btn primary press" }, icon("waypoints"), t("ui.verHilo"))]));
+      [h("a", { href: "#hilo", class: "btn primary press" }, icon("chart-no-axes-gantt"), t("ui.verHilo"))]));
     wrap.appendChild(card(null, null, lensPicker(), { cls: "lens-card" }));
     wrap.appendChild(h("div", { class: "mt" }));
     var fn = { pentest: lensPentest, red: lensRed, blue: lensBlue, purple: lensPurple, grc: lensGrc }[l];
@@ -594,7 +594,7 @@
   /* ---------------------------------------------------------------- El Hilo */
   function viewHilo() {
     var D = state.D;
-    var wrap = h("div", null, vhead("waypoints", t("hilo.kicker"), t("hilo.h1"), t("hilo.lede")));
+    var wrap = h("div", null, vhead("chart-no-axes-gantt", t("hilo.kicker"), t("hilo.h1"), t("hilo.lede")));
     if (!D.incs.length) { wrap.appendChild(card(null, null, h("p", { class: "empty", text: t("inc.ninguno") }))); return wrap; }
     var pick = h("div", { class: "inc-pick", role: "group", "aria-label": t("hilo.elige") }, D.incs.map(function (inc, i) {
       return h("button", { type: "button", class: "press", "aria-pressed": String(i === state.incident), onclick: function () { state.incident = i; render(); } },

@@ -1,11 +1,11 @@
 {
   "id": "CORR-WEB-003",
-  "title": "Explotación de SQL Injection en Login seguida de Ejecución de Comandos Web",
+  "title": "Inyección SQL en el inicio de sesión seguida de ejecución de comandos en el servidor web",
   "status": "production",
   "author": "Yoandy Ramírez Delgado",
   "severity": "HIGH",
   "confidence": 0.92,
-  "description": "Correlaciona vectores de inyección SQL (SQLMap / payloads UNION o OR 1=1) en endpoints de autenticación seguidos de extracción masiva o ejecución de procesos por el usuario del servidor web.",
+  "description": "Correlaciona cargas de inyección SQL (SQLMap, UNION u OR 1=1) contra endpoints de autenticación con la ejecución posterior de procesos por el usuario del servidor web.",
   "correlation": {
     "type": "temporal_sequence",
     "window": "15m",
@@ -72,21 +72,21 @@
     "ens_rd_311_2022": [
       {
         "control_id": "mp.s.2",
-        "control_name": "Protección de aplicaciones web (Prevención de Inyección SQL)",
+        "control_name": "Protección de las aplicaciones web (prevención de inyección SQL)",
         "impact_level": "ALTO",
         "audit_verdict": "NO_CONFORME_CRITICO",
-        "evidence_summary": "Falta de parametrización de consultas SQL en el endpoint de login permitiendo bypass de autenticación e intrusión."
+        "evidence_summary": "Las consultas SQL del endpoint de inicio de sesión no están parametrizadas, lo que permite eludir la autenticación y acceder al servidor."
       }
     ],
     "iso_27001_2022": [
       {
         "control_id": "A.8.26",
-        "control_name": "Application security requirements",
+        "control_name": "Requisitos de seguridad de las aplicaciones",
         "audit_verdict": "NON_CONFORMITY_MAJOR"
       },
       {
         "control_id": "A.8.28",
-        "control_name": "Secure coding",
+        "control_name": "Codificación segura",
         "audit_verdict": "NON_CONFORMITY_MAJOR"
       }
     ],

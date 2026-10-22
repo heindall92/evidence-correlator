@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="TRAMA: sigue el hilo del hallazgo del pentest a la alerta del SOC y a la no conformidad (ENS, ISO/IEC 27001, NIS2), con cadena de custodia SHA-256 y Merkle. Local, sin servidor.">
+<meta name="description" content="TRAMA correlaciona hallazgos de pentest, telemetría del SOC y no conformidades del ENS, la ISO/IEC 27001 y NIS2 en un paquete con cadena de custodia SHA-256 y Merkle. Procesamiento local, sin servidor.">
 <title>TRAMA</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/app.css">
@@ -19,8 +19,8 @@
   <aside class="side" id="side">
     <div class="side-in">
       <div class="brand">
-        <span class="logo" data-icon="waypoints" aria-hidden="true"></span>
-        <span class="brand-t"><b class="brand-name">TRAMA</b><small id="brand-sub">Sigue el hilo</small></span>
+        <span class="logo" aria-hidden="true"><svg class="mark" viewBox="0 0 24 24" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M6 6.5h12M12 6.5v12" stroke-width="2.2"/><path d="M6 12h3.8M14.2 12H18M6 17.5h12" stroke-width="1.6" opacity=".6"/></g></svg></span>
+        <span class="brand-t"><b class="brand-name">TRAMA</b><small id="brand-sub">Correlación de evidencias</small></span>
       </div>
       <button class="pkg press" type="button" id="pkg-btn"></button>
       <nav class="nav" id="nav"><span class="nav-pill" id="nav-pill" aria-hidden="true"></span></nav>
@@ -37,7 +37,7 @@
   <div class="col">
     <header class="top" id="top">
       <button class="icon-btn press desk-only" type="button" id="collapse-btn" aria-controls="side"><span data-icon="panel-left" aria-hidden="true"></span></button>
-      <span class="brand-mini mobile-only" aria-hidden="true"><span class="logo" data-icon="waypoints"></span>TRAMA</span>
+      <span class="brand-mini mobile-only" aria-hidden="true"><span class="logo"><svg class="mark" viewBox="0 0 24 24" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M6 6.5h12M12 6.5v12" stroke-width="2.2"/><path d="M6 12h3.8M14.2 12H18M6 17.5h12" stroke-width="1.6" opacity=".6"/></g></svg></span>TRAMA</span>
       <span class="chip-local" id="chip-local"><span data-icon="wifi-off" aria-hidden="true"></span><span class="lbl" id="chip-local-t">Local</span></span>
       <span class="spacer"></span>
       <button class="searchbtn press" type="button" id="search-btn" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /"><span data-icon="search" aria-hidden="true"></span><span id="search-btn-t">Buscar</span><kbd id="search-kbd">Ctrl K</kbd></button>

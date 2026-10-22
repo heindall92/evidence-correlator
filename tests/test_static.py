@@ -143,6 +143,39 @@ class DashboardStaticTest(unittest.TestCase):
         self.assertEqual(committed.get("dataset"), "demo")
 
 
+class ProfessionalCopyTest(unittest.TestCase):
+    """Redacción de producto: sin preguntas retóricas, tuteo ni giros típicos de texto generado."""
+
+    BANNED = re.compile(
+        r"sigue el hilo|follow the thread|mundo real|real world|se te escap|slips? past|hasta que te vieron|"
+        r"qu[eé] viste|until they saw|no es solo|not just|sin fisuras|seamless|potente|powerful|revoluciona|"
+        r"game.?changer|deep dive|siguiente nivel|next level|de un vistazo|at a glance|\bleverag|\bunlock|"
+        r"\brobust[oa]?\b|en un clic|with one click|magia|magic", re.I)
+    TUTEO = re.compile(r"(?i)\b(tu|tus|te|ti|contigo|tienes|puedes|quieres|necesitas|ver[aá]s|elige|pulsa|suelta)\b")
+    YOU = re.compile(r"(?i)\b(you|your|yours)\b")
+
+    def test_interface_copy(self):
+        i18n = load_i18n()
+        for lang in ("es", "en"):
+            for key, value in i18n[lang].items():
+                with self.subTest(lang=lang, key=key):
+                    self.assertNotRegex(value, r"[¿?¡!]", "sin preguntas ni exclamaciones")
+                    self.assertNotRegex(value, self.BANNED)
+                    self.assertNotRegex(value, self.TUTEO if lang == "es" else self.YOU)
+
+    def test_documents_copy(self):
+        for name in ("README.md", "ROADMAP.md", "CONTRIBUTING.md", "SECURITY.md", "docs/index.html",
+                     "trama/branding.py", "pyproject.toml"):
+            with open(os.path.join(ROOT, name), encoding="utf-8") as fh:
+                with self.subTest(fichero=name):
+                    self.assertNotRegex(fh.read(), self.BANNED)
+
+    def test_own_logo_not_a_shared_icon(self):
+        html = read(os.path.join(DOCS, "index.html"))
+        self.assertNotIn("waypoints", html, "el icono waypoints es el logo de CTEM-Nexus")
+        self.assertEqual(html.count('<svg class="mark"'), 2, "marca propia en el lateral y en la barra móvil")
+
+
 class RepositoryHygieneTest(unittest.TestCase):
     def test_no_ai_attribution(self):
         pattern = re.compile(r"co-authored-by|generated (?:by|with) (?:ai|chatgpt|claude|copilot)|"
