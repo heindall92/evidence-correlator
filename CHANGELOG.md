@@ -2,6 +2,16 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versiones según [SemVer](https://semver.org/lang/es/).
 
+## 0.2.3 · octubre de 2026
+
+### Corregido
+- **Las hojas del móvil quedaban arriba** («Más», Ajustes, Perfil, Ayuda), con un hueco vacío debajo. El diálogo tenía `inset: 0` y altura automática, así que ocupaba toda la pantalla y la tarjeta quedaba pegada arriba. Ahora se ancla abajo (`inset: auto 0 0`), mide lo que su contenido y llega como máximo al 92 % de la altura.
+- **El móvil seguía mostrando la versión anterior** tras publicar una nueva: GitHub Pages guarda los ficheros hasta 10 minutos. Los estilos y scripts de la consola llevan ahora la versión (`app.js?v=0.2.3`), así que cada publicación invalida la caché.
+
+### Añadido
+- Asa de arrastre en las hojas del móvil, como en iOS.
+- Pruebas: la hoja queda pegada al borde inferior y sin ocupar toda la pantalla; todos los estilos y scripts llevan la versión actual.
+
 ## 0.2.2 · octubre de 2026
 
 ### Cambiado

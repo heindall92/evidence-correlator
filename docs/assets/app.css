@@ -521,8 +521,12 @@ dl.gloss dd { margin: 0; color: var(--ink-2); font-size: 13.5px; }
   .bnav a, .bnav button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; border-radius: 16px; border: 0; background: transparent; color: var(--ink-2); text-decoration: none; font-size: 11px; font-weight: 600; cursor: pointer; }
   .bnav a[aria-current="page"] { color: var(--text); background: var(--tint); }
   .bnav a[aria-current="page"] .ico { color: var(--accent); }
-  dialog.sheet[open] { margin: auto 0 0; height: auto; width: 100vw; }
+  /* Hoja inferior: anclada abajo y con la altura de su contenido (con inset 0 se estiraba a toda la pantalla). */
+  dialog.sheet[open] { inset: auto 0 0 0; margin: 0; height: auto; max-height: 92dvh; width: 100vw; }
   dialog.sheet .dlg { width: 100vw; height: auto; max-height: 90dvh; border-radius: 24px 24px 0 0; }
+  /* Asa de arrastre, como en las hojas de iOS. */
+  dialog.sheet .dlg { position: relative; padding-top: 10px; }
+  dialog.sheet .dlg::before { content: ""; position: absolute; top: 7px; left: 50%; width: 36px; height: 5px; margin-left: -18px; border-radius: 999px; background: var(--line-strong, var(--muted)); opacity: .5; }
   .toasts { right: 12px; left: 12px; bottom: 96px; }
   dl.gloss { grid-template-columns: minmax(0, 1fr); }
   .cards-sm thead { display: none; }

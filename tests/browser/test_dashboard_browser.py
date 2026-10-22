@@ -145,6 +145,12 @@ class ConsoleBrowserTest(unittest.TestCase):
             page.click("#more-btn")
             page.wait_for_selector("#dlg-more[open]")
             with self.subTest(ancho=width):
+                # Hoja inferior: pegada al borde de abajo y con la altura de su contenido.
+                box = page.evaluate("""() => { const r = document.getElementById('dlg-more').getBoundingClientRect();
+                    return [r.top, r.bottom, innerHeight]; }""")
+                self.assertAlmostEqual(box[1], box[2], delta=1)
+                if width == 390:
+                    self.assertGreater(box[0], 40, "la hoja no debe ocupar toda la pantalla")
                 self.assertEqual(page.locator("#dlg-more .tile").count(), 3)
                 self.assertEqual(page.locator("#dlg-more .group .grow-row").count(), 4)
                 self.assertEqual(page.locator("#dlg-more .more-k").count(), 3)

@@ -56,7 +56,15 @@ class DashboardStaticTest(unittest.TestCase):
 
     def test_referenced_local_files_exist(self):
         for ref in re.findall(r'(?:src|href)="([^"#:]+)"', self.html):
-            self.assertTrue(os.path.exists(os.path.join(DOCS, ref)), ref)
+            self.assertTrue(os.path.exists(os.path.join(DOCS, ref.split("?")[0])), ref)
+
+    def test_assets_carry_current_version(self):
+        """Cada versión publicada invalida la caché del navegador: app.js?v=<versión>."""
+        from trama import __version__
+        refs = re.findall(r'(?:src|href)="((?:assets|data)/[^"]+\.(?:css|js)[^"]*)"', self.html)
+        self.assertTrue(refs)
+        for ref in refs:
+            self.assertTrue(ref.endswith("?v=" + __version__), ref)
         for ref in re.findall(r'url\("([^"]+)"\)', self.css):
             self.assertTrue(os.path.exists(os.path.join(DOCS, "assets", ref)), ref)
 
