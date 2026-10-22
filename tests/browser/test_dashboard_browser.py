@@ -158,7 +158,8 @@ class ConsoleBrowserTest(unittest.TestCase):
             const input = document.getElementById('file-input');
             input.files = dt.files; input.dispatchEvent(new Event('change'));
         }""")
-        page.wait_for_function("document.querySelector('.inc-btn .title') && document.querySelector('.inc-btn .title').textContent.includes('<img')")
+        # Localizador en lugar de wait_for_function con cadena: la CSP de la consola bloquea eval.
+        page.locator(".inc-btn .title", has_text="<img").first.wait_for()
         self.assertIn("<img src=x", page.inner_text("#main"))
         self.go(page, "inicio")
         page.click('.lens-opt[data-lens="pentest"]')
@@ -172,7 +173,7 @@ class ConsoleBrowserTest(unittest.TestCase):
             page.evaluate("""(c) => { const f = new File([c], 'x.json', {type: 'application/json'});
                 const dt = new DataTransfer(); dt.items.add(f); const i = document.getElementById('file-input');
                 i.files = dt.files; i.dispatchEvent(new Event('change')); }""", content)
-            page.wait_for_function("(m) => document.getElementById('toasts').textContent.includes(m)", arg=msg)
+            page.locator("#toasts", has_text=msg).wait_for()
         self.assertIn("Paquete de ejemplo", page.inner_text("#pkg-btn"))
 
     # ------------------------------------------------------------ custodia
@@ -202,7 +203,7 @@ class ConsoleBrowserTest(unittest.TestCase):
         page.evaluate("""(c) => { const f = new File([c], 'decimales.json', {type: 'application/json'});
             const dt = new DataTransfer(); dt.items.add(f); const i = document.getElementById('file-input');
             i.files = dt.files; i.dispatchEvent(new Event('change')); }""", json.dumps(bundle))
-        page.wait_for_function("document.getElementById('pkg-btn').textContent.includes('decimales.json')")
+        page.locator("#pkg-btn", has_text="decimales.json").wait_for()
         page.click("#btn-verify")
         self.assertIn("Cadena íntegra", page.inner_text("#verdict"))
 

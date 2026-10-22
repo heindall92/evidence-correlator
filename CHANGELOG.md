@@ -26,6 +26,7 @@ Revisión editorial de toda la plataforma para un registro de producto profesion
 - Paso de la CI que imprime el informe de redacción.
 
 ### Corregido
+- Prueba de navegador inestable en la CI: tres esperas usaban `wait_for_function`, que Playwright evalúa dentro de la página y que la CSP de la consola bloquea («unsafe-eval»). Ahora usan localizadores, que no ejecutan código en la página.
 - Desajuste entre el texto visible y el nombre accesible del destino Trazabilidad en la barra inferior móvil (axe `label-content-name-mismatch`).
 
 ## 0.2.0 · octubre de 2026
