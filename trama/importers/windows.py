@@ -14,7 +14,7 @@ import json
 import re
 
 from .common import (MAX_EVENTS, UNKNOWN_HOST, child, children, clean_ip, clean_user, clip, descendants,
-                     host_tag, ImportError_, iso, lines_of, local, parse_xml, text_of, to_int)
+                     host_tag, ImportError_, iso, lines_of, attr, parse_xml, text_of, to_int)
 
 SYSMON = "microsoft-windows-sysmon"
 LOGON_ACTION = {2: "interactive_logon", 3: "network_logon", 7: "unlock_logon", 9: "new_credentials_logon",
@@ -69,8 +69,6 @@ def _ecs_record(obj):
 
 def _xml_record(node):
     sysn = child(node, "system")
-    created = child(sysn, "timecreated")
-    provider = child(sysn, "provider")
     data = {}
     for block in ("eventdata", "userdata"):
         holder = child(node, block)
@@ -79,18 +77,18 @@ def _xml_record(node):
         items = children(holder, "data")
         if items:
             for i, d in enumerate(items):
-                data[d.attrib.get("Name") or "Data%d" % i] = "".join(d.itertext())
+                data[attr(d, "name") or "Data%d" % i] = d["text"]
         else:  # UserData: <Algo><Campo>valor</Campo></Algo>
-            for wrapper in list(holder):
-                for field in list(wrapper):
-                    data[local(field.tag)] = "".join(field.itertext())
+            for wrapper in holder["children"]:
+                for field in wrapper["children"]:
+                    data[field["name"]] = field["text"]
     return {
         "event_id": to_int(text_of(sysn, "eventid")),
-        "time": created.attrib.get("SystemTime", "") if created is not None else "",
+        "time": attr(child(sysn, "timecreated"), "systemtime"),
         "computer": text_of(sysn, "computer"),
         "record": to_int(text_of(sysn, "eventrecordid")),
         "channel": text_of(sysn, "channel"),
-        "provider": provider.attrib.get("Name", "") if provider is not None else "",
+        "provider": attr(child(sysn, "provider"), "name"),
         "data": data,
     }
 
@@ -227,7 +225,7 @@ def map_record(rec, source_file, fmt, original):
         "native": {"format": fmt, "record": original},
     }
     if sysmon:
-        raw["event_id"] = "sysmon-%s-%s" % (host_tag(computer), rec["record"])
+        raw["event_id"] = "sysmon-%s-%s" % (host_tag(computer), rec["record"] if rec["record"] is not None else eid)
     return raw
 
 
@@ -236,12 +234,20 @@ def _sysmon_sha256(hashes):
     return m.group(1).lower() if m else None
 
 
+def _safe_map(rec, source_file, fmt, original):
+    """Un registro con fecha ilegible se omite; no invalida el resto del fichero."""
+    try:
+        return map_record(rec, source_file, fmt, original)
+    except ImportError_:
+        return None
+
+
 def _objects(text):
     """(objeto, texto original) de un fichero evtx_dump (-o json con «Record N» o -o jsonl),
     un array JSON o NDJSON. El texto original es lo que se sella; en un array se usa el objeto."""
     stripped = text.lstrip()
-    if re.match(r"^Record \d+\s*$", stripped.split("\n", 1)[0]):
-        parts = [p.strip() for p in re.split(r"(?m)^Record \d+\s*$", text) if p.strip()]
+    if re.match(r"^Record [0-9]+\s*$", stripped.split("\n", 1)[0]):
+        parts = [p.strip() for p in re.split(r"(?m)^Record [0-9]+\s*$", text) if p.strip()]
         return [(json.loads(p), p) for p in parts]
     if stripped.startswith("["):
         data = json.loads(stripped)
@@ -259,12 +265,12 @@ def parse(text, source_file, asset=None):
     events, skipped = [], 0
     if text.lstrip().startswith("<"):
         root = parse_xml(text)
-        nodes = [root] if local(root.tag) == "event" else descendants(root, "event")
+        nodes = descendants(root, "event")
         chunks = re.findall(r"<Event[\s>][\s\S]*?</Event>", text)
         fmt = "windows-xml"
         for i, node in enumerate(nodes):
-            original = chunks[i] if len(chunks) == len(nodes) else _xml_text(node)
-            ev = map_record(_xml_record(node), source_file, fmt, original)
+            original = chunks[i] if len(chunks) == len(nodes) else node
+            ev = _safe_map(_xml_record(node), source_file, fmt, original)
             if ev:
                 events.append(ev)
             else:
@@ -272,8 +278,8 @@ def parse(text, source_file, asset=None):
     else:
         try:
             objs = _objects(text)
-        except ValueError as exc:
-            raise ImportError_("JSON de eventos de Windows no válido: %s" % exc)
+        except ValueError:
+            raise ImportError_("JSON de eventos de Windows no válido")
         for obj, original in objs:
             if not isinstance(obj, dict):
                 skipped += 1
@@ -285,7 +291,7 @@ def parse(text, source_file, asset=None):
             else:
                 skipped += 1
                 continue
-            ev = map_record(rec, source_file, fmt, obj if original is None else original)
+            ev = _safe_map(rec, source_file, fmt, obj if original is None else original)
             if ev:
                 events.append(ev)
             else:
@@ -294,8 +300,3 @@ def parse(text, source_file, asset=None):
         skipped += len(events) - MAX_EVENTS
         events = events[:MAX_EVENTS]
     return events, skipped
-
-
-def _xml_text(node):
-    import xml.etree.ElementTree as ET
-    return ET.tostring(node, encoding="unicode")

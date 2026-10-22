@@ -8,7 +8,7 @@ import json
 import os
 import re
 
-from .common import (MAX_FINDINGS, child, children, classify, clip, descendants, finding, ImportError_,
+from .common import (MAX_FINDINGS, attr, child, children, classify, clip, descendants, finding, ImportError_,
                      lines_of, parse_xml, sev, text_of, to_int)
 
 
@@ -23,31 +23,31 @@ def parse_nmap(text, source_file, asset=None):
     out, skipped = [], 0
     for h in descendants(root, "host"):
         status = child(h, "status")
-        if status is not None and status.attrib.get("state") not in (None, "up"):
+        if status is not None and attr(status, "state") not in ("", "up"):
             skipped += 1
             continue
         ip = ""
         for a in children(h, "address"):
-            if a.attrib.get("addrtype") in ("ipv4", "ipv6"):
-                ip = a.attrib.get("addr", "")
+            if attr(a, "addrtype") in ("ipv4", "ipv6"):
+                ip = attr(a, "addr")
                 break
-        names = [n.attrib.get("name", "") for n in descendants(h, "hostname") if n.attrib.get("name")]
+        names = [attr(n, "name") for n in descendants(h, "hostname") if attr(n, "name")]
         hostname = names[0] if names else ip
         for p in descendants(h, "port"):
             st = child(p, "state")
-            if st is None or st.attrib.get("state") != "open":
+            if st is None or attr(st, "state") != "open":
                 continue
-            port, proto = p.attrib.get("portid", ""), p.attrib.get("protocol", "tcp")
+            port, proto = attr(p, "portid"), attr(p, "protocol") or "tcp"
             svc = child(p, "service")
-            sa = svc.attrib if svc is not None else {}
+            sa = svc["attrs"] if svc is not None else {}
             label = " ".join(x for x in (sa.get("name"), sa.get("product"), sa.get("version")) if x)
             out.append(finding("NMAP-%s-%s-%s" % (ip or hostname, proto, port), "exposed_service",
                                "%s/%s abierto%s" % (port, proto, (" · " + label) if label else ""), "Nmap",
                                hostname, ip, "INFO", port=to_int(port), service=clip(label, 200) or None))
             for sc in children(p, "script"):
-                output = sc.attrib.get("output", "")
+                output = attr(sc, "output")
                 if re.search(r"\bVULNERABLE\b", output):
-                    sid = sc.attrib.get("id", "nse")
+                    sid = attr(sc, "id") or "nse"
                     out.append(finding("NMAP-%s-%s-%s-%s" % (ip or hostname, proto, port, sid), classify(sid + " " + output),
                                        "%s en %s/%s" % (sid, port, proto), "Nmap NSE", hostname, ip, "HIGH",
                                        clip(output, 1000), port=to_int(port)))
@@ -65,18 +65,18 @@ def parse_nessus(text, source_file, asset=None):
     for rh in descendants(root, "reporthost"):
         props = {}
         for tag in descendants(child(rh, "hostproperties") if child(rh, "hostproperties") is not None else rh, "tag"):
-            props[tag.attrib.get("name", "")] = "".join(tag.itertext()).strip()
-        ip = props.get("host-ip") or rh.attrib.get("name", "")
-        hostname = props.get("host-fqdn") or props.get("netbios-name") or rh.attrib.get("name", "") or ip
+            props[attr(tag, "name")] = tag["text"].strip()
+        ip = props.get("host-ip") or attr(rh, "name")
+        hostname = props.get("host-fqdn") or props.get("netbios-name") or attr(rh, "name") or ip
         for ri in children(rh, "reportitem"):
-            level = to_int(ri.attrib.get("severity")) or 0
+            level = to_int(attr(ri, "severity")) or 0
             if level == 0:
                 skipped += 1
                 continue
-            title = ri.attrib.get("pluginName") or text_of(ri, "plugin_name") or "Plugin %s" % ri.attrib.get("pluginID")
-            cves = sorted({"".join(c.itertext()).strip().upper() for c in children(ri, "cve")})
-            port = to_int(ri.attrib.get("port"))
-            out.append(finding("NESSUS-%s-%s-%s" % (ri.attrib.get("pluginID", "0"), ip or hostname, port or 0),
+            title = attr(ri, "pluginname") or text_of(ri, "plugin_name") or "Plugin %s" % attr(ri, "pluginid")
+            cves = sorted({c["text"].strip().upper() for c in children(ri, "cve")})
+            port = to_int(attr(ri, "port"))
+            out.append(finding("NESSUS-%s-%s-%s" % (attr(ri, "pluginid") or "0", ip or hostname, port or 0),
                                classify(title), title, "Nessus", hostname, ip, _NESSUS_SEV.get(level, "MEDIUM"),
                                text_of(ri, "synopsis") or text_of(ri, "description"), port=port or None,
                                cves=cves or None))
@@ -86,7 +86,7 @@ def parse_nessus(text, source_file, asset=None):
 # --------------------------------------------------------------------------- Nuclei
 
 def _url_parts(url):
-    m = re.match(r"^([a-z][a-z0-9+.-]*)://(\[[^\]]+\]|[^/:?#]+)(?::(\d+))?([^?#]*)", url or "", re.I)
+    m = re.match(r"^([a-z][a-z0-9+.-]*)://(\[[^\]]+\]|[^/:?#]+)(?::([0-9]+))?([^?#]*)", url or "", re.I)
     if not m:
         return "", None, ""
     scheme, host, port, path = m.groups()
@@ -145,12 +145,12 @@ def parse_burp(text, source_file, asset=None):
         name = text_of(issue, "name")
         host_node = child(issue, "host")
         url = text_of(host_node)
-        ip = host_node.attrib.get("ip", "") if host_node is not None else ""
+        ip = attr(host_node, "ip")
         host, port, _ = _url_parts(url)
         path = text_of(issue, "path")
         out.append(finding("BURP-%s-%s-%s" % (text_of(issue, "type") or name, host or ip, path), classify(name),
-                           name, "Burp Suite", host, ip, sev(level), text_of(issue, "issueBackground") or
-                           text_of(issue, "issueDetail"), port=port, resource_path=path or None))
+                           name, "Burp Suite", host, ip, sev(level), text_of(issue, "issuebackground") or
+                           text_of(issue, "issuedetail"), port=port, resource_path=path or None))
     return _cap(out)[0], skipped
 
 
@@ -205,7 +205,7 @@ _SUID_LINE = re.compile(r"^-[rwxsS-]{2}[sS][rwxsStT-]{6}\s.*?\s(/\S+)$")
 
 def _gtfo(path):
     base = os.path.basename(path)
-    return base in GTFOBINS or re.sub(r"[\d.]+$", "", base) in GTFOBINS
+    return base in GTFOBINS or re.sub(r"[[0-9].]+$", "", base) in GTFOBINS
 
 
 def parse_linpeas(text, source_file, asset=None):

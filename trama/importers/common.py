@@ -9,7 +9,6 @@ paquete con los mismos ficheros (lo comprueba ``tests/test_parity.py``).
 import calendar
 import json
 import re
-import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 MAX_BYTES = 50 * 1024 * 1024
@@ -24,24 +23,30 @@ class ImportError_(ValueError):
     """Fichero que no se puede importar (formato, tamaño o contenido)."""
 
 
+# Espacios: los mismos que ``str.isspace`` de Python, escritos a mano para que JavaScript use la misma
+# lista (su ``\\s`` no incluye \\x1c-\\x1f y sí \\ufeff).
+WS = "\t\n\x0b\x0c\r\x1c\x1d\x1e\x1f \x85\xa0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000"
+_WS_RUN = re.compile("[%s]+" % WS)
+
+
 def clip(value, size=400):
     if value is None:
         return ""
     text = value if isinstance(value, str) else str(value)
-    return re.sub(r"\s+", " ", text).strip()[:size]
+    return _WS_RUN.sub(" ", text).strip(WS)[:size]
 
 
 def to_int(value):
     try:
         text = str(value).strip()
-        if re.match(r"^-?\d+$", text):
+        if re.match(r"^-?[0-9]+$", text):
             return int(text)
     except Exception:
         pass
     return None
 
 
-_TS = re.compile(r"^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:[.,](\d+))?\s*(Z|z|[+-]\d{2}:?\d{2})?$")
+_TS = re.compile(r"^([0-9]{4})-([0-9]{2})-([0-9]{2})[T ]([0-9]{2}):([0-9]{2}):([0-9]{2})(?:[.,]([0-9]+))?\s*(Z|z|[+-][0-9]{2}:?[0-9]{2})?$")
 
 
 def iso_from_ms(ms):
@@ -94,7 +99,7 @@ def lines_of(text):
 
 
 def is_ip(text):
-    return bool(re.match(r"^\d{1,3}(\.\d{1,3}){3}$", text or "")) or (":" in (text or "") and bool(re.match(r"^[0-9a-fA-F:]+$", text)))
+    return bool(re.match(r"^[0-9]{1,3}(\.[0-9]{1,3}){3}$", text or "")) or (":" in (text or "") and bool(re.match(r"^[0-9a-fA-F:]+$", text)))
 
 
 def host_tag(name):
@@ -106,40 +111,133 @@ def short_host(name):
     return (name or "").split(".")[0].lower()
 
 
+MAX_XML_NODES = 1000000
+_XML_NAMED = {"lt": "<", "gt": ">", "amp": "&", "quot": '"', "apos": "'"}
+_XML_ATTR = re.compile(r"""([^\s=/>]+)\s*=\s*("([^"]*)"|'([^']*)')""")
+_XML_ENT = re.compile(r"&(#x[0-9a-fA-F]+|#[0-9]+|[a-zA-Z]+);")
+
+
+def _xml_entities(text):
+    if "&" not in text:
+        return text
+
+    def rep(m):
+        e = m.group(1)
+        if e[0] == "#":
+            code = int(e[2:], 16) if e[1] in "xX" else int(e[1:])
+            return chr(code) if 0 < code <= 0x10FFFF and not 0xD800 <= code <= 0xDFFF else ""
+        return _XML_NAMED.get(e.lower(), m.group(0))
+    return _XML_ENT.sub(rep, text)
+
+
+def _xml_local(name):
+    i = name.find(":")
+    return (name[i + 1:] if i >= 0 else name).lower()
+
+
 def parse_xml(text):
-    """XML sin DTD: evita entidades externas y expansión exponencial (XXE, billion laughs)."""
-    if re.search(r"<!DOCTYPE|<!ENTITY", text[:200000], re.I):
+    """Analizador XML mínimo, el mismo algoritmo que ``docs/assets/importers.js`` (y que CTEM-Nexus).
+
+    - Rechaza DTD y entidades declaradas (XXE, expansión exponencial) antes de analizar.
+    - Solo resuelve las cinco entidades predefinidas y las referencias numéricas.
+    - Nodos ``{"name", "attrs", "children", "text"}`` con nombres y atributos locales en minúscula;
+      el texto es la concatenación de los fragmentos directos que no son solo espacios.
+    Devuelve un nodo raíz virtual ``#document``.
+    """
+    if re.search(r"<!ENTITY", text, re.I) or re.search(r"<!DOCTYPE[^>]*(\[|SYSTEM|PUBLIC)", text, re.I):
         raise ImportError_("XML con DTD o entidades: rechazado por seguridad")
-    try:
-        return ET.fromstring(text)
-    except ET.ParseError as exc:
-        raise ImportError_("XML no válido: %s" % exc)
-
-
-def local(tag):
-    return tag.rsplit("}", 1)[-1].lower() if isinstance(tag, str) else ""
-
-
-def children(node, name):
-    return [c for c in list(node) if local(c.tag) == name]
+    root = {"name": "#document", "attrs": {}, "children": [], "text": ""}
+    stack = [root]
+    count, i, n = 0, 0, len(text)
+    while i < n:
+        lt = text.find("<", i)
+        end_text = n if lt == -1 else lt
+        if end_text > i:
+            raw = text[i:end_text]
+            if raw.strip():
+                stack[-1]["text"] += _xml_entities(raw)
+        if lt == -1:
+            break
+        if text.startswith("<!--", lt):
+            end = text.find("-->", lt + 4)
+            i = n if end == -1 else end + 3
+        elif text.startswith("<![CDATA[", lt):
+            end = text.find("]]>", lt + 9)
+            stack[-1]["text"] += text[lt + 9:n if end == -1 else end]
+            i = n if end == -1 else end + 3
+        elif text.startswith("<?", lt):
+            end = text.find("?>", lt + 2)
+            i = n if end == -1 else end + 2
+        elif text.startswith("<!", lt):
+            end = text.find(">", lt + 2)
+            i = n if end == -1 else end + 1
+        elif lt + 1 < n and text[lt + 1] == "/":
+            end = text.find(">", lt + 2)
+            name = _xml_local(text[lt + 2:n if end == -1 else end].strip())
+            for k in range(len(stack) - 1, 0, -1):  # tolera etiquetas mal anidadas
+                if stack[k]["name"] == name:
+                    del stack[k:]
+                    break
+            i = n if end == -1 else end + 1
+        else:
+            j, q = lt + 1, None
+            while j < n:
+                c = text[j]
+                if q:
+                    if c == q:
+                        q = None
+                elif c in "\"'":
+                    q = c
+                elif c == ">":
+                    break
+                j += 1
+            body = text[lt + 1:j]
+            closing = body.endswith("/")
+            inner = body[:-1] if closing else body
+            m = re.match(r"[^\s/>]+", inner)
+            if m:
+                count += 1
+                if count > MAX_XML_NODES:
+                    raise ImportError_("el XML tiene demasiados elementos")
+                attrs = {}
+                for a in _XML_ATTR.finditer(inner[m.end():]):
+                    attrs[_xml_local(a.group(1))] = _xml_entities(a.group(3) if a.group(3) is not None else a.group(4) or "")
+                node = {"name": _xml_local(m.group(0)), "attrs": attrs, "children": [], "text": ""}
+                stack[-1]["children"].append(node)
+                if not closing:
+                    stack.append(node)
+            i = j + 1
+    return root
 
 
 def child(node, name):
-    for c in list(node) if node is not None else []:
-        if local(c.tag) == name:
+    for c in (node or {}).get("children", []):
+        if c["name"] == name:
             return c
     return None
 
 
+def children(node, name):
+    return [c for c in (node or {}).get("children", []) if c["name"] == name]
+
+
 def descendants(node, name):
-    return [c for c in node.iter() if local(c.tag) == name]
+    out, stack = [], list(reversed(node["children"]))
+    while stack:
+        cur = stack.pop()
+        if cur["name"] == name:
+            out.append(cur)
+        stack.extend(reversed(cur["children"]))
+    return out
 
 
 def text_of(node, name=None):
-    if node is None:
-        return ""
     target = child(node, name) if name else node
-    return clip("".join(target.itertext()) if target is not None else "", 4000)
+    return clip(target["text"] if target else "", 4000)
+
+
+def attr(node, name):
+    return (node or {}).get("attrs", {}).get(name, "") if node else ""
 
 
 def json_lines(text):

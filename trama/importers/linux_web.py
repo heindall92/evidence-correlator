@@ -8,8 +8,8 @@ from .common import (MAX_EVENTS, UNKNOWN_HOST, clean_ip, clip, host_tag, ImportE
 
 # --------------------------------------------------------------------------- auditd
 
-_AUDIT_LINE = re.compile(r"^(?:node=(\S+) )?type=(\w+) msg=audit\((\d+)\.(\d+):(\d+)\):\s?(.*)$")
-_KV = re.compile(r"(\w+)=(\"(?:[^\"\\]|\\.)*\"|\S+)")
+_AUDIT_LINE = re.compile(r"^(?:node=(\S+) )?type=([A-Za-z0-9_]+) msg=audit\(([0-9]+)\.([0-9]+):([0-9]+)\):\s?(.*)$")
+_KV = re.compile(r"([A-Za-z0-9_]+)=(\"(?:[^\"\\]|\\.)*\"|\S+)")
 _HEX = re.compile(r"^[0-9A-F]+$")
 UNSET = ("4294967295", "-1", "unset")
 ELEVATORS = {"sudo", "su", "pkexec", "doas", "runuser", "login", "sshd", "cron", "crond", "systemd"}
@@ -109,9 +109,9 @@ def parse_auditd(text, source_file, asset=None):
 
 # --------------------------------------------------------------------------- logs de acceso web
 
-_ACCESS = re.compile(r'^(\S+) \S+ (\S+) \[([^\]]+)\] "((?:[^"\\]|\\.)*)" (\d{3}) (\S+)(?: "((?:[^"\\]|\\.)*)" "((?:[^"\\]|\\.)*)")?')
+_ACCESS = re.compile(r'^(\S+) \S+ (\S+) \[([^\]]+)\] "((?:[^"\\]|\\.)*)" ([0-9]{3}) (\S+)(?: "((?:[^"\\]|\\.)*)" "((?:[^"\\]|\\.)*)")?')
 _MONTHS = {m: i + 1 for i, m in enumerate("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split())}
-_CLF_TIME = re.compile(r"^(\d{2})/(\w{3})/(\d{4}):(\d{2}):(\d{2}):(\d{2}) ([+-]\d{4})$")
+_CLF_TIME = re.compile(r"^([0-9]{2})/([A-Za-z0-9_]{3})/([0-9]{4}):([0-9]{2}):([0-9]{2}):([0-9]{2}) ([+-][0-9]{4})$")
 
 
 def _clf_time(text):
@@ -133,6 +133,11 @@ def parse_access_log(text, source_file, asset=None):
                 skipped += 1
             continue
         ip, user, when, request, status, _size, _ref, ua = m.groups()
+        try:
+            stamp = _clf_time(when)
+        except ImportError_:
+            skipped += 1
+            continue
         parts = request.split(" ")
         method = parts[0] if len(parts) >= 2 else "-"
         url = parts[1] if len(parts) >= 2 else request
@@ -141,7 +146,7 @@ def parse_access_log(text, source_file, asset=None):
         code = int(status)
         events.append({
             "event_id": "web-%s-%d" % (host_tag(host), n),
-            "timestamp_utc": _clf_time(when),
+            "timestamp_utc": stamp,
             "source_type": "web_access_log",
             "source_file": source_file,
             "record_number": n,
@@ -178,11 +183,16 @@ def parse_suricata(text, source_file, asset=None):
         if kind not in ("http", "alert") or not obj.get("timestamp"):
             skipped += 1
             continue
+        try:
+            stamp = iso(obj["timestamp"])
+        except (ImportError_, TypeError):
+            skipped += 1
+            continue
         http = obj.get("http") or {}
         dest = clean_ip(obj.get("dest_ip"))
         host = clip(http.get("hostname"), 255) or asset or dest or UNKNOWN_HOST
         base = {
-            "timestamp_utc": iso(obj["timestamp"]),
+            "timestamp_utc": stamp,
             "source_file": source_file,
             "record_number": i + 1,
             "actor": {"user_name": "anonymous"},

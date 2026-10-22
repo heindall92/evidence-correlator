@@ -56,7 +56,7 @@ def detect(text, filename=""):
         if "<event" in low and ("schemas.microsoft.com/win/2004/08/events" in low or "<system>" in low):
             return "windows"
         return None
-    if re.match(r"^Record \d+\s*$", head.split("\n", 1)[0]):
+    if re.match(r"^Record [0-9]+\s*$", head.split("\n", 1)[0]):
         return "windows"
     if head.startswith(("{", "[")):
         data = None
@@ -94,7 +94,7 @@ def detect(text, filename=""):
             if "event_type" in line and "timestamp" in line:
                 return "suricata"
         return None
-    if re.search(r"^(?:node=\S+ )?type=\w+ msg=audit\(", head, re.M):
+    if re.search(r"^(?:node=\S+ )?type=[A-Za-z0-9_]+ msg=audit\(", head, re.M):
         return "auditd"
     first = next((l for l in lines_of(head) if l.strip()), "")
     if linux_web._ACCESS.match(first):
@@ -132,8 +132,8 @@ def parse_file(text, filename, asset=None, fmt=None):
         items, skipped = parser(text, filename, asset)
     except ImportError_:
         raise
-    except (ValueError, KeyError, TypeError, AttributeError) as exc:
-        raise ImportError_("%s no válido: %s" % (label, exc))
+    except (ValueError, KeyError, TypeError, AttributeError):
+        raise ImportError_("%s no válido" % label)
     return fmt, kind, items, skipped
 
 
