@@ -115,7 +115,7 @@ def write_bundle(bundle, path):
 
 
 def write_dashboard_js(bundle, path):
-    """Escribe el paquete como script para que el dashboard funcione en file://
+    """Escribe el paquete como script para que la consola funcione en file://
     (los navegadores bloquean fetch() de ficheros locales)."""
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     payload = json.dumps(bundle, ensure_ascii=False, indent=1).replace("</", "<\\/")

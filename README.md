@@ -13,7 +13,7 @@
   <a href="LICENSE"><img alt="Licencia GPLv2" src="https://img.shields.io/badge/licencia-GPLv2-4169A1?style=flat"/></a>
   <img alt="Python 3.8 a 3.12" src="https://img.shields.io/badge/Python-3.8%E2%80%933.12-1A3DB8?style=flat&logo=python&logoColor=white"/>
   <img alt="Sin dependencias" src="https://img.shields.io/badge/dependencias-0-2E8B57?style=flat"/>
-  <img alt="119 pruebas" src="https://img.shields.io/badge/pruebas-119-2E8B57?style=flat"/>
+  <img alt="120 pruebas" src="https://img.shields.io/badge/pruebas-120-2E8B57?style=flat"/>
   <img alt="axe-core: 0 infracciones" src="https://img.shields.io/badge/axe--core-0%20infracciones-2E8B57?style=flat"/>
   <img alt="MITRE ATT&CK" src="https://img.shields.io/badge/MITRE-ATT%26CK-B42318?style=flat"/>
   <img alt="ENS RD 311/2022" src="https://img.shields.io/badge/ENS-RD%20311%2F2022-E07B39?style=flat"/>
@@ -37,7 +37,7 @@ TRAMA las une en un incidente con tres capas:
 
 Cada evento crudo se sella con SHA-256 y se encadena al anterior. Si se modifica un registro, un sello o el paquete exportado, la verificación (en la CLI y en el navegador) lo detecta e indica el bloque afectado.
 
-Requiere **Python 3.8 o superior y solo la librería estándar**. La consola es HTML estático: se abre con doble clic (`file://`), sin servidor, sin red y sin servicios de terceros.
+Requiere **Python 3.8 o superior y solo la librería estándar**. La consola es HTML estático: se abre con doble clic (`file://`) y funciona sin servidor ni conexión a servicios externos.
 
 > **Demo:** <https://heindall92.github.io/evidence-correlator/> (datos de laboratorio ficticios).
 
@@ -295,16 +295,18 @@ python3 -m trama rules   [--rules DIR|F]
 
 ## Calidad
 
-**119 pruebas** con `unittest` (compatible con pytest), 17 de ellas en un Chromium real con axe-core.
+**120 pruebas** con `unittest` (compatible con pytest), 17 de ellas en un Chromium real con axe-core.
 
 | Conjunto | Pruebas | Qué cubre |
 |---|---:|---|
 | `tests/test_custody.py` | 23 | Merkle (vacío, orden, nodo impar, separación de dominio), enlaces, sellos, manipulación, truncado y **números canónicos** como en JavaScript (`1.0`, `1e-7`, `1e16`, `1e21`, `5e-324`) sin cambiar los hashes anteriores |
 | `tests/test_correlator.py` | 24 | Las tres reglas, ventana, orden, zonas horarias, referencias, postura, cifrado fuerte, puertos como texto, SUID y capabilities, sin duplicados, grupos independientes |
 | `tests/test_pipeline_cli.py` | 15 | Paquete, `verify` con manipulaciones, script del dashboard seguro, CLI y `python -m` sin avisos |
-| `tests/test_static.py` | 19 | Redacción profesional (sin preguntas, tuteo ni giros vetados en ES/EN y documentos), logotipo propio, consola sin recursos remotos ni `fetch`, CSP estricta, `innerHTML` solo para iconos vendorizados, iconos existentes, tokens claro/oscuro y 7 acentos, movimiento reducido, paridad y cobertura ES/EN (más de 150 claves), constantes NIS2 24/72/1, datos de ejemplo al día |
+| `tests/test_static.py` | 20 | Redacción profesional con `scripts/redaccion.py` sobre interfaz, documentos, reglas, datos de ejemplo y CLI (y su sensibilidad frente a giros conocidos), logotipo propio, consola sin recursos remotos ni `fetch`, CSP estricta, `innerHTML` solo para iconos vendorizados, iconos existentes, tokens claro/oscuro y 7 acentos, movimiento reducido, paridad y cobertura ES/EN (más de 150 claves), constantes NIS2 24/72/1, datos de ejemplo al día |
 | `tests/test_normalizer.py` · `test_rules.py` · `test_timeutil.py` | 21 | Esquema y contexto ofensivo, carga y validación de reglas, tiempo compatible con 3.8 |
 | `tests/browser/` | 17 | axe (0 infracciones) en las 7 vistas, las 5 perspectivas y todos los diálogos, en claro, oscuro y 390 px; sin desbordamiento horizontal ni iconos vacíos; solo peticiones locales; un paquete con HTML no se ejecuta; paquetes no válidos rechazados; verificación y manipulación; decimales verificados en el navegador; reloj NIS2 de la demo; portapapeles; incidente resaltado en Trazabilidad; teclado y búsqueda; inglés; perfil; ajustes; fundido de tema coordinado; movimiento reducido |
+
+**Redacción.** `scripts/redaccion.py` aplica las reglas de `linkedin-humanizer` adaptadas al español: vocabulario puntuado por densidad (3 marcadores en un párrafo obligan a reescribirlo), revelaciones, paralelismo negativo, tríadas escalonadas, frases cortadas para dar efecto, clichés, falsa sinceridad, rayas y emojis. Recorre la interfaz en ES y EN, los documentos, las reglas, los datos de ejemplo y los mensajes de la CLI; `python3 scripts/redaccion.py --avisos` muestra el informe completo.
 
 Las pruebas de navegador se omiten si Playwright no está instalado (`pip install playwright && python3 -m playwright install chromium`). La CI ejecuta el resto en Python 3.8, 3.9, 3.10, 3.11 y 3.12 y las de navegador en un trabajo aparte, con acciones fijadas por SHA.
 
@@ -345,7 +347,7 @@ Más detalles y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.m
 │   ├── data/bundle.js            # paquete de ejemplo generado por la CLI
 │   └── img/                      # capturas
 ├── tests/                        # unittest + tests/browser (Playwright y axe-core)
-├── scripts/                      # screenshots.py, vendor_icons.py
+├── scripts/                      # redaccion.py (auditor de estilo), screenshots.py, vendor_icons.py
 ├── ROADMAP.md
 └── .github/workflows/ci.yml
 ```

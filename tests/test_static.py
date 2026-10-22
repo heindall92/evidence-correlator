@@ -1,7 +1,8 @@
-"""Comprobaciones estáticas del dashboard y del repositorio."""
+"""Comprobaciones estáticas de la consola y del repositorio."""
 import json
 import os
 import re
+import sys
 import unittest
 
 from trama import NAME
@@ -144,35 +145,48 @@ class DashboardStaticTest(unittest.TestCase):
 
 
 class ProfessionalCopyTest(unittest.TestCase):
-    """Redacción de producto: sin preguntas retóricas, tuteo ni giros típicos de texto generado."""
+    """Redacción de producto: reglas de linkedin-humanizer adaptadas al español (scripts/redaccion.py)."""
 
-    BANNED = re.compile(
-        r"sigue el hilo|follow the thread|mundo real|real world|se te escap|slips? past|hasta que te vieron|"
-        r"qu[eé] viste|until they saw|no es solo|not just|sin fisuras|seamless|potente|powerful|revoluciona|"
-        r"game.?changer|deep dive|siguiente nivel|next level|de un vistazo|at a glance|\bleverag|\bunlock|"
-        r"\brobust[oa]?\b|en un clic|with one click|magia|magic", re.I)
-    TUTEO = re.compile(r"(?i)\b(tu|tus|te|ti|contigo|tienes|puedes|quieres|necesitas|ver[aá]s|elige|pulsa|suelta)\b")
-    YOU = re.compile(r"(?i)\b(you|your|yours)\b")
+    @classmethod
+    def setUpClass(cls):
+        sys.path.insert(0, os.path.join(ROOT, "scripts"))
+        import redaccion
+        cls.R = redaccion
 
-    def test_interface_copy(self):
-        i18n = load_i18n()
-        for lang in ("es", "en"):
-            for key, value in i18n[lang].items():
-                with self.subTest(lang=lang, key=key):
-                    self.assertNotRegex(value, r"[¿?¡!]", "sin preguntas ni exclamaciones")
-                    self.assertNotRegex(value, self.BANNED)
-                    self.assertNotRegex(value, self.TUTEO if lang == "es" else self.YOU)
+    def test_platform_copy_has_no_ai_tells(self):
+        fails, _ = self.R.audit()
+        self.assertEqual(["%s · %s · %s" % f for f in fails], [])
 
-    def test_documents_copy(self):
-        for name in ("README.md", "ROADMAP.md", "CONTRIBUTING.md", "SECURITY.md", "docs/index.html",
-                     "trama/branding.py", "pyproject.toml"):
-            with open(os.path.join(ROOT, name), encoding="utf-8") as fh:
-                with self.subTest(fichero=name):
-                    self.assertNotRegex(fh.read(), self.BANNED)
+    def test_detector_catches_known_tells(self):
+        cases = [
+            ("Hasta que te vieron", True, "es"), ("Qué viste y qué se te escapó", True, "es"),
+            ("¿Mis hallazgos se explotaron en el mundo real?", True, "es"), ("Sigue el hilo", True, "es"),
+            ("No se trata solo de cumplir, sino de demostrarlo.", False, "es"),
+            ("El resultado: cero sorpresas.", False, "es"),
+            ("Sin red, sin analítica y sin cookies.", False, "es"),
+            ("Una solución integral que permite gestionar evidencias de forma sencilla y eficiente.", False, "es"),
+            ("Además, garantiza la trazabilidad. Asimismo, facilita la auditoría.", False, "es"),
+            ("Aprovechando la telemetría, el equipo optimiza la detección y potencia la respuesta.", False, "es"),
+            ("Seamos sinceros: nadie lee los informes.", False, "es"),
+            ("Preferencias y perfil. Nada más.", True, "es"),
+            ("What you saw and what you missed", True, "en"), ("It's not just a tool, it's a workflow.", False, "en"),
+            ("Here's the thing: custody matters.", False, "en"), ("Lanzamos la versión 🚀", False, "es"),
+        ]
+        for text, ui, lang in cases:
+            with self.subTest(texto=text):
+                self.assertTrue(self.R.audit_paragraph(text, ui=ui, lang=lang)[0], "no detectado")
+
+    def test_detector_leaves_plain_technical_copy(self):
+        for text in ("Cada evento crudo se sella con SHA-256 y se encadena al anterior.",
+                     "Incidentes detectados con su tiempo de detección.",
+                     "La CLI registró la cadena como íntegra. «Verificar ahora» recalcula cada sello en este navegador.",
+                     "Fuera las frases del tipo «no es X, es Y»."):
+            with self.subTest(texto=text):
+                self.assertEqual(self.R.audit_paragraph(text, ui=True)[0], [])
 
     def test_own_logo_not_a_shared_icon(self):
         html = read(os.path.join(DOCS, "index.html"))
-        self.assertNotIn("waypoints", html, "el icono waypoints es el logo de CTEM-Nexus")
+        self.assertNotIn("waypoints", html, "el icono waypoints es el logotipo de CTEM-Nexus")
         self.assertEqual(html.count('<svg class="mark"'), 2, "marca propia en el lateral y en la barra móvil")
 
 

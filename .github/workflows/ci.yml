@@ -25,6 +25,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Pruebas (solo librería estándar)
         run: python -W error::SyntaxWarning -m unittest discover -s tests -t . -v
+      - name: Redacción (marcadores de texto generado)
+        run: python scripts/redaccion.py --avisos
       - name: CLI de extremo a extremo
         run: |
           python -m trama run -o output/bundle.json --dashboard-js /tmp/bundle.js

@@ -9,7 +9,7 @@ Gracias por el interés. Estas pautas mantienen el repositorio pequeño, auditab
 - **El nombre se define en un solo lugar** (`trama/branding.py`). No se escribe a mano en otros módulos de Python.
 - **Todo texto visible de la consola va en `docs/assets/i18n.js`** en español y en inglés; una prueba exige las mismas claves en los dos idiomas.
 - **Diseño:** superficies lisas (sin rejillas, puntos ni texturas de fondo), WCAG 2.2 AA con axe, un único acento de los 7 del ecosistema, solo iconos Lucide (vendorizados con `scripts/vendor_icons.py`) y nada de anillos ni gráficos circulares. La visualización propia es Trazabilidad y el logotipo es una marca propia (no un icono de Lucide).
-- **Redacción:** registro profesional e impersonal, títulos nominales, sin preguntas retóricas, tuteo, exclamaciones ni fórmulas de relleno. `ProfessionalCopyTest` lo comprueba.
+- **Redacción:** registro profesional e impersonal, títulos nominales, sin preguntas retóricas, tuteo, exclamaciones ni fórmulas de relleno. `python3 scripts/redaccion.py` lo comprueba (también forma parte de las pruebas).
 - **Sin estilos ni scripts en línea:** la CSP no admite `unsafe-inline`.
 
 ## Flujo

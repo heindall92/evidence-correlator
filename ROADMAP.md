@@ -25,7 +25,7 @@ Un mismo paquete de evidencias admite lecturas distintas según el perfil. La co
 - **Submarca:** «Correlación de evidencias».
 - **Visualización propia: Trazabilidad.** Tres carriles horizontales (ofensiva, detección y cumplimiento) sobre el orden de los eventos. Cada incidente se traza desde el hallazgo, por sus eventos, hasta los controles afectados. El incidente seleccionado se resalta en el acento con trazo animado y el resto queda atenuado. No usa anillos (Rosetta), franjas por activo (CTEM-Nexus), la matriz (LemonByte) ni la constelación (Astrolabio).
 - **Custodia bloque a bloque:** al verificar, un pulso recorre la cadena; al simular una manipulación, el bloque alterado se marca como roto.
-- **Redacción:** registro profesional e impersonal, títulos nominales, sin preguntas retóricas, tuteo, revelaciones («El resultado:») ni fórmulas del tipo «no es X, es Y». Una prueba automática (`ProfessionalCopyTest`) lo comprueba en la interfaz y en la documentación.
+- **Redacción:** registro profesional e impersonal, títulos nominales, sin preguntas retóricas, tuteo, revelaciones («El resultado:») ni fórmulas del tipo «no es X, es Y». `scripts/redaccion.py` lo audita en la interfaz, la documentación, las reglas, los datos y la CLI, y forma parte de las pruebas.
 
 ## 3. Diseño (estilo del ecosistema)
 
@@ -54,7 +54,7 @@ Una PR por versión (`version/X.Y.Z` → `main`), con las pruebas y axe en verde
 - [x] Paquete marcado como `demo` o `real` (`dataset`) para que los plazos de la demo no aparezcan vencidos.
 - [x] Serialización canónica con los números como en JavaScript: la verificación del navegador ya no da un falso positivo con decimales como `1.0`.
 - [x] Consola desde cero:
-  - shell del ecosistema, ES/EN, tema, 7 acentos, Ajustes, Perfil y centro de ayuda con Acerca de y ecosistema;
+  - estructura de interfaz común a las demás herramientas del autor, ES/EN, tema, 7 acentos, ajustes, perfil y centro de ayuda con «Acerca de» y herramientas relacionadas;
   - vistas: Inicio por perspectiva, Trazabilidad, Incidentes, Cumplimiento con plazos NIS2, Custodia, Eventos y Entidades;
   - móvil con barra inferior y «Más».
 - [x] Pruebas de navegador nuevas (axe en todas las vistas, temas y móvil, perspectivas, trazabilidad, custodia, idioma, teclado y XSS) y capturas.
@@ -63,7 +63,7 @@ Una PR por versión (`version/X.Y.Z` → `main`), con las pruebas y axe en verde
 - [x] Textos de la consola (ES y EN), README, hoja de ruta, CLI y metadatos reescritos con registro profesional.
 - [x] «El Hilo» pasa a «Trazabilidad» y «lentes», a «perspectivas».
 - [x] Logotipo y favicon propios en lugar del icono `waypoints` de CTEM-Nexus.
-- [x] `ProfessionalCopyTest`: sin preguntas, tuteo ni giros vetados en la interfaz y los documentos.
+- [x] Auditor de redacción `scripts/redaccion.py` con las reglas de `linkedin-humanizer` en español e inglés, integrado en las pruebas y en la CI.
 
 ### v0.3.0 · Firma del paquete y ejercicios guiados
 - [ ] **Firma Ed25519** (RFC 8032) en Python puro, sin dependencias: `trama keygen`, `trama sign` y `trama verify --pubkey`. La cadena prueba la integridad; la firma prueba la autoría. Verificación también en la consola con WebCrypto cuando el navegador la ofrezca.
