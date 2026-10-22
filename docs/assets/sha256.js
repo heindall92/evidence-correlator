@@ -83,11 +83,24 @@
     return hex(level[0]);
   }
 
-  /* Equivalente a json.dumps(sort_keys=True, ensure_ascii=False, separators=(",", ":")). */
+  /* Orden de claves por punto de código, como sorted() de Python (sort() de JS compara unidades UTF-16). */
+  function byCodePoint(a, b) {
+    var ia = 0, ib = 0;
+    while (ia < a.length && ib < b.length) {
+      var ca = a.codePointAt(ia), cb = b.codePointAt(ib);
+      if (ca !== cb) return ca - cb;
+      ia += ca > 0xffff ? 2 : 1; ib += cb > 0xffff ? 2 : 1;
+    }
+    return (a.length - ia) - (b.length - ib);
+  }
+
+  /* Igual que custody.canonical_json: json.dumps(sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+   * con los números escritos como en JavaScript. */
   function canonicalJSON(v) {
+    if (v === undefined) return "null";
     if (v === null || typeof v !== "object") return JSON.stringify(v);
     if (Array.isArray(v)) return "[" + v.map(canonicalJSON).join(",") + "]";
-    return "{" + Object.keys(v).sort().map(function (k) {
+    return "{" + Object.keys(v).sort(byCodePoint).map(function (k) {
       return JSON.stringify(k) + ":" + canonicalJSON(v[k]);
     }).join(",") + "}";
   }
@@ -97,4 +110,4 @@
     merkleRoot: merkleRoot,
     canonicalJSON: canonicalJSON
   };
-})(window);
+})(typeof window !== "undefined" ? window : globalThis);

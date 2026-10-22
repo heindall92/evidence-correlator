@@ -1,0 +1,65 @@
+Record 1
+{
+  "Event": {
+    "#attributes": {
+      "xmlns": "http://schemas.microsoft.com/win/2004/08/events/event"
+    },
+    "System": {
+      "Provider": {
+        "#attributes": {
+          "Name": "Microsoft-Windows-Security-Auditing"
+        }
+      },
+      "EventID": 4624,
+      "EventRecordID": 5001,
+      "TimeCreated": {
+        "#attributes": {
+          "SystemTime": "2026-10-20T07:58:12.1234567Z"
+        }
+      },
+      "Computer": "SRV01.lab.local",
+      "Channel": "Security"
+    },
+    "EventData": {
+      "TargetUserName": "a.lopez",
+      "TargetDomainName": "LAB",
+      "LogonType": 2,
+      "IpAddress": "-",
+      "WorkstationName": "SRV01",
+      "ProcessName": "C:\\Windows\\System32\\svchost.exe"
+    }
+  }
+}
+Record 2
+{
+  "Event": {
+    "#attributes": {
+      "xmlns": "http://schemas.microsoft.com/win/2004/08/events/event"
+    },
+    "System": {
+      "Provider": {
+        "#attributes": {
+          "Name": "Microsoft-Windows-Security-Auditing"
+        }
+      },
+      "EventID": 4769,
+      "EventRecordID": 5002,
+      "TimeCreated": {
+        "#attributes": {
+          "SystemTime": "2026-10-20T08:01:00.5Z"
+        }
+      },
+      "Computer": "SRV01.lab.local",
+      "Channel": "Security"
+    },
+    "EventData": {
+      "TargetUserName": "a.lopez@LAB.LOCAL",
+      "TargetDomainName": "LAB.LOCAL",
+      "ServiceName": "http_web",
+      "TicketEncryptionType": "0x12",
+      "IpAddress": "::ffff:10.0.0.21",
+      "IpPort": "50211",
+      "Status": "0x0"
+    }
+  }
+}

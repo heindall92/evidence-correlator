@@ -46,6 +46,31 @@ class NormalizerTest(unittest.TestCase):
         self.assertEqual([x["finding_id"] for x in m], ["WEB-SQLI-LOGIN-003"])
         self.assertEqual(norm.match_offensive_context(None), [])
 
+    def test_short_name_ip_alias_and_domain_scope(self):
+        findings = [
+            {"finding_id": "N1", "hostname": "web-prod-01.corp.local", "ip": "10.10.10.80"},   # Nmap: nombre e IP
+            {"finding_id": "U1", "hostname": "10.10.10.80", "ip": "10.10.10.80"},             # Nuclei: solo IP
+            {"finding_id": "B1", "scope": "domain", "domain": "CORP.LOCAL", "target_spn": "svc_sql",
+             "spns": ["MSSQLSvc/db01.corp.local:1433"]},                                     # BloodHound
+        ]
+        norm = EvidenceNormalizer(CustodyChain(clock=fixed_clock()), findings)
+        ids = lambda m: sorted(x["finding_id"] for x in m)
+        self.assertEqual(ids(norm.match_offensive_context("WEB-PROD-01")), ["N1", "U1"])
+        self.assertEqual(ids(norm.match_offensive_context("DC01.CORP.LOCAL", "svc_sql")), ["B1"])
+        self.assertEqual(ids(norm.match_offensive_context("DC01", "mssqlsvc/db01.corp.local:1433", domain="CORP")), ["B1"])
+        self.assertEqual(ids(norm.match_offensive_context("DC01.CORP.LOCAL", "otra")), [])
+        self.assertEqual(ids(norm.match_offensive_context("OTRO.EJEMPLO.LOCAL", "svc_sql")), [])
+
+    def test_binary_finding_matches_parent_process(self):
+        findings = [{"finding_id": "C1", "hostname": "WEB-PROD-01", "binary_path": "/usr/bin/python3",
+                     "capabilities": ["cap_setuid"]}]
+        norm = EvidenceNormalizer(CustodyChain(clock=fixed_clock()), findings)
+        ev = norm.normalize({"timestamp_utc": "2026-10-21T08:00:00Z", "target": {"hostname": "WEB-PROD-01"},
+                             "process_or_artifact": {"process_name": "/usr/bin/bash",
+                                                     "parent_process_name": "/usr/bin/python3"}}, 0)
+        self.assertEqual([x["finding_id"] for x in ev["offensive_posture_context"]["known_exposures"]], ["C1"])
+        self.assertEqual(ev["process_or_artifact"]["capabilities"], ["cap_setuid"])
+
     def test_minimal_event_defaults(self):
         norm = EvidenceNormalizer(CustodyChain(clock=fixed_clock()))
         ev = norm.normalize({"timestamp_utc": "2026-10-21T08:00:00Z", "target": None}, 0)

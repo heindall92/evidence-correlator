@@ -13,7 +13,7 @@
   <a href="LICENSE"><img alt="Licencia GPLv2" src="https://img.shields.io/badge/licencia-GPLv2-4169A1?style=flat"/></a>
   <img alt="Python 3.8 a 3.12" src="https://img.shields.io/badge/Python-3.8%E2%80%933.12-1A3DB8?style=flat&logo=python&logoColor=white"/>
   <img alt="Sin dependencias" src="https://img.shields.io/badge/dependencias-0-2E8B57?style=flat"/>
-  <img alt="122 pruebas" src="https://img.shields.io/badge/pruebas-122-2E8B57?style=flat"/>
+  <img alt="162 pruebas" src="https://img.shields.io/badge/pruebas-162-2E8B57?style=flat"/>
   <img alt="axe-core: 0 infracciones" src="https://img.shields.io/badge/axe--core-0%20infracciones-2E8B57?style=flat"/>
   <img alt="MITRE ATT&CK" src="https://img.shields.io/badge/MITRE-ATT%26CK-B42318?style=flat"/>
   <img alt="ENS RD 311/2022" src="https://img.shields.io/badge/ENS-RD%20311%2F2022-E07B39?style=flat"/>
@@ -31,8 +31,8 @@ Un pentest detecta que la cuenta de servicio `svc_sql` admite tickets Kerberos c
 
 TRAMA las une en un incidente con tres capas:
 
-1. **Ofensiva.** Hallazgos de auditoría (BloodHound, LinPEAS, Burp Suite, SQLMap) que describen la exposición conocida de cada activo.
-2. **Detección.** Eventos de Windows (EVTX), Linux (auditd) y servidores web, normalizados al esquema `UnifiedEvidenceEvent` v1 (inspirado en OCSF y ECS) y correlacionados con reglas multietapa.
+1. **Ofensiva.** Hallazgos de Nmap, Nessus, Nuclei, Burp Suite, BloodHound y LinPEAS que describen la exposición conocida de cada activo.
+2. **Detección.** Eventos de Windows (Security y Sysmon), Linux (auditd), servidores web y Suricata, normalizados al esquema `UnifiedEvidenceEvent` v1 (inspirado en OCSF y ECS) y correlacionados con reglas multietapa.
 3. **Cumplimiento.** No conformidades sobre el **ENS (RD 311/2022)**, la **ISO/IEC 27001:2022** y la **Directiva NIS2**, con la evidencia sellada que las sustenta y los plazos de notificación del artículo 23.
 
 Cada evento crudo se sella con SHA-256 y se encadena al anterior. Si se modifica un registro, un sello o el paquete exportado, la verificación (en la CLI y en el navegador) lo detecta e indica el bloque afectado.
@@ -46,6 +46,7 @@ Requiere **Python 3.8 o superior y solo la librería estándar**. La consola es 
 ## Índice
 
 - [Perspectivas por rol](#perspectivas-por-rol)
+- [Datos reales](#datos-reales)
 - [Arranque rápido](#arranque-rápido)
 - [Consola](#consola)
 - [Capturas](#capturas)
@@ -81,6 +82,30 @@ Un mismo paquete admite cinco lecturas. La consola abre la perspectiva del rol c
 |---|---|---|---|---|
 | <img src="docs/img/perspectiva-pentest.png" width="170" alt="Perspectiva pentester: hallazgos explotados y evidencia sellada"/> | <img src="docs/img/perspectiva-red.png" width="170" alt="Perspectiva Red Team: ruta de ataque y tiempos de detección"/> | <img src="docs/img/perspectiva-blue.png" width="170" alt="Perspectiva Blue Team: detecciones, exposiciones sin detección e IOC"/> | <img src="docs/img/perspectiva-purple.png" width="170" alt="Perspectiva Purple Team: cobertura ATT&CK"/> | <img src="docs/img/perspectiva-grc.png" width="170" alt="Perspectiva GRC: no conformidades y plazos NIS2"/> |
 
+## Datos reales
+
+TRAMA trabaja con los ficheros que cada equipo ya genera a diario. Se importan en la consola (**Importar datos**, tecla `I`, o arrastrándolos a la ventana) o en la CLI, y el formato se detecta por el contenido, sin indicar el tipo de fichero. Los dos caminos usan el mismo importador y producen el mismo paquete, sello a sello: `tests/test_parity.py` ejecuta el código de la consola con Node y lo compara campo a campo con la CLI.
+
+| Equipo | Fuente | Fichero | Cómo se obtiene |
+|---|---|---|---|
+| Pentester | Nmap | XML | `nmap -sV -oX scan.xml objetivo` (puertos abiertos y scripts NSE `VULNERABLE`) |
+| Pentester | Nessus | `.nessus` | Export → Nessus (se omiten los informativos) |
+| Pentester | Nuclei | JSONL o JSON | `nuclei -l objetivos.txt -jsonl -o nuclei.jsonl` |
+| Pentester · web | Burp Suite | XML | Issues → Report selected issues → XML |
+| Red Team · AD | BloodHound | `users.json` | SharpHound o bloodhound-python: cuentas con SPN (Kerberoasting) y sin preautenticación (AS-REP) |
+| Red Team · Linux | LinPEAS, `getcap`, `find -perm` | texto | `linpeas.sh \| tee linpeas.txt` · `getcap -r / 2>/dev/null` · `find / -perm -4000 -ls` |
+| SOC · Windows | Security y Sysmon | JSONL, JSON, XML o NDJSON | `evtx_dump -o jsonl Security.evtx` · `wevtutil qe Security /f:xml` · Winlogbeat |
+| SOC · Linux | auditd | `audit.log` | `/var/log/audit/audit.log` o `ausearch --raw` (formato `ENRICHED` incluido) |
+| SOC · web | nginx o Apache | `access.log` | formato combined o common |
+| SOC · red | Suricata | `eve.json` | eventos `http` y `alert` |
+| Cualquiera | TRAMA | JSON | eventos y hallazgos ya normalizados, o un paquete ya generado (se abre directamente) |
+
+**Qué se extrae.** Eventos de Windows 4624/4625, 4648, 4672, 4688, 4768/4769 (con el cifrado del ticket), 5140/5145, 4697/7045, 4720, 4728/4732/4756 y 1102, y Sysmon 1, 3, 10 y 11. En auditd, cada `execve` con su usuario real y efectivo, los argumentos en hexadecimal decodificados y el paso a root por un binario SUID o con capabilities (sin contar `sudo`, `su` ni `pkexec`). En los escáneres, cada hallazgo con su clase (`sqli`, `rce`, `kerberoastable_spn`, `dangerous_capability`, `suid_gtfobin`…), que es lo que leen las reglas, sin depender de identificadores fijos.
+
+**Activo.** Los logs web, LinPEAS y auditd sin `node=` no indican el host. Se deduce del nombre del fichero cuando coincide con un host conocido por otro informe (`access_web01.log` → `web01`) y, si no, se indica: en la consola, en la fila del fichero; en la CLI, con `--asset access.log=web01`. Los hallazgos con nombre e IP (Nmap, Nessus) enlazan además los informes que solo conocen uno de los dos.
+
+**Procedencia.** Cada evento conserva el registro original tal cual (`raw.native`), dentro de lo que se sella; el paquete incluye por fichero el formato detectado, los registros importados, los omitidos (fechas imposibles, líneas que no son del formato) y el activo. Un XML con DTD o entidades se rechaza.
+
 ## Arranque rápido
 
 ```bash
@@ -100,22 +125,32 @@ open docs/index.html            # macOS
 python3 -m unittest discover -s tests -t .
 ```
 
-Con datos propios:
+Con datos propios, en cualquier mezcla de formatos:
 
 ```bash
-python3 -m trama run \
-  --events mis_eventos.json \
-  --findings hallazgos_pentest.json \
-  --rules reglas/ \
-  -o output/caso-2026-10.json \
-  --dashboard-js docs/data/bundle.js
+# Revisar qué detecta en cada fichero, sin correlacionar
+python3 -m trama import scan.xml scan.nessus nuclei.jsonl users.json linpeas_web01.txt \
+  Security.jsonl audit.log access.log eve.json
+
+# Correlacionar y exportar el paquete sellado
+python3 -m trama run scan.xml scan.nessus nuclei.jsonl users.json linpeas_web01.txt \
+  Security.jsonl audit.log access.log eve.json \
+  --asset access.log=web01 -o output/caso-2026-10.json
 ```
 
 También se instala como comando: `pip install .` y después `trama run`.
 
 ## Consola
 
-`docs/index.html` carga `docs/data/bundle.js`. Los navegadores bloquean `fetch()` en `file://`, de modo que la CLI escribe también el paquete como script. Otro paquete se abre con **Abrir** (`O`) o arrastrándolo a la ventana; los datos no salen del navegador.
+`docs/index.html` abre con el paquete de ejemplo (`docs/data/bundle.js`). **Importar datos** (`I`, el botón del lateral o arrastrar a la ventana) recibe varios ficheros a la vez:
+
+- cada fila muestra el formato detectado, los eventos o hallazgos que aporta, los registros omitidos y, si el formato no indica el host, el activo deducido o un campo para indicarlo;
+- **Correlacionar** avanza por fases visibles (detectar, normalizar y sellar, guardar) con el mismo motor que la CLI;
+- el último análisis se guarda en IndexedDB si así se elige al importar, y se olvida desde Ajustes;
+- **Exportar paquete** (Custodia y Ajustes) descarga el JSON sellado, que `trama verify` acepta;
+- un paquete ya generado se abre directamente al soltarlo.
+
+Los ficheros se procesan en el navegador y no salen de él.
 
 | Vista | Qué muestra |
 |---|---|
@@ -124,12 +159,12 @@ También se instala como comando: `pip install .` y después `trama run`.
 | **Incidentes** | Etapas encadenadas con comando, exposición ofensiva y hash de cada evento; técnicas ATT&CK; dictamen por marco; raíz de Merkle. `J` / `K` para recorrerlos. |
 | **Cumplimiento** | No conformidades por marco (ENS, ISO/IEC 27001, NIS2) con evidencia e incidentes, plazos NIS2 en una pista lineal y exportación a CSV protegida contra inyección de fórmulas. |
 | **Custodia** | La cadena bloque a bloque. **Verificar** (`V`) recalcula en el navegador cada sello, el hash de cada evento crudo y las raíces de Merkle; **Simular manipulación** altera un bloque en memoria para mostrar cómo se detecta. |
-| **Eventos** | Tabla filtrable de eventos normalizados con el JSON completo de cada uno. |
+| **Eventos** | Tabla filtrable de eventos normalizados con el JSON completo de cada uno y, con datos importados, la procedencia de cada fichero. |
 | **Entidades** | Origen → actor → destino de cada evento, con los activos expuestos marcados. |
 
 **Estructura de la interfaz.** Lateral con el paquete abierto, la navegación, los 7 colores de acento (azul eléctrico por defecto) y el perfil; barra superior con búsqueda `Ctrl K`, selector `ES | EN`, tema, ajustes y ayuda. En móvil, barra inferior con cuatro destinos y menú «Más».
 
-- **Ajustes:** tema, acento, densidad, movimiento (sistema o reducido), abrir paquete, volver a la demo y borrado de preferencias en dos pasos.
+- **Ajustes:** tema, acento, densidad, movimiento (sistema o reducido), importar datos, exportar el paquete, volver a la demo, olvidar el último análisis y borrado de preferencias en dos pasos.
 - **Perfil:** nombre, organización y rol, que fija la perspectiva inicial. Se guarda solo en este navegador.
 - **Ayuda:** guía, método (generado desde las constantes de la consola, como los plazos NIS2), datos y CLI, atajos, glosario y acerca de (autor, avisos de independencia, ecosistema y soporte).
 - **Movimiento:** criterios de Emil Kowalski para interfaces de Apple. Escala 0,97 al pulsar, muelles sin rebote y un único fundido coordinado de 0,32 s al cambiar de tema. Con movimiento reducido, todas las transiciones pasan a fundido.
@@ -142,7 +177,8 @@ También se instala como comando: `pip install .` y después `trama run`.
 | `J` / `K` | Incidente siguiente / anterior |
 | `V` | Verificar la cadena de custodia |
 | `T` | Alternar tema |
-| `O` | Abrir un paquete JSON |
+| `I` | Importar datos |
+| `O` | Elegir ficheros (un paquete se abre; lo demás pasa a Importar) |
 | `[` | Plegar el lateral |
 | `?` | Ayuda |
 
@@ -160,6 +196,7 @@ Generadas con `python3 scripts/screenshots.py` (Playwright, Chromium headless, 1
 | Cumplimiento | <img src="docs/img/cumplimiento-light.png" width="300" alt="Cumplimiento en tema claro"/> | <img src="docs/img/cumplimiento-dark.png" width="300" alt="Cumplimiento en tema oscuro"/> | <img src="docs/img/cumplimiento-mobile.png" width="110" alt="Cumplimiento en móvil"/> |
 | Custodia | <img src="docs/img/custodia-light.png" width="300" alt="Custodia en tema claro"/> | <img src="docs/img/custodia-dark.png" width="300" alt="Custodia en tema oscuro"/> | <img src="docs/img/custodia-mobile.png" width="110" alt="Custodia en móvil"/> |
 | Eventos | <img src="docs/img/eventos-light.png" width="300" alt="Eventos en tema claro"/> | <img src="docs/img/eventos-dark.png" width="300" alt="Eventos en tema oscuro"/> | <img src="docs/img/eventos-mobile.png" width="110" alt="Eventos en móvil"/> |
+| Importar datos | <img src="docs/img/importar-light.png" width="300" alt="Importar datos en tema claro: ficheros con su formato detectado, recuento y activo"/> | <img src="docs/img/importar-dark.png" width="300" alt="Importar datos en tema oscuro"/> | <img src="docs/img/importar-mobile.png" width="110" alt="Importar datos en móvil"/> |
 | Menú «Más» (móvil) | <img src="docs/img/mas-light.png" width="150" alt="Menú Más en tema claro: vistas en rejilla, cuenta y ayuda agrupadas, idioma y acentos"/> | <img src="docs/img/mas-dark.png" width="150" alt="Menú Más en tema oscuro"/> | |
 | Entidades | <img src="docs/img/entidades-light.png" width="300" alt="Entidades en tema claro"/> | <img src="docs/img/entidades-dark.png" width="300" alt="Entidades en tema oscuro"/> | <img src="docs/img/entidades-mobile.png" width="110" alt="Entidades en móvil"/> |
 
@@ -168,12 +205,14 @@ Generadas con `python3 scripts/screenshots.py` (Playwright, Chromium headless, 1
 ```mermaid
 flowchart LR
   subgraph Entradas
-    F["Hallazgos ofensivos<br/>BloodHound · LinPEAS · Burp"]
-    T["Telemetría cruda<br/>EVTX · auditd · nginx"]
+    F["Hallazgos ofensivos<br/>Nmap · Nessus · Nuclei · Burp<br/>BloodHound · LinPEAS"]
+    T["Telemetría<br/>Windows · Sysmon · auditd<br/>nginx/Apache · Suricata"]
+    M["Importador<br/>detección por contenido"]
     R["Reglas JSON<br/>etapas + ventana"]
   end
-  T --> N["Normalizador<br/>UnifiedEvidenceEvent v1"]
-  F --> N
+  T --> M
+  F --> M
+  M --> N["Normalizador<br/>UnifiedEvidenceEvent v1"]
   N --> C["Cadena de custodia<br/>SHA-256 encadenado"]
   N --> E["Motor FSM<br/>secuencias multi-etapa"]
   R --> E
@@ -186,10 +225,11 @@ flowchart LR
   B --> V["verify"]
 ```
 
-1. **Normalización.** Cada evento se lleva al esquema común (actor, origen, destino, proceso o artefacto) y se enriquece con los hallazgos ofensivos del mismo activo. Un hallazgo con SPN o binario concreto solo se asocia a eventos sobre ese SPN o binario; uno genérico, a cualquier evento del host.
-2. **Sellado.** Antes de correlacionar, el evento crudo se serializa de forma canónica y se encadena en la cadena de custodia.
-3. **Correlación.** Cada regla es una máquina de estados: un evento que cumple la etapa 1 abre un estado por grupo (`group_by`), los eventos posteriores lo hacen avanzar y, si la secuencia se completa dentro de la ventana, se emite un incidente.
-4. **Cumplimiento.** El incidente hereda las técnicas MITRE ATT&CK y los controles de la regla; el paquete agrega las no conformidades por marco y enlaza cada una con sus incidentes.
+1. **Importación.** Cada fichero se identifica por su contenido y se traduce a eventos crudos (con el registro original) o a hallazgos con su clase. Los eventos se ordenan por tiempo y los hallazgos repetidos en varios informes cuentan una vez.
+2. **Normalización.** Cada evento se lleva al esquema común (actor, origen, destino, proceso o artefacto) y se enriquece con los hallazgos ofensivos del mismo activo. Un hallazgo con SPN o binario concreto solo se asocia a eventos sobre ese SPN o binario; uno genérico, a cualquier evento del host.
+3. **Sellado.** Antes de correlacionar, el evento crudo se serializa de forma canónica y se encadena en la cadena de custodia.
+4. **Correlación.** Cada regla es una máquina de estados: un evento que cumple la etapa 1 abre un estado por grupo (`group_by`), los eventos posteriores lo hacen avanzar y, si la secuencia se completa dentro de la ventana, se emite un incidente.
+5. **Cumplimiento.** El incidente hereda las técnicas MITRE ATT&CK y los controles de la regla; el paquete agrega las no conformidades por marco y enlaza cada una con sus incidentes.
 
 ## Cadena de custodia
 
@@ -235,18 +275,15 @@ Una regla por fichero JSON en `trama/rules/` (o el directorio que pases con `--r
         "stage_id": "stage_1_tgs_request",
         "source_type": "windows_evtx",
         "match": { "event.NativeEventID": 4769, "process_or_artifact.EffectiveTicketEncryption": "0x17" },
-        "posture_condition": { "offensive_posture_context.known_exposures.finding_id": "AD-SPN-RC4-001" },
+        "posture_condition": { "offensive_posture_context.known_exposures.finding_class": ["kerberoastable_spn"] },
         "extract": { "attacker_ip": "source.ip", "target_service_account": "target.target_user_or_spn" }
       },
       {
         "stage_id": "stage_2_lateral_movement",
         "source_type": "windows_evtx",
-        "match": { "event.NativeEventID": [4624, 5140], "event.LogonType": 3,
+        "match": { "event.action": ["network_logon", "network_share_access"],
                    "actor.user_name": "$stage_1_tgs_request.target_service_account" },
-        "predicates": {
-          "equals_ref": { "source.ip": "$stage_1_tgs_request.attacker_ip" },
-          "field_in_list": { "target.port": [5985, 5986, 445] }
-        }
+        "predicates": { "equals_ref": { "source.ip": "$stage_1_tgs_request.attacker_ip" } }
       }
     ]
   },
@@ -264,7 +301,7 @@ Una regla por fichero JSON en `trama/rules/` (o el directorio que pases con `--r
 | `window` | Tiempo máximo entre la primera y la última etapa: `120s`, `45m`, `2h`, `1d`. Un formato desconocido es un error, no un valor por defecto. |
 | `group_by` | Variables extraídas o rutas del evento que identifican una secuencia. Hay un estado abierto por grupo, así que un mismo ataque no genera incidentes duplicados. |
 | `match` | Igualdad por ruta con punto. Una lista significa «cualquiera de». `$etapa.variable` referencia un valor extraído. La comparación tolera tipos (`"5985"` = `5985`). |
-| `posture_condition` | Exige que el activo tenga ese hallazgo ofensivo conocido. |
+| `posture_condition` | Exige que el activo tenga un hallazgo ofensivo de esa clase (`finding_class`: `kerberoastable_spn`, `sqli`, `dangerous_capability`, `suid_gtfobin`…). Al leer la clase y no un identificador fijo, la misma regla sirve con hallazgos de BloodHound, Nessus, Nuclei, Burp o LinPEAS. |
 | `extract` | Guarda valores del evento para etapas posteriores (`variable` y `etapa.variable`). |
 | `field_contains_any` | Subcadenas, sin distinguir mayúsculas. |
 | `equals_ref` / `not_equals` / `field_in_list` | Igual a una variable, distinto de un valor, dentro de una lista. |
@@ -274,20 +311,25 @@ Reglas incluidas:
 
 | Id | Secuencia | MITRE ATT&CK | ENS |
 |---|---|---|---|
-| `CORR-AD-001` | TGS con RC4 sobre cuenta con SPN expuesto → inicio de sesión de red (tipo 3) por WinRM o SMB desde la misma IP | T1558.003, T1021.006 | op.acc.5, op.acc.6 |
+| `CORR-AD-001` | TGS con RC4 sobre cuenta con SPN expuesto → inicio de sesión de red o acceso a recurso compartido de esa cuenta desde la misma IP | T1558.003, T1021.006 | op.acc.5, op.acc.6 |
 | `CORR-LNX-002` | Enumeración de SUID y capabilities sin privilegios → transición a euid 0 con un binario explotable | T1083, T1548.001 | op.exp.2, mp.sw.2 |
 | `CORR-WEB-003` | Inyección SQL con respuesta 200 en el login → `www-data` ejecuta comandos en el mismo host | T1190, T1059.004 | mp.s.2 |
 
 ## CLI
 
 ```text
-python3 -m trama run     [--events F] [--findings F] [--rules DIR|F] [-o SALIDA]
-                         [--dashboard-js RUTA] [--no-raw] [--json] [--color auto|always|never]
-python3 -m trama verify  PAQUETE.json [--json]
-python3 -m trama rules   [--rules DIR|F]
+python3 -m trama run      [FICHERO ...] [--asset FICHERO=HOST] [--rules DIR|F] [-o SALIDA]
+                          [--dashboard-js RUTA] [--no-raw] [--json] [--color auto|always|never]
+python3 -m trama import   FICHERO ... [--asset FICHERO=HOST] [--json]
+python3 -m trama verify   PAQUETE.json [--json]
+python3 -m trama rules    [--rules DIR|F]
+python3 -m trama rules-js [--rules DIR|F] [-o docs/assets/rules.js]
 ```
 
 - Sin subcomando equivale a `run` con los datos de ejemplo.
+- `run` acepta cualquier mezcla de los formatos de [Datos reales](#datos-reales); `--events` y `--findings` se mantienen por compatibilidad. Si ningún fichero se puede importar, termina con código `1` y el motivo de cada uno.
+- `import` muestra, por fichero, el formato detectado, lo importado, lo omitido y el activo, sin correlacionar.
+- `rules-js` copia las reglas a la consola; una prueba impide que se desincronicen.
 - Códigos de salida: `0` correcto, `1` error de entrada (fichero, JSON o regla no válidos), `2` integridad comprometida.
 - El color se desactiva fuera de una terminal y con `NO_COLOR`.
 - `--no-raw` exporta el paquete sin los eventos crudos (más ligero, pero `verify` ya no puede comprobarlos).
@@ -296,16 +338,18 @@ python3 -m trama rules   [--rules DIR|F]
 
 ## Calidad
 
-**122 pruebas** con `unittest` (compatible con pytest), 18 de ellas en un Chromium real con axe-core.
+**162 pruebas** con `unittest` (compatible con pytest), 22 de ellas en un Chromium real con axe-core.
 
 | Conjunto | Pruebas | Qué cubre |
 |---|---:|---|
 | `tests/test_custody.py` | 23 | Merkle (vacío, orden, nodo impar, separación de dominio), enlaces, sellos, manipulación, truncado y **números canónicos** como en JavaScript (`1.0`, `1e-7`, `1e16`, `1e21`, `5e-324`) sin cambiar los hashes anteriores |
-| `tests/test_correlator.py` | 24 | Las tres reglas, ventana, orden, zonas horarias, referencias, postura, cifrado fuerte, puertos como texto, SUID y capabilities, sin duplicados, grupos independientes |
+| `tests/test_importers.py` | 25 | Detección por contenido de los 13 formatos, Windows (evtx_dump, Winlogbeat, XML), auditd (agrupación, `ENRICHED`, hexadecimal, `sudo` frente a SUID), logs web, Suricata, escáneres, BloodHound, LinPEAS, XML con DTD rechazado, límite de tamaño, fechas imposibles omitidas, activo deducido, deduplicación y extremo a extremo con la CLI |
+| `tests/test_parity.py` | 8 | La consola (ejecutada con Node) y la CLI dan el mismo resultado campo a campo: cada fixture, todos juntos, casos límite (CRLF, BOM, espacios Unicode, entidades XML, registros rotos), paquete de la demo y paquete con ficheros nativos que `verify` acepta; reglas de la consola al día |
+| `tests/test_correlator.py` | 25 | Las tres reglas, ventana, orden, zonas horarias, referencias, postura, cifrado fuerte, puertos como texto, SUID y capabilities, sin duplicados, grupos independientes |
 | `tests/test_pipeline_cli.py` | 15 | Paquete, `verify` con manipulaciones, script del dashboard seguro, CLI y `python -m` sin avisos |
 | `tests/test_static.py` | 21 | Redacción profesional con `scripts/redaccion.py` sobre interfaz, documentos, reglas, datos de ejemplo y CLI (y su sensibilidad frente a giros conocidos), logotipo propio, consola sin recursos remotos ni `fetch`, CSP estricta, `innerHTML` solo para iconos vendorizados, iconos existentes, tokens claro/oscuro y 7 acentos, movimiento reducido, paridad y cobertura ES/EN (más de 150 claves), constantes NIS2 24/72/1, datos de ejemplo al día |
-| `tests/test_normalizer.py` · `test_rules.py` · `test_timeutil.py` | 21 | Esquema y contexto ofensivo, carga y validación de reglas, tiempo compatible con 3.8 |
-| `tests/browser/` | 18 | menú «Más» en móvil a 320 y 390 px; axe (0 infracciones) en las 7 vistas, las 5 perspectivas y todos los diálogos, en claro, oscuro y 390 px; sin desbordamiento horizontal ni iconos vacíos; solo peticiones locales; un paquete con HTML no se ejecuta; paquetes no válidos rechazados; verificación y manipulación; decimales verificados en el navegador; reloj NIS2 de la demo; portapapeles; incidente resaltado en Trazabilidad; teclado y búsqueda; inglés; perfil; ajustes; fundido de tema coordinado; movimiento reducido |
+| `tests/test_normalizer.py` · `test_rules.py` · `test_timeutil.py` | 23 | Esquema y contexto ofensivo, carga y validación de reglas, tiempo compatible con 3.8 |
+| `tests/browser/` | 22 | importar los 13 formatos, correlacionar, restaurar tras recargar y exportar un paquete que `verify` acepta; ficheros no válidos, activo indicado a mano y fichero quitado; paquete abierto directamente y olvidado desde Ajustes; importación en inglés y móvil sin guardar; menú «Más» en móvil a 320 y 390 px; axe (0 infracciones) en las 7 vistas, las 5 perspectivas y todos los diálogos, en claro, oscuro y 390 px; sin desbordamiento horizontal ni iconos vacíos; solo peticiones locales; un paquete con HTML no se ejecuta; paquetes no válidos rechazados; verificación y manipulación; decimales verificados en el navegador; reloj NIS2 de la demo; portapapeles; incidente resaltado en Trazabilidad; teclado y búsqueda; inglés; perfil; ajustes; fundido de tema coordinado; movimiento reducido |
 
 **Redacción.** `scripts/redaccion.py` aplica las reglas de `linkedin-humanizer` adaptadas al español: vocabulario puntuado por densidad (3 marcadores en un párrafo obligan a reescribirlo), revelaciones, paralelismo negativo, tríadas escalonadas, frases cortadas para dar efecto, clichés, falsa sinceridad, rayas y emojis. Recorre la interfaz en ES y EN, los documentos, las reglas, los datos de ejemplo y los mensajes de la CLI; `python3 scripts/redaccion.py --avisos` muestra el informe completo.
 
@@ -316,15 +360,17 @@ Las pruebas de navegador se omiten si Playwright no está instalado (`pip instal
 - **Sin red.** La consola declara `default-src 'none'` sin `unsafe-inline`; scripts, estilos, fuentes (Geist, OFL) e iconos (Lucide, ISC) están en el repositorio. Sin CDN, analítica ni cookies.
 - **Datos no confiables.** Todo lo que viene de un paquete se inserta con `textContent`; el único `innerHTML` es para los SVG de Lucide vendorizados, y una prueba lo comprueba. El paquete incrustado escapa `</` para no cerrar la etiqueta `<script>`.
 - **CSV.** Las celdas que empiezan por `=`, `+`, `-`, `@`, tabulador o retorno se neutralizan.
-- **Almacenamiento.** Solo preferencias (tema, acento, densidad, movimiento, idioma, perspectiva) y el perfil, en `localStorage` de este navegador.
+- **Almacenamiento.** Preferencias (tema, acento, densidad, movimiento, idioma, perspectiva) y perfil en `localStorage`; el último análisis, solo si se elige al importar, en IndexedDB. Todo en este navegador y borrable desde Ajustes.
+- **Ficheros hostiles.** El XML se analiza sin DTD ni entidades (se rechaza si las trae), los textos se recortan y cada fichero tiene un límite de 50 MB, 200 000 eventos y 20 000 hallazgos. Las fechas imposibles omiten ese registro, no el fichero.
 
 Más detalles y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.md).
 
 ## Limitaciones conocidas
 
-- La correlación trabaja sobre ficheros JSON ya exportados; no hay conectores en vivo con SIEM ni EDR.
+- La correlación trabaja sobre ficheros exportados; no hay conectores en vivo con SIEM ni EDR. Los `.evtx` binarios se convierten antes con `evtx_dump` o `wevtutil`.
+- La consola procesa en el hilo principal: con ficheros cercanos a 50 MB la página puede tardar unos segundos en responder.
 - El sello registra el instante de ingesta: dos ejecuciones sobre los mismos datos producen sellos distintos (las raíces de Merkle sí coinciden).
-- La cadena demuestra integridad, no autoría: aún no hay firma asimétrica del paquete (llega en la 0.3.0 con Ed25519). Mientras tanto, se recomienda firmar el JSON con `minisign` o `gpg --detach-sign`, o anclar el sello final en un registro externo.
+- La cadena demuestra integridad, no autoría: aún no hay firma asimétrica del paquete (llega en la 0.4.0 con Ed25519). Mientras tanto, se recomienda firmar el JSON con `minisign` o `gpg --detach-sign`, o anclar el sello final en un registro externo.
 - Los plazos NIS2 solo aplican a incidentes significativos de entidades esenciales o importantes; la consola los calcula desde la detección como orientación, no como dictamen jurídico.
 - Los mapeos a ENS, ISO/IEC 27001 y NIS2 de las reglas de ejemplo son orientativos y deben revisarse con el auditor.
 
@@ -334,7 +380,8 @@ Más detalles y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.m
 .
 ├── trama/                        # paquete Python (solo librería estándar)
 │   ├── branding.py               # nombre, lema, slug y autor: único lugar donde se definen
-│   ├── cli.py · __main__.py      # CLI: run, verify, rules
+│   ├── cli.py · __main__.py      # CLI: run, import, verify, rules, rules-js
+│   ├── importers/                # detección y traducción de los 13 formatos nativos
 │   ├── pipeline.py               # orquestación, resumen GRC y de reglas, verificación de paquetes
 │   ├── normalizer.py             # esquema UnifiedEvidenceEvent v1 + contexto ofensivo
 │   ├── correlator.py             # motor FSM multietapa y grafo de entidades
@@ -345,9 +392,10 @@ Más detalles y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.m
 ├── docs/                         # consola (también para GitHub Pages)
 │   ├── index.html
 │   ├── assets/                   # app.js, app.css, i18n.js, theme-boot.js, sha256.js, fuentes e iconos
+│   │                             # importers.js, engine.js y rules.js: importador y motor de la CLI en JavaScript
 │   ├── data/bundle.js            # paquete de ejemplo generado por la CLI
 │   └── img/                      # capturas
-├── tests/                        # unittest + tests/browser (Playwright y axe-core)
+├── tests/                        # unittest, tests/parity (Node), tests/fixtures/nativo y tests/browser (Playwright y axe-core)
 ├── scripts/                      # redaccion.py (auditor de estilo), screenshots.py, vendor_icons.py
 ├── ROADMAP.md
 └── .github/workflows/ci.yml
@@ -363,11 +411,12 @@ Detalle y criterios de aceptación en [ROADMAP.md](ROADMAP.md).
 | 0.2.1 ✅ | Redacción profesional de toda la interfaz y la documentación, marca propia y prueba de estilo |
 | 0.2.2 ✅ | Menú «Más» del móvil reorganizado según las pautas de iOS |
 | 0.2.3 ✅ | Hojas del móvil ancladas abajo y versión en los ficheros de la consola |
-| **0.2.4** ✅ | Ancho correcto de todas las perspectivas en móvil |
-| 0.3.0 | Firma Ed25519 del paquete (Python puro) y ejercicios guiados por perspectiva |
-| 0.4.0 | Importar hallazgos de CTEM-Nexus y ENS AD Auditor y exportar a Rosetta con el sobre `yrd-ecosistema` |
-| 0.5.0 | Entregables por rol: dossier de auditoría, informe de impacto, IOC en STIX 2.1 y borradores Sigma |
-| 0.6.0 | Más fuentes (Sysmon, auditd, nginx/Apache), reglas de AD y web, plazos DORA |
+| 0.2.4 ✅ | Ancho correcto de todas las perspectivas en móvil |
+| **0.3.0** ✅ | Datos reales: 13 formatos nativos en la consola y la CLI con paridad comprobada |
+| 0.4.0 | Firma Ed25519 del paquete (Python puro) y ejercicios guiados por perspectiva |
+| 0.5.0 | Importar hallazgos de CTEM-Nexus y ENS AD Auditor y exportar a Rosetta con el sobre `yrd-ecosistema` |
+| 0.6.0 | Entregables por rol: dossier de auditoría, informe de impacto, IOC en STIX 2.1 y borradores Sigma |
+| 0.7.0 | Reglas de AD y web (AS-REP, DCSync, ADCS, webshell), procesamiento en segundo plano y plazos DORA |
 
 ## Ecosistema
 
@@ -387,6 +436,7 @@ TRAMA forma parte de un conjunto de herramientas GRC y de seguridad de código a
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.3.0 | octubre de 2026 | Importación de datos reales en la consola y la CLI: Nmap, Nessus, Nuclei, Burp, BloodHound, LinPEAS, Windows (Security y Sysmon), auditd, nginx/Apache y Suricata, detectados por contenido; mismo paquete en los dos caminos, comprobado con Node; reglas por clase de hallazgo; análisis guardado en el navegador y paquete exportable. |
 | 0.2.4 | octubre de 2026 | Corrige el ancho de la perspectiva pentester en móvil (ensanchaba la página a 624 px); la prueba móvil recorre las cinco perspectivas. |
 | 0.2.3 | octubre de 2026 | Hojas del móvil ancladas abajo con asa de arrastre; versión en los ficheros de la consola para que el navegador no muestre una publicación anterior. |
 | 0.2.2 | octubre de 2026 | Menú «Más» del móvil reorganizado: vistas en rejilla, cuenta y ayuda en lista agrupada, idioma segmentado y acentos repartidos; filas por debajo de 360 px. |

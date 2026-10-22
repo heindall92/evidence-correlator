@@ -5,7 +5,7 @@
   "author": "Yoandy Ramírez Delgado",
   "severity": "CRITICAL",
   "confidence": 0.96,
-  "description": "Correlaciona una solicitud de ticket TGS con cifrado RC4 (0x17) sobre una cuenta con SPN expuesta y un inicio de sesión de red posterior (LogonType 3) por WinRM o sobre C$ desde la misma IP.",
+  "description": "Correlaciona una solicitud de ticket TGS con cifrado RC4 (0x17) sobre una cuenta con SPN expuesta (BloodHound, Nessus) y un inicio de sesión de red posterior (4624 de tipo 3 o 5140) de esa cuenta desde la misma IP.",
   "correlation": {
     "type": "temporal_sequence",
     "window": "45m",
@@ -21,7 +21,9 @@
           "process_or_artifact.EffectiveTicketEncryption": "0x17"
         },
         "posture_condition": {
-          "offensive_posture_context.known_exposures.finding_id": "AD-SPN-RC4-001"
+          "offensive_posture_context.known_exposures.finding_class": [
+            "kerberoastable_spn"
+          ]
         },
         "extract": {
           "attacker_ip": "source.ip",
@@ -32,23 +34,15 @@
         "stage_id": "stage_2_lateral_movement",
         "source_type": "windows_evtx",
         "match": {
-          "event.NativeEventID": [
-            4624,
-            5140
+          "event.action": [
+            "network_logon",
+            "network_share_access"
           ],
-          "event.LogonType": 3,
           "actor.user_name": "$stage_1_tgs_request.target_service_account"
         },
         "predicates": {
           "equals_ref": {
             "source.ip": "$stage_1_tgs_request.attacker_ip"
-          },
-          "field_in_list": {
-            "target.port": [
-              5985,
-              5986,
-              445
-            ]
           }
         }
       }

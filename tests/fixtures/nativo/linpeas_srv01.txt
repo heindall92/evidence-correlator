@@ -1,0 +1,9 @@
+[1;34m╔══════════╣ [1;32mSystem Information[0m
+Hostname: srv01
+╔══════════╣ Capabilities
+Files with capabilities (limited to 50):
+/usr/bin/ping cap_net_raw=ep
+/usr/bin/python3.11 cap_setuid=ep
+╔══════════╣ SUID - Check easy privesc
+-rwsr-xr-x 1 root root 59K Feb  6 2024 /usr/bin/passwd
+-rwsr-xr-x 1 root root 1.4M Mar  1 2024 /usr/bin/find

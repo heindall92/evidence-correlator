@@ -75,7 +75,15 @@ Una PR por versión (`version/X.Y.Z` → `main`), con las pruebas y axe en verde
 ### v0.2.4 · Ancho en móvil
 - [x] La perspectiva pentester ya no ensancha la página; prueba con las cinco perspectivas.
 
-### v0.3.0 · Firma del paquete y ejercicios guiados
+### v0.3.0 · Datos reales
+- [x] Importadores de 13 formatos detectados por contenido: Nmap, Nessus, Nuclei, Burp, BloodHound, LinPEAS, Windows y Sysmon (evtx_dump, Winlogbeat, XML), auditd, nginx/Apache, Suricata y JSON de TRAMA.
+- [x] Reglas por clase de hallazgo (`finding_class`) y equivalencias nombre-IP entre informes.
+- [x] CLI: ficheros posicionales, `--asset`, `import` y `rules-js`.
+- [x] Consola: «Importar datos» con detección, recuentos, activo, guía de exportación y fases; análisis guardado en IndexedDB; exportación del paquete; procedencia en Eventos.
+- [x] Paridad CLI ↔ consola comprobada con Node, campo a campo, incluidos casos límite.
+- [x] Pruebas e2e y axe del flujo en claro, oscuro, móvil e inglés.
+
+### v0.4.0 · Firma del paquete y ejercicios guiados
 - [ ] **Firma Ed25519** (RFC 8032) en Python puro, sin dependencias: `trama keygen`, `trama sign` y `trama verify --pubkey`. La cadena prueba la integridad; la firma prueba la autoría. Verificación también en la consola con WebCrypto cuando el navegador la ofrezca.
 - [ ] Verificación de firmas externas de `minisign` y `gpg --detach-sign` si las herramientas están instaladas.
 
@@ -87,18 +95,19 @@ Ejercicios guiados que se resuelven **con los datos del paquete abierto**, uno p
 - [ ] GRC · Notificación en plazo: identificar el primer plazo de NIS2 que vence y la evidencia que acompaña la notificación.
 - [ ] Custodia · Análisis de manipulación: alterar un bloque y explicar por qué falla la verificación.
 
-### v0.4.0 · Correlación con el ecosistema
+### v0.5.0 · Correlación con el ecosistema
 - [ ] Importar hallazgos ofensivos de **CTEM-Nexus** y **ENS AD Auditor** desde el sobre `yrd-ecosistema` (tipo `hallazgos`), en la CLI y en la consola.
 - [ ] Exportar a **Rosetta** las no conformidades como `controles` (estado y evidencia) y a **CTEM-Nexus** los incidentes como `indicadores`.
 - [ ] Añadir `trama` al esquema común (`heindall92/ctem-nexus/shared/schemas`), con fichero de ida y vuelta y prueba en los dos repositorios.
 
-### v0.5.0 · Entregables por rol
+### v0.6.0 · Entregables por rol
 - [ ] Dossier de auditoría imprimible (GRC): portada, no conformidades, evidencia sellada y verificación.
 - [ ] Informe de impacto (pentester) y línea de tiempo del ejercicio (red y purple).
 - [ ] Exportación de IOC (CSV y STIX 2.1 básico) y de reglas de correlación como borrador Sigma (blue y purple).
 
-### v0.6.0 · Más fuentes y reglas
-- [ ] Importadores de EVTX exportado a JSON, Sysmon, auditd y registros de nginx o Apache.
+### v0.7.0 · Más reglas y volumen
+- [ ] Procesamiento de la importación en un Worker cuando la consola se sirva por HTTP (en `file://` sigue en el hilo principal).
+- [ ] Más formatos a petición de usuarios: Zeek, CloudTrail, registros de Microsoft Entra ID y salidas de Impacket.
 - [ ] Reglas nuevas: AS-REP Roasting, DCSync, abuso de ADCS (ESC1), persistencia por cron y webshell.
 - [ ] Plazos de **DORA** para banca y seguros (además de NIS2).
 

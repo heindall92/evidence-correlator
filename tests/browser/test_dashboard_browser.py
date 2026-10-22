@@ -12,7 +12,7 @@ try:
 except ImportError:  # pragma: no cover
     sync_playwright = None
 
-from trama.pipeline import SAMPLE_EVENTS, SAMPLE_FINDINGS, load_json_list, run_pipeline
+from trama.pipeline import SAMPLE_EVENTS, SAMPLE_FINDINGS, load_json_list, run_pipeline, verify_bundle
 from trama.rules import load_rules
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -20,6 +20,7 @@ URL = (ROOT / "docs" / "index.html").as_uri()
 AXE = (pathlib.Path(__file__).parent / "axe.min.js").read_text(encoding="utf-8")
 VIEWS = ["inicio", "hilo", "incidentes", "cumplimiento", "custodia", "eventos", "entidades"]
 LENSES = ["pentest", "red", "blue", "purple", "grc"]
+NATIVE = sorted((ROOT / "tests" / "fixtures" / "nativo").iterdir())
 I18N = json.loads((ROOT / "docs" / "assets" / "i18n.js").read_text(encoding="utf-8")
                   .split("window.TRAMA_I18N = ", 1)[1].rstrip().rstrip(";"))
 
@@ -208,11 +209,16 @@ class ConsoleBrowserTest(unittest.TestCase):
     def test_invalid_file_and_ecosystem_envelope_are_rejected(self):
         page = self.open()
         self.go(page, "inicio")
-        for content, msg in (('{"hola": 1}', "No es un paquete"), ('{"format": "yrd-ecosistema", "version": 1}', "yrd-ecosistema")):
-            page.evaluate("""(c) => { const f = new File([c], 'x.json', {type: 'application/json'});
+        drop = """(c) => { const f = new File([c], 'x.json', {type: 'application/json'});
                 const dt = new DataTransfer(); dt.items.add(f); const i = document.getElementById('file-input');
-                i.files = dt.files; i.dispatchEvent(new Event('change')); }""", content)
-            page.locator("#toasts", has_text=msg).wait_for()
+                i.files = dt.files; i.dispatchEvent(new Event('change')); }"""
+        page.evaluate(drop, '{"format": "yrd-ecosistema", "version": 1}')
+        page.locator("#toasts", has_text="yrd-ecosistema").wait_for()
+        # Un JSON que no es un paquete pasa a Importar y queda marcado como no reconocido.
+        page.evaluate(drop, '{"hola": 1}')
+        page.locator("#imp-list .imp-row.bad", has_text=I18N["es"]["imp.errFormato"]).wait_for()
+        self.assertTrue(page.locator("#imp-go").is_disabled())
+        page.keyboard.press("Escape")
         self.assertIn("Paquete de ejemplo", page.inner_text("#pkg-btn"))
 
     # ------------------------------------------------------------ custodia
@@ -389,6 +395,115 @@ class ConsoleBrowserTest(unittest.TestCase):
         running = page.evaluate("document.getAnimations().filter(a => a.playState === 'running' && a.effect.getComputedTiming().duration > 1).length")
         self.assertEqual(running, 0)
 
+    # ------------------------------------------------------------------ importar datos
+    def import_files(self, page, paths):
+        page.locator("#pkg-btn").click()
+        page.wait_for_selector("#dlg-import[open]")
+        page.set_input_files("#imp-input", [str(x) for x in paths])
+        page.locator("#imp-list > li").nth(len(paths) - 1).wait_for()
+
+    def test_import_native_files_correlate_restore_and_export(self):
+        page = self.open(accept_downloads=True)
+        self.go(page, "inicio")
+        self.import_files(page, NATIVE)
+        self.assertEqual(page.evaluate("document.activeElement.id"), "imp-pick")
+        self.assertIn("16", page.inner_text(".imp-sum"))
+        self.assertEqual(page.locator("#imp-list .imp-row.bad").count(), 0)
+        self.assertEqual(self.axe(page), [])
+        page.locator("#imp-go").click()
+        page.wait_for_selector("#dlg-import", state="hidden")
+        self.assertIn(I18N["es"]["pkg.importado"], page.inner_text("#pkg-btn"))
+        self.go(page, "eventos")
+        self.assertEqual(page.locator("#ev-sources > li").count(), len(NATIVE))
+        self.assertIn("16 de 16", page.inner_text("#ev-count"))
+        # Se restaura al volver a abrir la consola (IndexedDB).
+        page.reload()
+        page.locator("#ev-sources > li").first.wait_for()
+        self.assertIn(I18N["es"]["pkg.importado"], page.inner_text("#pkg-btn"))
+        # El paquete exportado lo verifica la CLI.
+        self.go(page, "custodia")
+        with page.expect_download() as dl:
+            page.locator("#btn-export").click()
+        bundle = json.loads(pathlib.Path(dl.value.path()).read_text(encoding="utf-8"))
+        self.assertEqual(bundle["dataset"], "real")
+        self.assertEqual(len(bundle["imports"]), len(NATIVE))
+        self.assertTrue(verify_bundle(bundle)["valid"])
+        self.assertEqual(page.errors, [])
+        self.assertTrue(all(u.startswith(("file:", "data:")) for u in page.requests), page.requests)
+
+    def test_import_reports_bad_files_and_takes_the_asset(self):
+        page = self.open()
+        self.go(page, "inicio")
+        tmp = pathlib.Path(self.tmpdir())
+        (tmp / "notas.txt").write_text("texto sin formato\n", encoding="utf-8")
+        log = tmp / "front.log"
+        log.write_text('10.0.0.5 - - [21/Oct/2026:08:00:00 +0200] "GET / HTTP/1.1" 200 1 "-" "-"\n', encoding="utf-8")
+        self.import_files(page, [tmp / "notas.txt", log])
+        bad = page.locator("#imp-list .imp-row.bad")
+        self.assertEqual(bad.count(), 1)
+        self.assertIn(I18N["es"]["imp.errFormato"], bad.inner_text())
+        warn = page.locator("#imp-list .imp-row.warn")
+        self.assertIn(I18N["es"]["imp.sinActivo"], warn.inner_text())
+        warn.locator("input").fill("web01.example.local")
+        warn.locator("input").press("Tab")
+        page.locator("#imp-list .imp-row.warn").wait_for(state="detached")
+        # Quitar el fichero no válido.
+        page.locator("#imp-list .imp-row.bad .icon-btn").click()
+        self.assertEqual(page.locator("#imp-list > li").count(), 1)
+        self.assertEqual(self.axe(page), [])
+        page.locator("#imp-go").click()
+        page.wait_for_selector("#dlg-import", state="hidden")
+        self.go(page, "eventos")
+        self.assertIn("web01.example.local", page.inner_text("#ev-table"))
+        self.assertEqual(page.errors, [])
+
+    def test_bundle_opens_directly_and_forget_clears_storage(self):
+        page = self.open()
+        self.go(page, "inicio")
+        path = pathlib.Path(self.tmpdir()) / "caso.json"
+        bundle = run_pipeline(load_json_list(SAMPLE_EVENTS, "e"), load_json_list(SAMPLE_FINDINGS, "f"), load_rules())
+        path.write_text(json.dumps(bundle), encoding="utf-8")
+        page.set_input_files("#file-input", str(path))
+        page.locator("#pkg-btn", has_text="caso.json").wait_for()
+        self.assertFalse(page.locator("#dlg-import").evaluate("d => d.open"))
+        page.reload()
+        page.locator("#pkg-btn", has_text="caso.json").wait_for()
+        page.locator("#settings-btn").click()
+        page.locator("#set-forget").click()
+        page.wait_for_timeout(150)
+        page.reload()
+        page.wait_for_selector("#view-inicio")
+        page.wait_for_timeout(300)
+        self.assertIn("Paquete de ejemplo", page.inner_text("#pkg-btn"))
+
+    def test_import_without_remembering_and_in_english_on_mobile(self):
+        page = self.open(lang="en", viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        self.go(page, "inicio")
+        page.keyboard.press("i")
+        page.wait_for_selector("#dlg-import[open]")
+        page.set_input_files("#imp-input", [str(x) for x in NATIVE[:3]])
+        page.locator("#imp-list > li").nth(2).wait_for()
+        text = page.inner_text("#dlg-import")
+        self.assertIn(I18N["en"]["imp.correlacionar"], text)
+        self.assertNotRegex(text, r"[áéíóúñ¿¡]")
+        box = page.locator("#dlg-import .dlg").bounding_box()
+        self.assertLessEqual(box["width"], 390)
+        self.assertEqual(page.evaluate("document.documentElement.scrollWidth"), 390)
+        self.assertEqual(self.axe(page), [])
+        page.locator("#imp-remember").uncheck()
+        page.locator("#imp-go").click()
+        page.wait_for_selector("#dlg-import", state="hidden")
+        page.reload()
+        page.wait_for_selector("#view-inicio")
+        page.wait_for_timeout(300)
+        self.assertIn(I18N["en"]["pkg.demo"], page.inner_text("#pkg-btn"))
+        self.assertEqual(page.errors, [])
+
+    def tmpdir(self):
+        import shutil, tempfile
+        d = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, d, True)
+        return d
 
 if __name__ == "__main__":
     unittest.main()

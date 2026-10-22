@@ -1,0 +1,1 @@
+{"@timestamp": "2026-10-20T09:10:00.000Z", "host": {"name": "srv02"}, "winlog": {"event_id": "4624", "record_id": 881, "computer_name": "SRV02.lab.local", "channel": "Security", "provider_name": "Microsoft-Windows-Security-Auditing", "event_data": {"TargetUserName": "b.ruiz", "TargetDomainName": "LAB", "LogonType": "3", "IpAddress": "10.0.0.30", "IpPort": "0"}}}

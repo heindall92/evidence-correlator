@@ -15,7 +15,8 @@ file-spreadsheet shield-check circle-check circle-x flask-conical fingerprint ha
 crosshair swords shield-half blend clipboard-check timer hourglass server user globe terminal key-round radar
 bug list-checks external-link code mail info keyboard sliders-horizontal unlink link-2 play arrow-right
 activity gauge eye eye-off file-json sparkles route layers boxes radio-tower log-out briefcase-business
-building-2 lock calendar-clock bell-ring file-text git-commit-horizontal""".split()
+building-2 lock calendar-clock bell-ring file-text git-commit-horizontal file-up trash-2 loader-circle
+file-check file-x database history""".split()
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "docs", "assets", "vendor", "lucide-icons.js")

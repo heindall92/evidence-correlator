@@ -12,6 +12,7 @@ output/
 node_modules/
 test-results/
 *.log
+!tests/fixtures/**/*.log
 .DS_Store
 Thumbs.db
 .env

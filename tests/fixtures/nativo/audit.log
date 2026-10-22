@@ -1,0 +1,12 @@
+node=srv01 type=SYSCALL msg=audit(1792483200.100:501): arch=c000003e syscall=59 success=yes exit=0 ppid=200 pid=300 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 tty=pts0 ses=3 comm="ls" exe="/usr/bin/ls" key="exec"ARCH=x86_64 SYSCALL=execve AUID="a.lopez" UID="a.lopez" EUID="a.lopez"
+node=srv01 type=EXECVE msg=audit(1792483200.100:501): argc=3 a0="ls" a1="-la" a2="/tmp"
+node=srv01 type=PROCTITLE msg=audit(1792483200.100:501): proctitle=6C73
+node=srv01 type=SYSCALL msg=audit(1792483260.200:502): arch=c000003e syscall=59 success=yes exit=0 ppid=200 pid=301 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 tty=pts0 ses=3 comm="echo" exe="/usr/bin/echo" key="exec"ARCH=x86_64 SYSCALL=execve AUID="a.lopez" UID="a.lopez" EUID="a.lopez"
+node=srv01 type=EXECVE msg=audit(1792483260.200:502): argc=2 a0="echo" a1=686F6C61206D756E646F
+node=srv01 type=PROCTITLE msg=audit(1792483260.200:502): proctitle=6C73
+node=srv01 type=SYSCALL msg=audit(1792483320.300:503): arch=c000003e syscall=59 success=yes exit=0 ppid=200 pid=310 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 tty=pts0 ses=3 comm="sudo" exe="/usr/bin/sudo" key="exec"ARCH=x86_64 SYSCALL=execve AUID="a.lopez" UID="a.lopez" EUID="a.lopez"
+node=srv01 type=EXECVE msg=audit(1792483320.300:503): argc=3 a0="sudo" a1="apt" a2="update"
+node=srv01 type=PROCTITLE msg=audit(1792483320.300:503): proctitle=6C73
+node=srv01 type=SYSCALL msg=audit(1792483320.900:504): arch=c000003e syscall=59 success=yes exit=0 ppid=310 pid=311 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 tty=pts0 ses=3 comm="apt" exe="/usr/bin/apt" key="exec"ARCH=x86_64 SYSCALL=execve AUID="a.lopez" UID="a.lopez" EUID="root"
+node=srv01 type=EXECVE msg=audit(1792483320.900:504): argc=2 a0="apt" a1="update"
+node=srv01 type=PROCTITLE msg=audit(1792483320.900:504): proctitle=6C73

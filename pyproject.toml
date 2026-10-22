@@ -33,7 +33,7 @@ browser = ["playwright>=1.40"]
 trama = "trama.cli:main"
 
 [tool.setuptools]
-packages = ["trama"]
+packages = ["trama", "trama.importers"]
 
 [tool.setuptools.dynamic]
 version = { attr = "trama.__version__" }

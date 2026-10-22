@@ -73,13 +73,44 @@ def run_pipeline(raw_events, offensive_findings, rules, clock=None, embed_raw=Tr
     return bundle
 
 
-def run_files(events_path=None, findings_path=None, rules_path=None, **kw):
-    raw = load_json_list(events_path or SAMPLE_EVENTS, "eventos")
-    findings = load_json_list(findings_path or SAMPLE_FINDINGS, "hallazgos")
+def read_text(path):
+    """Lee un fichero de texto en UTF-8 (con o sin BOM); los bytes no válidos se sustituyen."""
+    with open(path, "rb") as fh:
+        data = fh.read()
+    if data[:2] in (b"\xff\xfe", b"\xfe\xff"):  # exportaciones de Windows en UTF-16
+        return data.decode("utf-16")
+    return data.decode("utf-8-sig", "replace")
+
+
+def run_files(events_path=None, findings_path=None, rules_path=None, files=None, assets=None, **kw):
+    """Ejecuta el flujo completo sobre ficheros.
+
+    ``files`` admite cualquier mezcla de formatos nativos (se detectan por el
+    contenido) y de JSON de TRAMA; ``events_path`` y ``findings_path`` se
+    mantienen por compatibilidad. Sin ningún fichero se usan los datos de ejemplo.
+    """
+    from .importers import import_files
+    paths = [p for p in ([events_path] if isinstance(events_path, str) else list(events_path or []))
+             + ([findings_path] if isinstance(findings_path, str) else list(findings_path or []))
+             + list(files or []) if p]
+    if not paths:
+        raw = load_json_list(SAMPLE_EVENTS, "eventos")
+        findings = load_json_list(SAMPLE_FINDINGS, "hallazgos")
+        bundle = run_pipeline(raw, findings, load_rules(rules_path), **kw)
+        # La consola usa la marca para fijar un reloj de referencia en los plazos
+        # (NIS2) en vez de mostrar como vencidos los de unos datos de ejemplo.
+        bundle["dataset"] = "demo"
+        return bundle
+    named = [(os.path.basename(p), read_text(p)) for p in paths]
+    assets = {os.path.basename(k): v for k, v in (assets or {}).items()}
+    raw, findings, report = import_files(named, assets)
+    failed = [r for r in report if r.get("error")]
+    if len(failed) == len(report):
+        raise ValueError("ningún fichero se pudo importar: " + "; ".join(
+            "%s (%s)" % (r["file"], r["error"]) for r in failed))
     bundle = run_pipeline(raw, findings, load_rules(rules_path), **kw)
-    # La consola usa la marca para fijar un reloj de referencia en los plazos
-    # (NIS2) en vez de mostrar como vencidos los de unos datos de ejemplo.
-    bundle["dataset"] = "demo" if events_path is None and findings_path is None else "real"
+    bundle["dataset"] = "real"
+    bundle["imports"] = report
     return bundle
 
 

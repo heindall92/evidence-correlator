@@ -5,7 +5,7 @@
   "author": "Yoandy Ramírez Delgado",
   "severity": "HIGH",
   "confidence": 0.92,
-  "description": "Correlaciona cargas de inyección SQL (SQLMap, UNION u OR 1=1) contra endpoints de autenticación con la ejecución posterior de procesos por el usuario del servidor web.",
+  "description": "Correlaciona cargas de inyección SQL con respuesta 200 contra un activo con la debilidad confirmada (Nuclei, Burp, Nessus) y la ejecución posterior de comandos por el usuario del servidor web en el mismo host.",
   "correlation": {
     "type": "temporal_sequence",
     "window": "15m",
@@ -17,16 +17,28 @@
         "stage_id": "stage_1_sqli_payload",
         "source_type": "web_access_log",
         "match": {
-          "event.category": "web_request",
-          "event.http_status": 200
+          "event.category": "web_request"
+        },
+        "posture_condition": {
+          "offensive_posture_context.known_exposures.finding_class": [
+            "sqli"
+          ]
         },
         "predicates": {
           "field_contains_any": {
             "process_or_artifact.command_line": [
-              "UNION SELECT",
-              "' OR 1=1--",
+              "union select",
+              "' or 1=1",
+              "or 1=1--",
               "sqlmap",
-              "SLEEP(5)"
+              "sleep(",
+              "benchmark(",
+              "information_schema"
+            ]
+          },
+          "field_in_list": {
+            "event.http_status": [
+              200
             ]
           }
         },
@@ -40,16 +52,29 @@
         "source_type": "linux_auditd",
         "match": {
           "event.category": "process_creation",
-          "actor.user_name": "www-data",
           "target.hostname": "$stage_1_sqli_payload.web_host"
         },
         "predicates": {
+          "field_in_list": {
+            "actor.user_name": [
+              "www-data",
+              "apache",
+              "nginx",
+              "httpd",
+              "tomcat",
+              "wwwrun"
+            ]
+          },
           "field_contains_any": {
             "process_or_artifact.command_line": [
+              " -c ",
               "whoami",
-              "id",
-              "/bin/bash -c",
-              "nc -e"
+              "uname",
+              "/bin/sh",
+              "/bin/bash",
+              "nc ",
+              "curl ",
+              "wget "
             ]
           }
         }

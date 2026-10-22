@@ -33,12 +33,13 @@ def repo_text_files():
     for d, dirs, files in os.walk(ROOT):
         dirs[:] = [x for x in dirs if x not in skip]
         for f in files:
-            if f.endswith((".py", ".md", ".toml", ".yml", ".sh", ".html", ".css", ".json")) or f in ("app.js", "theme-boot.js", "sha256.js", "i18n.js"):
+            if f.endswith((".py", ".md", ".toml", ".yml", ".sh", ".html", ".css", ".json")) or f in ("app.js", "theme-boot.js", "sha256.js", "i18n.js", "importers.js", "engine.js"):
                 yield os.path.join(d, f)
 
 
 class DashboardStaticTest(unittest.TestCase):
-    FILES = ("index.html", "assets/app.css", "assets/app.js", "assets/i18n.js", "assets/theme-boot.js")
+    FILES = ("index.html", "assets/app.css", "assets/app.js", "assets/i18n.js", "assets/theme-boot.js",
+             "assets/importers.js", "assets/engine.js", "assets/sha256.js")
 
     def setUp(self):
         self.html = read("docs", "index.html")

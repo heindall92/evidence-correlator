@@ -5,7 +5,8 @@
     "hostname": "DC01.CORP.LOCAL",
     "target_spn": "svc_sql",
     "severity": "HIGH",
-    "description": "Cuenta de servicio «svc_sql» con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado RC4-HMAC (0x17) habilitado en Kerberos."
+    "description": "Cuenta de servicio «svc_sql» con SPN activo (MSSQLSvc/db01.corp.local:1433) y cifrado RC4-HMAC (0x17) habilitado en Kerberos.",
+    "finding_class": "kerberoastable_spn"
   },
   {
     "finding_id": "LNX-CAP-SETUID-002",
@@ -13,13 +14,18 @@
     "hostname": "WEB-PROD-01",
     "binary_path": "/usr/bin/python3",
     "severity": "CRITICAL",
-    "description": "El binario /usr/bin/python3 tiene la capability «cap_setuid+ep», que permite cambiar el UID a 0 (root)."
+    "description": "El binario /usr/bin/python3 tiene la capability «cap_setuid+ep», que permite cambiar el UID a 0 (root).",
+    "finding_class": "dangerous_capability",
+    "capabilities": [
+      "cap_setuid"
+    ]
   },
   {
     "finding_id": "WEB-SQLI-LOGIN-003",
     "source_tool": "Burp Suite Professional / SQLMap",
     "hostname": "WEB-PROD-01",
     "severity": "CRITICAL",
-    "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION."
+    "description": "El parámetro «username» de /api/v1/login es vulnerable a inyección SQL booleana y basada en UNION.",
+    "finding_class": "sqli"
   }
 ]

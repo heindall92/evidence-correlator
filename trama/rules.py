@@ -83,3 +83,11 @@ def load_rules(path=None):
     if not rules:
         raise RuleError("no se encontraron reglas en %s" % path)
     return rules
+
+
+def rules_js(rules=None):
+    """Las reglas como script para la consola (``docs/assets/rules.js``): la importación
+    en el navegador correlaciona con exactamente las mismas reglas que la CLI."""
+    payload = json.dumps(rules if rules is not None else load_rules(), ensure_ascii=False, indent=1)
+    return ("/* Generado con: python -m trama rules-js. No editar a mano; las reglas viven en trama/rules. */\n"
+            "window.TRAMA_RULES = " + payload.replace("</", "<\\/") + ";\n")

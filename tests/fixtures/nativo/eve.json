@@ -1,0 +1,4 @@
+{"timestamp": "2026-10-20T08:20:00.123456+0000", "event_type": "http", "src_ip": "10.0.0.21", "src_port": 51000, "dest_ip": "10.0.0.10", "dest_port": 80, "http": {"hostname": "srv01.lab.local", "url": "/index.html", "http_method": "GET", "status": 200, "http_user_agent": "Mozilla/5.0"}}
+{"timestamp": "2026-10-20T08:21:00.000000+0000", "event_type": "alert", "src_ip": "10.0.0.21", "dest_ip": "93.184.216.34", "dest_port": 443, "alert": {"signature": "ET POLICY curl User-Agent Outbound", "signature_id": 2013028, "severity": 3}}
+{"timestamp": "2026-10-20T08:22:00.000000+0000", "event_type": "stats", "stats": {}}
+{roto

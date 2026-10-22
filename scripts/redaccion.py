@@ -205,7 +205,9 @@ def sources():
         yield "offensive_findings %s" % f["finding_id"], f["description"], False, "es"
     # Mensajes y ayuda de la CLI y del motor: toda cadena con texto en español.
     import ast
-    for fn in sorted(os.listdir(os.path.join(ROOT, "trama"))):
+    pyfiles = sorted(os.path.relpath(os.path.join(d, f), os.path.join(ROOT, "trama"))
+                     for d, _, fs in os.walk(os.path.join(ROOT, "trama")) for f in fs if f.endswith(".py"))
+    for fn in pyfiles:
         if fn.endswith(".py"):
             tree = ast.parse(read("trama", fn))
             for node in ast.walk(tree):

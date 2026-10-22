@@ -1,0 +1,2 @@
+{"template-id": "http-missing-security-headers", "info": {"name": "HTTP Missing Security Headers", "severity": "info", "tags": ["misconfig"]}, "host": "https://srv01.lab.local", "matched-at": "https://srv01.lab.local/", "ip": "10.0.0.10"}
+{"template-id": "weak-cipher-suites", "info": {"name": "Weak Cipher Suites", "severity": "low", "tags": ["ssl", "tls"]}, "host": "srv01.lab.local:443", "matched-at": "srv01.lab.local:443", "ip": "10.0.0.10"}

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<NessusClientData_v2><Policy><policyName>Interna</policyName></Policy><Report name="lab">
+<ReportHost name="10.0.0.10"><HostProperties><tag name="host-ip">10.0.0.10</tag><tag name="host-fqdn">srv01.lab.local</tag></HostProperties>
+<ReportItem port="443" svc_name="www" protocol="tcp" severity="2" pluginID="51192" pluginName="SSL Certificate Cannot Be Trusted"><synopsis>El certificado no es de confianza.</synopsis></ReportItem>
+<ReportItem port="0" svc_name="general" protocol="tcp" severity="0" pluginID="19506" pluginName="Nessus Scan Information"><synopsis>Informativo.</synopsis></ReportItem>
+</ReportHost></Report></NessusClientData_v2>
