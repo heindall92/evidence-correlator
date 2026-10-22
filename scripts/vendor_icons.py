@@ -9,11 +9,13 @@ import os
 import re
 import sys
 
-ICONS = """shield-check shield-alert search sun moon monitor keyboard circle-help settings lock
-wifi wifi-off layout-dashboard siren scale link list network folder-open download file-json
-check x triangle-alert clock target fingerprint hash server user globe terminal copy
-chevron-right filter flask-conical rotate-ccw file-spreadsheet key-round info radar
-git-commit-horizontal circle-check circle-x eye-off""".split()
+ICONS = """house waypoints siren scale link list network panel-left search sun moon circle-question-mark
+settings user-round ellipsis palette folder-open wifi-off x check chevron-right chevron-down copy download
+file-spreadsheet shield-check circle-check circle-x flask-conical fingerprint hash clock target triangle-alert
+crosshair swords shield-half blend clipboard-check timer hourglass server user globe terminal key-round radar
+bug list-checks external-link code mail info keyboard sliders-horizontal unlink link-2 play arrow-right
+activity gauge eye eye-off file-json sparkles route layers boxes radio-tower log-out briefcase-business
+building-2 lock calendar-clock bell-ring file-text git-commit-horizontal""".split()
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "docs", "assets", "vendor", "lucide-icons.js")

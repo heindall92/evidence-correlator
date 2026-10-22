@@ -1,16 +1,16 @@
 /* Generado por la CLI. No editar a mano. */
 window.EVIDENCE_BUNDLE = {
  "generator": {
-  "name": "PROYECTO",
-  "version": "0.1.0",
+  "name": "TRAMA",
+  "version": "0.2.0",
   "schema_version": "1.0.0"
  },
- "generated_at_utc": "2026-10-21T10:53:58Z",
+ "generated_at_utc": "2026-10-22T10:55:45Z",
  "forensic_custody_verification": {
   "valid": true,
   "total_sealed_events": 6,
   "genesis_hash": "49a9e3bd86bde19d6e5da00ffcd2f05e9dcb4f9aa14d551738cb8d6f7e9abeef",
-  "head_seal_hash": "e621e7ff03cb01b7359695262b0c32ce4438890881b706db7808e8f183068737",
+  "head_seal_hash": "5076b1d50d6333992c6997c45d65fa039a1edb1e90d47e09b702017c4e2ea1f0",
   "merkle_root_sha256": "1d67694014cc76fb3a882519af58a36577f283fbd66b7f099157e5f92bf9e377",
   "broken_at_index": null,
   "reason": null
@@ -23,8 +23,8 @@ window.EVIDENCE_BUNDLE = {
    "record_number": 9821,
    "raw_log_sha256": "dae557080bea81fe7556dccddf643cb0873c0bf6697674c6bff2bbf0490af2b4",
    "previous_node_hash": "49a9e3bd86bde19d6e5da00ffcd2f05e9dcb4f9aa14d551738cb8d6f7e9abeef",
-   "chain_seal_sha256": "09fd95414c42d80ac3d0055f256d1226927702d6d407b6ca1fbac237a5bd1a38",
-   "ingested_at_utc": "2026-10-21T10:53:58.632768Z"
+   "chain_seal_sha256": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
+   "ingested_at_utc": "2026-10-22T10:55:45.107042Z"
   },
   {
    "index": 1,
@@ -32,9 +32,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "/var/log/audit/audit.log",
    "record_number": 44102,
    "raw_log_sha256": "8116d84c889a3170500ddfda1eb94a332ff2d55dc36fb8845ff98610fe6fadb9",
-   "previous_node_hash": "09fd95414c42d80ac3d0055f256d1226927702d6d407b6ca1fbac237a5bd1a38",
-   "chain_seal_sha256": "a4d369f37d5dd9d9db67747be947149ad38650d622e67753a680f061365b7c96",
-   "ingested_at_utc": "2026-10-21T10:53:58.632849Z"
+   "previous_node_hash": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
+   "chain_seal_sha256": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
+   "ingested_at_utc": "2026-10-22T10:55:45.107214Z"
   },
   {
    "index": 2,
@@ -42,9 +42,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "/var/log/audit/audit.log",
    "record_number": 44189,
    "raw_log_sha256": "874b4c400c0247aad98d7722822099a05989a0eff11e4f926adc9ac2bf901726",
-   "previous_node_hash": "a4d369f37d5dd9d9db67747be947149ad38650d622e67753a680f061365b7c96",
-   "chain_seal_sha256": "c67b1b48383e3efa3d306539737a5c94ba831c77444515912cb11a9caca86966",
-   "ingested_at_utc": "2026-10-21T10:53:58.632888Z"
+   "previous_node_hash": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
+   "chain_seal_sha256": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
+   "ingested_at_utc": "2026-10-22T10:55:45.107303Z"
   },
   {
    "index": 3,
@@ -52,9 +52,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "/var/log/audit/audit.log",
    "record_number": 44210,
    "raw_log_sha256": "0651763d90ad160534311d8054aac92f98c3945e3c1f214ca3e48583e56d6e96",
-   "previous_node_hash": "c67b1b48383e3efa3d306539737a5c94ba831c77444515912cb11a9caca86966",
-   "chain_seal_sha256": "0c98fdf186a01ebc1ac741fa14668046f77b36258afc3fca2f752b3031b44d2b",
-   "ingested_at_utc": "2026-10-21T10:53:58.632918Z"
+   "previous_node_hash": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
+   "chain_seal_sha256": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
+   "ingested_at_utc": "2026-10-22T10:55:45.107401Z"
   },
   {
    "index": 4,
@@ -62,9 +62,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "Security_DC01_20261021.evtx",
    "record_number": 148920,
    "raw_log_sha256": "f1e0aa944a7dbd19a66888e370dc68fc6b5f3654c5bbebb9b48d699db60a00f1",
-   "previous_node_hash": "0c98fdf186a01ebc1ac741fa14668046f77b36258afc3fca2f752b3031b44d2b",
-   "chain_seal_sha256": "c311604a6956db126b611be78e4d488d565a045c943a42f27556543a50143f5c",
-   "ingested_at_utc": "2026-10-21T10:53:58.632947Z"
+   "previous_node_hash": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
+   "chain_seal_sha256": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
+   "ingested_at_utc": "2026-10-22T10:55:45.107500Z"
   },
   {
    "index": 5,
@@ -72,9 +72,9 @@ window.EVIDENCE_BUNDLE = {
    "source_file": "Security_DC01_20261021.evtx",
    "record_number": 149310,
    "raw_log_sha256": "f8b7ba4423b16a10f2d9abe89525ef58a4f8dd6fb470f68d38bb0b0fcd697eb6",
-   "previous_node_hash": "c311604a6956db126b611be78e4d488d565a045c943a42f27556543a50143f5c",
-   "chain_seal_sha256": "e621e7ff03cb01b7359695262b0c32ce4438890881b706db7808e8f183068737",
-   "ingested_at_utc": "2026-10-21T10:53:58.632977Z"
+   "previous_node_hash": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
+   "chain_seal_sha256": "5076b1d50d6333992c6997c45d65fa039a1edb1e90d47e09b702017c4e2ea1f0",
+   "ingested_at_utc": "2026-10-22T10:55:45.107614Z"
   }
  ],
  "offensive_findings": [
@@ -108,21 +108,62 @@ window.EVIDENCE_BUNDLE = {
    "title": "Explotación exitosa de Kerberoasting seguida de Movimiento Lateral WinRM/SMB",
    "severity": "CRITICAL",
    "confidence": 0.96,
-   "description": "Correlaciona una solicitud de ticket TGS con cifrado débil RC4 (0x17) sobre una cuenta con SPN vulnerable, seguida de autenticación de red (LogonType 3) sobre C$ o WinRM."
+   "description": "Correlaciona una solicitud de ticket TGS con cifrado débil RC4 (0x17) sobre una cuenta con SPN vulnerable, seguida de autenticación de red (LogonType 3) sobre C$ o WinRM.",
+   "mitre_attack": [
+    {
+     "tactic": "Credential Access",
+     "technique_id": "T1558.003",
+     "technique_name": "Steal or Forge Kerberos Tickets: Kerberoasting"
+    },
+    {
+     "tactic": "Lateral Movement",
+     "technique_id": "T1021.006",
+     "technique_name": "Remote Services: Windows Remote Management"
+    }
+   ],
+   "posture_findings": [
+    "AD-SPN-RC4-001"
+   ]
   },
   {
    "id": "CORR-LNX-002",
    "title": "Escalada de Privilegios en Linux mediante abuso de Binario SUID o Capabilities",
    "severity": "CRITICAL",
    "confidence": 0.94,
-   "description": "Detecta cuando un usuario sin privilegios enumera permisos SUID o capabilities (o ejecuta LinPEAS) y posteriormente ejecuta un binario GTFOBins obteniendo euid=0 (root)."
+   "description": "Detecta cuando un usuario sin privilegios enumera permisos SUID o capabilities (o ejecuta LinPEAS) y posteriormente ejecuta un binario GTFOBins obteniendo euid=0 (root).",
+   "mitre_attack": [
+    {
+     "tactic": "Discovery",
+     "technique_id": "T1083",
+     "technique_name": "File and Directory Discovery"
+    },
+    {
+     "tactic": "Privilege Escalation",
+     "technique_id": "T1548.001",
+     "technique_name": "Abuse Elevation Control Mechanism: Setuid and Setgid"
+    }
+   ],
+   "posture_findings": []
   },
   {
    "id": "CORR-WEB-003",
    "title": "Explotación de SQL Injection en Login seguida de Ejecución de Comandos Web",
    "severity": "HIGH",
    "confidence": 0.92,
-   "description": "Correlaciona vectores de inyección SQL (SQLMap / payloads UNION o OR 1=1) en endpoints de autenticación seguidos de extracción masiva o ejecución de procesos por el usuario del servidor web."
+   "description": "Correlaciona vectores de inyección SQL (SQLMap / payloads UNION o OR 1=1) en endpoints de autenticación seguidos de extracción masiva o ejecución de procesos por el usuario del servidor web.",
+   "mitre_attack": [
+    {
+     "tactic": "Initial Access",
+     "technique_id": "T1190",
+     "technique_name": "Exploit Public-Facing Application (SQL Injection)"
+    },
+    {
+     "tactic": "Execution",
+     "technique_id": "T1059.004",
+     "technique_name": "Command and Scripting Interpreter: Unix Shell"
+    }
+   ],
+   "posture_findings": []
   }
  ],
  "normalized_events": [
@@ -137,8 +178,8 @@ window.EVIDENCE_BUNDLE = {
     "record_number": 9821,
     "raw_log_sha256": "dae557080bea81fe7556dccddf643cb0873c0bf6697674c6bff2bbf0490af2b4",
     "previous_node_hash": "49a9e3bd86bde19d6e5da00ffcd2f05e9dcb4f9aa14d551738cb8d6f7e9abeef",
-    "chain_seal_sha256": "09fd95414c42d80ac3d0055f256d1226927702d6d407b6ca1fbac237a5bd1a38",
-    "ingested_at_utc": "2026-10-21T10:53:58.632768Z"
+    "chain_seal_sha256": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
+    "ingested_at_utc": "2026-10-22T10:55:45.107042Z"
    },
    "event": {
     "category": "web_request",
@@ -207,9 +248,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "/var/log/audit/audit.log",
     "record_number": 44102,
     "raw_log_sha256": "8116d84c889a3170500ddfda1eb94a332ff2d55dc36fb8845ff98610fe6fadb9",
-    "previous_node_hash": "09fd95414c42d80ac3d0055f256d1226927702d6d407b6ca1fbac237a5bd1a38",
-    "chain_seal_sha256": "a4d369f37d5dd9d9db67747be947149ad38650d622e67753a680f061365b7c96",
-    "ingested_at_utc": "2026-10-21T10:53:58.632849Z"
+    "previous_node_hash": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
+    "chain_seal_sha256": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
+    "ingested_at_utc": "2026-10-22T10:55:45.107214Z"
    },
    "event": {
     "category": "process_creation",
@@ -278,9 +319,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "/var/log/audit/audit.log",
     "record_number": 44189,
     "raw_log_sha256": "874b4c400c0247aad98d7722822099a05989a0eff11e4f926adc9ac2bf901726",
-    "previous_node_hash": "a4d369f37d5dd9d9db67747be947149ad38650d622e67753a680f061365b7c96",
-    "chain_seal_sha256": "c67b1b48383e3efa3d306539737a5c94ba831c77444515912cb11a9caca86966",
-    "ingested_at_utc": "2026-10-21T10:53:58.632888Z"
+    "previous_node_hash": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
+    "chain_seal_sha256": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
+    "ingested_at_utc": "2026-10-22T10:55:45.107303Z"
    },
    "event": {
     "category": "process_creation",
@@ -349,9 +390,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "/var/log/audit/audit.log",
     "record_number": 44210,
     "raw_log_sha256": "0651763d90ad160534311d8054aac92f98c3945e3c1f214ca3e48583e56d6e96",
-    "previous_node_hash": "c67b1b48383e3efa3d306539737a5c94ba831c77444515912cb11a9caca86966",
-    "chain_seal_sha256": "0c98fdf186a01ebc1ac741fa14668046f77b36258afc3fca2f752b3031b44d2b",
-    "ingested_at_utc": "2026-10-21T10:53:58.632918Z"
+    "previous_node_hash": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
+    "chain_seal_sha256": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
+    "ingested_at_utc": "2026-10-22T10:55:45.107401Z"
    },
    "event": {
     "category": "privilege_escalation",
@@ -432,9 +473,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "Security_DC01_20261021.evtx",
     "record_number": 148920,
     "raw_log_sha256": "f1e0aa944a7dbd19a66888e370dc68fc6b5f3654c5bbebb9b48d699db60a00f1",
-    "previous_node_hash": "0c98fdf186a01ebc1ac741fa14668046f77b36258afc3fca2f752b3031b44d2b",
-    "chain_seal_sha256": "c311604a6956db126b611be78e4d488d565a045c943a42f27556543a50143f5c",
-    "ingested_at_utc": "2026-10-21T10:53:58.632947Z"
+    "previous_node_hash": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
+    "chain_seal_sha256": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
+    "ingested_at_utc": "2026-10-22T10:55:45.107500Z"
    },
    "event": {
     "category": "authentication",
@@ -506,9 +547,9 @@ window.EVIDENCE_BUNDLE = {
     "source_file": "Security_DC01_20261021.evtx",
     "record_number": 149310,
     "raw_log_sha256": "f8b7ba4423b16a10f2d9abe89525ef58a4f8dd6fb470f68d38bb0b0fcd697eb6",
-    "previous_node_hash": "c311604a6956db126b611be78e4d488d565a045c943a42f27556543a50143f5c",
-    "chain_seal_sha256": "e621e7ff03cb01b7359695262b0c32ce4438890881b706db7808e8f183068737",
-    "ingested_at_utc": "2026-10-21T10:53:58.632977Z"
+    "previous_node_hash": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
+    "chain_seal_sha256": "5076b1d50d6333992c6997c45d65fa039a1edb1e90d47e09b702017c4e2ea1f0",
+    "ingested_at_utc": "2026-10-22T10:55:45.107614Z"
    },
    "event": {
     "category": "lateral_movement",
@@ -604,7 +645,7 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "DC01.CORP.LOCAL",
       "command_line": null,
       "raw_log_sha256": "f1e0aa944a7dbd19a66888e370dc68fc6b5f3654c5bbebb9b48d699db60a00f1",
-      "chain_seal_sha256": "c311604a6956db126b611be78e4d488d565a045c943a42f27556543a50143f5c",
+      "chain_seal_sha256": "495e460b1fc256782ecbf1d097b73c75ed97252a03a5971152d5a0f5c06efcab",
       "offensive_exposures": [
        {
         "finding_id": "AD-SPN-RC4-001",
@@ -627,7 +668,7 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "DC01.CORP.LOCAL",
       "command_line": "evil-winrm -i 10.10.10.5 -u svc_sql -p [REDACTED]",
       "raw_log_sha256": "f8b7ba4423b16a10f2d9abe89525ef58a4f8dd6fb470f68d38bb0b0fcd697eb6",
-      "chain_seal_sha256": "e621e7ff03cb01b7359695262b0c32ce4438890881b706db7808e8f183068737",
+      "chain_seal_sha256": "5076b1d50d6333992c6997c45d65fa039a1edb1e90d47e09b702017c4e2ea1f0",
       "offensive_exposures": [
        {
         "finding_id": "AD-SPN-RC4-001",
@@ -717,7 +758,7 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "WEB-PROD-01",
       "command_line": "find / -perm -4000 2>/dev/null && getcap -r / 2>/dev/null",
       "raw_log_sha256": "874b4c400c0247aad98d7722822099a05989a0eff11e4f926adc9ac2bf901726",
-      "chain_seal_sha256": "c67b1b48383e3efa3d306539737a5c94ba831c77444515912cb11a9caca86966",
+      "chain_seal_sha256": "dfd3d6793049b49f9f50909749138237943c5929e8bf58fca0359820ec6d35d0",
       "offensive_exposures": [
        {
         "finding_id": "WEB-SQLI-LOGIN-003",
@@ -739,7 +780,7 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "WEB-PROD-01",
       "command_line": "/usr/bin/python3 -c import os; os.setuid(0); os.system('/bin/bash')",
       "raw_log_sha256": "0651763d90ad160534311d8054aac92f98c3945e3c1f214ca3e48583e56d6e96",
-      "chain_seal_sha256": "0c98fdf186a01ebc1ac741fa14668046f77b36258afc3fca2f752b3031b44d2b",
+      "chain_seal_sha256": "d16de617d47277ab7b0b988603805cc7f00eeb464746c00fe3c11aa4cae7d98e",
       "offensive_exposures": [
        {
         "finding_id": "LNX-CAP-SETUID-002",
@@ -836,7 +877,7 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "WEB-PROD-01",
       "command_line": "POST /api/v1/login username=admin' UNION SELECT 1,username,password FROM users-- (User-Agent: sqlmap/1.8)",
       "raw_log_sha256": "dae557080bea81fe7556dccddf643cb0873c0bf6697674c6bff2bbf0490af2b4",
-      "chain_seal_sha256": "09fd95414c42d80ac3d0055f256d1226927702d6d407b6ca1fbac237a5bd1a38",
+      "chain_seal_sha256": "022f42374467110a4333caf43a49def2de0a0ca8b4e12187a201ce7fdf2d2618",
       "offensive_exposures": [
        {
         "finding_id": "WEB-SQLI-LOGIN-003",
@@ -858,7 +899,7 @@ window.EVIDENCE_BUNDLE = {
       "target_host": "WEB-PROD-01",
       "command_line": "/bin/bash -c id; whoami; uname -a",
       "raw_log_sha256": "8116d84c889a3170500ddfda1eb94a332ff2d55dc36fb8845ff98610fe6fadb9",
-      "chain_seal_sha256": "a4d369f37d5dd9d9db67747be947149ad38650d622e67753a680f061365b7c96",
+      "chain_seal_sha256": "eaeef6edccd8550907a0b1c5060c664c43f3d92f3ff7dacd52a527f8c13b0e4f",
       "offensive_exposures": [
        {
         "finding_id": "WEB-SQLI-LOGIN-003",
@@ -1357,5 +1398,6 @@ window.EVIDENCE_BUNDLE = {
     "command_line": "evil-winrm -i 10.10.10.5 -u svc_sql -p [REDACTED]"
    }
   }
- ]
+ ],
+ "dataset": "demo"
 };
