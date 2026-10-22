@@ -137,6 +137,32 @@ class ConsoleBrowserTest(unittest.TestCase):
         page.click('#dlg-more [lang="en"]')
         self.assertEqual(page.get_attribute("html", "lang"), "en")
 
+    def test_more_sheet_is_organised_at_every_width(self):
+        """«Más» en móvil: rejilla de vistas, lista agrupada y preferencias, sin textos cortados."""
+        for width in (320, 390):
+            page = self.open("light", viewport={"width": width, "height": 800}, is_mobile=True, has_touch=True)
+            self.go(page, "inicio")
+            page.click("#more-btn")
+            page.wait_for_selector("#dlg-more[open]")
+            with self.subTest(ancho=width):
+                self.assertEqual(page.locator("#dlg-more .tile").count(), 3)
+                self.assertEqual(page.locator("#dlg-more .group .grow-row").count(), 4)
+                self.assertEqual(page.locator("#dlg-more .more-k").count(), 3)
+                cut = page.evaluate("""() => [...document.querySelectorAll('#dlg-more .tile span, #dlg-more .gt b')]
+                    .filter(e => e.getBoundingClientRect().right > e.closest('.tile, .grow-row, .pref').getBoundingClientRect().right + 0.5)
+                    .map(e => e.textContent)""")
+                self.assertEqual(cut, [])
+                # Los siete acentos ocupan el ancho de la tarjeta: primero y último pegados a sus bordes.
+                spread = page.evaluate("""() => { const s = [...document.querySelectorAll('#dlg-more .swatch')];
+                    const box = s[0].parentElement.getBoundingClientRect();
+                    return [s[0].getBoundingClientRect().left - box.left, box.right - s[6].getBoundingClientRect().right]; }""")
+                self.assertLess(max(spread), 8)
+                self.assertEqual(self.axe(page), [])
+            page.locator("#dlg-more .tile").first.click()
+            page.wait_for_selector("#view-cumplimiento")
+            self.assertFalse(page.evaluate("document.getElementById('dlg-more').open"))
+            page.context.close()
+
     # ------------------------------------------------------------ seguridad y red
     def test_only_local_requests_and_no_errors(self):
         page = self.open()

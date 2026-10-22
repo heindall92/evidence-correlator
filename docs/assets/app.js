@@ -954,7 +954,7 @@
     var changed = id !== state.view;
     state.view = id;
     render();
-    if (changed) { var m = $("#main"); window.scrollTo(0, 0); if (document.activeElement && document.activeElement.closest && document.activeElement.closest("#nav, #bnav, .more-list")) m.focus({ preventScroll: true }); }
+    if (changed) { var m = $("#main"); window.scrollTo(0, 0); if (document.activeElement && document.activeElement.closest && document.activeElement.closest("#nav, #bnav, .tiles")) m.focus({ preventScroll: true }); }
   }
 
   /* ---------------------------------------------------------------- diálogos */
@@ -1156,22 +1156,36 @@
     openDialog(dlg, opener || $("#account-btn"));
   }
 
-  /* Más (móvil) */
+  /* Más (móvil): vistas en rejilla, cuenta y ayuda en lista agrupada, preferencias en una tarjeta. */
   function openMore(opener) {
     var dlg = $("#dlg-more");
-    var links = VIEWS.filter(function (v) { return MOBILE.indexOf(v.id) < 0; }).map(function (v) {
-      return h("a", { href: "#" + v.id, onclick: function () { dlg.close(); } }, icon(v.icon), t("view." + v.id));
+    function go() { dlg.close(); }
+    var tiles = VIEWS.filter(function (v) { return MOBILE.indexOf(v.id) < 0; }).map(function (v) {
+      return h("a", { class: "tile press", href: "#" + v.id, "aria-current": state.view === v.id ? "page" : null, onclick: go },
+        icon(v.icon), h("span", { text: t("view." + v.id) }));
     });
+    function row(ic, label, sub, fn) {
+      return h("li", null, h("button", { type: "button", class: "grow-row", onclick: function () { dlg.close(); fn(); } },
+        h("span", { class: "gi" }, icon(ic)),
+        h("span", { class: "gt" }, h("b", { text: label }), sub ? h("small", { text: sub }) : null),
+        icon("chevron-right")));
+    }
     dlgFrame(dlg, t("ui.mas"), [
-      h("div", { class: "more-list" }, links,
-        h("button", { type: "button", onclick: function () { dlg.close(); openProfile(opener); } }, icon("user-round"), t("ui.perfil")),
-        h("button", { type: "button", onclick: function () { dlg.close(); openSettings(opener); } }, icon("sliders-horizontal"), t("ui.ajustes")),
-        h("button", { type: "button", onclick: function () { dlg.close(); openHelp(); } }, icon("circle-question-mark"), t("ui.ayuda")),
-        h("button", { type: "button", onclick: function () { dlg.close(); $("#file-input").click(); } }, icon("folder-open"), t("ui.abrirPaquete"))),
-      h("div", { class: "field" }, h("span", { class: "lbl", id: "more-lang", text: t("ui.idioma") }), h("div", { class: "seg", role: "group", "aria-labelledby": "more-lang" }, ["es", "en"].map(function (l) {
-        return h("button", { type: "button", lang: l, "aria-pressed": String(lang() === l), onclick: function () { setLang(l); openMore(opener); } }, l.toUpperCase());
-      }))),
-      h("div", { class: "field" }, h("span", { class: "lbl", text: t("ui.acento") }), swatches())
+      h("section", { class: "more-sec", "aria-labelledby": "more-v" }, h("h3", { class: "more-k", id: "more-v", text: t("more.vistas") }),
+        h("div", { class: "tiles" }, tiles)),
+      h("section", { class: "more-sec", "aria-labelledby": "more-c" }, h("h3", { class: "more-k", id: "more-c", text: t("more.cuenta") }),
+        h("ul", { class: "group" },
+          row("user-round", t("ui.perfil"), (profile.nombre || t("perfil.anonimo")) + " · " + t("lens." + lens() + ".rol"), function () { openProfile(opener); }),
+          row("sliders-horizontal", t("ui.ajustes"), null, function () { openSettings(opener); }),
+          row("circle-question-mark", t("ui.ayuda"), null, openHelp),
+          row("folder-open", t("ui.abrirPaquete"), null, function () { $("#file-input").click(); }))),
+      h("section", { class: "more-sec", "aria-labelledby": "more-p" }, h("h3", { class: "more-k", id: "more-p", text: t("more.prefs") }),
+        h("div", { class: "group prefs" },
+          h("div", { class: "pref" }, h("span", { class: "gt", id: "more-lang" }, h("b", { text: t("ui.idioma") })),
+            h("div", { class: "seg", role: "group", "aria-labelledby": "more-lang" }, ["es", "en"].map(function (l) {
+              return h("button", { type: "button", lang: l, "aria-pressed": String(lang() === l), onclick: function () { setLang(l); openMore(opener); } }, l.toUpperCase());
+            }))),
+          h("div", { class: "pref col" }, h("span", { class: "gt" }, h("b", { text: t("ui.acento") })), swatches())))
     ]);
     if (!dlg.open) openDialog(dlg, opener); else hydrate(dlg);
   }

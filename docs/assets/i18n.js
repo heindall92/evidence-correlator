@@ -436,6 +436,10 @@ window.TRAMA_I18N = {
     "set.confirmar": "Pulsar de nuevo para confirmar",
     "set.pie": "Tema e idioma están en la barra superior; el acento, en la barra lateral.",
 
+    "more.vistas": "Vistas",
+    "more.cuenta": "Cuenta y ayuda",
+    "more.prefs": "Preferencias",
+
     "toast.copiado": "Copiado: {x}",
     "toast.noCopia": "No se ha podido copiar",
     "toast.exportado": "Exportado",
@@ -885,6 +889,10 @@ window.TRAMA_I18N = {
     "set.borrar": "Delete preferences and profile",
     "set.confirmar": "Press again to confirm",
     "set.pie": "Theme and language are in the top bar; the accent is in the sidebar.",
+
+    "more.vistas": "Views",
+    "more.cuenta": "Account and help",
+    "more.prefs": "Preferences",
 
     "toast.copiado": "Copied: {x}",
     "toast.noCopia": "Could not copy",

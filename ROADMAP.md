@@ -65,6 +65,9 @@ Una PR por versión (`version/X.Y.Z` → `main`), con las pruebas y axe en verde
 - [x] Logotipo y favicon propios en lugar del icono `waypoints` de CTEM-Nexus.
 - [x] Auditor de redacción `scripts/redaccion.py` con las reglas de `linkedin-humanizer` en español e inglés, integrado en las pruebas y en la CI.
 
+### v0.2.2 · Menú móvil
+- [x] «Más» en móvil: vistas en rejilla, cuenta y ayuda en lista agrupada, idioma segmentado y acentos repartidos; filas por debajo de 360 px.
+
 ### v0.3.0 · Firma del paquete y ejercicios guiados
 - [ ] **Firma Ed25519** (RFC 8032) en Python puro, sin dependencias: `trama keygen`, `trama sign` y `trama verify --pubkey`. La cadena prueba la integridad; la firma prueba la autoría. Verificación también en la consola con WebCrypto cuando el navegador la ofrezca.
 - [ ] Verificación de firmas externas de `minisign` y `gpg --detach-sign` si las herramientas están instaladas.
