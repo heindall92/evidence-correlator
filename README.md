@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/img/hilo-dark.png" alt="Vista Trazabilidad: carriles de ofensiva, detección y cumplimiento con el incidente seleccionado resaltado en azul eléctrico" width="880"/>
+  <img src="docs/img/hilo-light.png" alt="Vista Trazabilidad en tema claro: carriles de ofensiva, detección y cumplimiento con el incidente seleccionado resaltado en azul eléctrico" width="880"/>
 </p>
 
 ## Caso de uso
