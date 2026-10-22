@@ -1,7 +1,9 @@
 import hashlib
 import unittest
 
-from proyecto.custody import CustodyChain, canonical_json, merkle_root, sha256_hex, verify_chain
+import json
+
+from trama.custody import CustodyChain, canonical_json, js_number, merkle_root, sha256_hex, verify_chain
 from tests.helpers import deep, fixed_clock, normalize_all, sample_events
 
 
@@ -115,6 +117,44 @@ class ChainTest(unittest.TestCase):
         rep = CustodyChain(clock=fixed_clock()).verify()
         self.assertTrue(rep["valid"])
         self.assertEqual(rep["total_sealed_events"], 0)
+
+
+
+class CanonicalNumbersTest(unittest.TestCase):
+    """La consola recalcula los hashes con JSON.stringify: los números deben
+    escribirse como en JavaScript o un evento con «1.0» daría un falso positivo.
+    Vectores contrastados con Node (``JSON.stringify``)."""
+
+    VECTORS = [
+        (1.0, "1"), (-1.0, "-1"), (0.0, "0"), (-0.0, "0"), (1.5, "1.5"), (100.0, "100"),
+        (1e-7, "1e-7"), (1e-6, "0.000001"), (1.5e-7, "1.5e-7"), (1e16, "10000000000000000"),
+        (1e21, "1e+21"), (1e22, "1e+22"), (123456789012345680000.0, "123456789012345680000"),
+        (0.001, "0.001"), (0.1 + 0.2, "0.30000000000000004"), (5e-324, "5e-324"),
+        (1.7976931348623157e308, "1.7976931348623157e+308"), (-3.14e-10, "-3.14e-10"),
+        (float("nan"), "null"), (float("inf"), "null"),
+    ]
+
+    def test_numbers_like_javascript(self):
+        for value, expected in self.VECTORS:
+            with self.subTest(value=value):
+                self.assertEqual(js_number(value), expected)
+
+    def test_nested_object_like_browser(self):
+        payload = {"b": [1.0, {"z": 2, "a": 1e-7}], "a": "ñ", "c": None, "d": True, "e": 3}
+        self.assertEqual(canonical_json(payload), '{"a":"ñ","b":[1,{"a":1e-7,"z":2}],"c":null,"d":true,"e":3}')
+
+    def test_without_floats_hash_is_unchanged_from_0_1(self):
+        for ev in sample_events():
+            legacy = json.dumps(ev, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+            self.assertEqual(canonical_json(ev), legacy)
+
+    def test_event_with_decimal_verifies(self):
+        ev = deep(sample_events()[0])
+        ev["risk_score"] = 1.0
+        chain = CustodyChain(clock=fixed_clock())
+        chain.seal_event(ev, "windows_evtx", "a.evtx", 1)
+        self.assertTrue(verify_chain(chain.chain, chain.genesis_hash, [ev])["valid"])
+        self.assertEqual(chain.chain[0]["raw_log_sha256"], sha256_hex(canonical_json(ev)))
 
 
 if __name__ == "__main__":

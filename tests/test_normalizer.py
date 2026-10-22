@@ -1,7 +1,7 @@
 import unittest
 
-from proyecto.custody import CustodyChain
-from proyecto.normalizer import EvidenceNormalizer
+from trama.custody import CustodyChain
+from trama.normalizer import EvidenceNormalizer
 from tests.helpers import fixed_clock, normalize_all, sample_events, sample_findings
 
 

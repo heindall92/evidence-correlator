@@ -1,7 +1,7 @@
 import unittest
 from datetime import timedelta, timezone
 
-from proyecto.timeutil import parse_utc, parse_window
+from trama.timeutil import parse_utc, parse_window
 
 
 class ParseUtcTest(unittest.TestCase):

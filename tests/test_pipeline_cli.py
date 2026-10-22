@@ -6,8 +6,8 @@ import sys
 import tempfile
 import unittest
 
-from proyecto import NAME, __version__, cli
-from proyecto.pipeline import run_files, verify_bundle, write_bundle, write_dashboard_js
+from trama import NAME, __version__, cli
+from trama.pipeline import run_files, verify_bundle, write_bundle, write_dashboard_js
 from tests.helpers import ROOT
 
 
@@ -124,11 +124,11 @@ class CliTest(unittest.TestCase):
 
     def test_module_entrypoint_smoke(self):
         with tempfile.TemporaryDirectory() as d:
-            r = subprocess.run([sys.executable, "-W", "error", "-m", "proyecto", "--version"],
+            r = subprocess.run([sys.executable, "-W", "error", "-m", "trama", "--version"],
                                cwd=ROOT, capture_output=True, text=True)
             self.assertEqual(r.returncode, 0, r.stderr)
             self.assertIn(__version__, r.stdout)
-            r = subprocess.run([sys.executable, "-W", "error", "-m", "proyecto", "run", "-o",
+            r = subprocess.run([sys.executable, "-W", "error", "-m", "trama", "run", "-o",
                                 os.path.join(d, "b.json"), "--dashboard-js", os.path.join(d, "b.js")],
                                cwd=ROOT, capture_output=True, text=True, env=dict(os.environ, NO_COLOR="1"))
             self.assertEqual(r.returncode, 0, r.stderr)

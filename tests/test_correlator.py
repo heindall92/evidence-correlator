@@ -1,7 +1,7 @@
 import unittest
 
-from proyecto.correlator import EvidenceCorrelationEngine, get_nested
-from proyecto.custody import merkle_root
+from trama.correlator import EvidenceCorrelationEngine, get_nested
+from trama.custody import merkle_root
 from tests.helpers import deep, normalize_all, sample_events, sample_rules
 
 

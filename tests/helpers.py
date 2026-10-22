@@ -2,10 +2,10 @@ import copy
 import json
 import os
 
-from proyecto.custody import CustodyChain
-from proyecto.normalizer import EvidenceNormalizer
-from proyecto.pipeline import SAMPLE_EVENTS, SAMPLE_FINDINGS
-from proyecto.rules import load_rules
+from trama.custody import CustodyChain
+from trama.normalizer import EvidenceNormalizer
+from trama.pipeline import SAMPLE_EVENTS, SAMPLE_FINDINGS
+from trama.rules import load_rules
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

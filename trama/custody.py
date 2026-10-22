@@ -21,9 +21,52 @@ def sha256_hex(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def js_number(value):
+    """Escribe un float como lo hace JavaScript (``Number::toString`` de ECMAScript).
+
+    Así la consola, que recalcula los hashes con ``JSON.stringify``, obtiene la
+    misma cadena que Python: ``1.0`` -> ``1``, ``1e-07`` -> ``1e-7``,
+    ``1e+16`` -> ``10000000000000000``. NaN e infinitos van como ``null``, igual
+    que en JavaScript. ``repr`` ya da los dígitos más cortos que reconstruyen el
+    número; aquí solo cambia dónde va la coma y cuándo se usa exponente."""
+    if value != value or value in (float("inf"), float("-inf")):
+        return "null"
+    if value == 0:
+        return "0"
+    sign = "-" if value < 0 else ""
+    text = repr(abs(value))
+    mantissa, _, exp = text.partition("e")
+    int_part, _, frac = mantissa.partition(".")
+    raw = int_part + frac
+    lead = len(raw) - len(raw.lstrip("0"))
+    digits = raw[lead:].rstrip("0") or "0"
+    k = len(digits)
+    n = len(int_part) - lead + int(exp or 0)  # posición de la coma respecto al primer dígito
+    if k <= n <= 21:
+        out = digits + "0" * (n - k)
+    elif 0 < n <= 21:
+        out = digits[:n] + "." + digits[n:]
+    elif -6 < n <= 0:
+        out = "0." + "0" * (-n) + digits
+    else:
+        e = n - 1
+        out = digits[0] + ("." + digits[1:] if k > 1 else "") + "e" + ("+" if e >= 0 else "-") + str(abs(e))
+    return sign + out
+
+
 def canonical_json(payload):
-    """Serialización canónica usada para el hash de cada evento crudo."""
-    return json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    """Serialización canónica usada para el hash de cada evento crudo: claves
+    ordenadas, sin espacios, UTF-8 sin escapar y números como en JavaScript.
+    Para datos sin decimales coincide byte a byte con
+    ``json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":"))``."""
+    if isinstance(payload, dict):
+        return "{" + ",".join(json.dumps(str(k), ensure_ascii=False) + ":" + canonical_json(payload[k])
+                              for k in sorted(payload, key=str)) + "}"
+    if isinstance(payload, (list, tuple)):
+        return "[" + ",".join(canonical_json(v) for v in payload) + "]"
+    if isinstance(payload, float):
+        return js_number(payload)
+    return json.dumps(payload, ensure_ascii=False)
 
 
 def _leaf(hex_hash):
