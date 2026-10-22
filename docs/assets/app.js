@@ -265,9 +265,9 @@
     $("#acc-label").textContent = t("ui.acento");
     var sw = swatches(); sw.id = "swatches"; $("#swatches").replaceWith(sw);
     var pkg = clear($("#pkg-btn"));
-    pkg.appendChild(icon("file-json"));
-    pkg.appendChild(h("span", { class: "sr-only", text: t("ui.abrirPaquete") + ": " }));
-    pkg.appendChild(h("span", { class: "pkg-t" }, h("b", { text: b ? (state.fileName || (D.demo ? t("pkg.demo") : t("pkg.paquete"))) : t("pkg.ninguno") }),
+    pkg.appendChild(icon(b && b.imports ? "file-check" : "file-json"));
+    pkg.appendChild(h("span", { class: "sr-only", text: t("ui.importar") + ": " }));
+    pkg.appendChild(h("span", { class: "pkg-t" }, h("b", { text: b ? (state.fileName || (D.demo ? t("pkg.demo") : b.imports ? t("pkg.importado") : t("pkg.paquete"))) : t("pkg.ninguno") }),
       h("small", { text: b ? t("pkg.generado", { f: (b.generated_at_utc || "—").replace("T", " ").replace("Z", " UTC") }) : t("pkg.abrir") })));
     pkg.appendChild(icon("chevron-down", "chev"));
     var nav = $("#nav"); nav.setAttribute("aria-label", t("ui.secciones"));
@@ -308,7 +308,7 @@
     foot.appendChild(h("span", { text: t("foot.indep") }));
     markNav();
   }
-  function version() { var g = (state.bundle && state.bundle.generator) || {}; return "v" + (g.version || "0.2.0"); }
+  function version() { var g = (state.bundle && state.bundle.generator) || {}; return "v" + (g.version || (window.TRAMA_ENGINE ? TRAMA_ENGINE.VERSION : "0.3.0")); }
   function markNav() {
     $$("#nav a, #bnav a").forEach(function (a) {
       if (a.getAttribute("data-view") === state.view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
@@ -824,6 +824,7 @@
     var D = state.D, b = state.bundle, stored = b.forensic_custody_verification, r = state.verify;
     var wrap = h("div", null, vhead("link", t("cus.kicker"), t("cus.h1"), t("cus.lede"), [
       h("button", { type: "button", class: "btn press", id: "btn-tamper", "aria-pressed": String(state.tampered), onclick: function () { state.tampered = !state.tampered; runVerify(); } }, icon("flask-conical"), t("cus.simular")),
+      h("button", { type: "button", class: "btn press", id: "btn-export", onclick: exportBundle }, icon("download"), t("ui.exportar")),
       h("button", { type: "button", class: "btn primary press", id: "btn-verify", onclick: runVerify }, icon("shield-check"), t("cus.verificar"))]));
     var v;
     if (!r) v = h("div", { class: "verdict", id: "verdict", role: "status" }, icon("shield-check"), h("div", null, h("b", { text: t("cus.pendiente") }), h("span", { text: t("cus.registrado", { e: stored.valid ? t("cus.integra") : t("cus.rota") }) })));
@@ -867,8 +868,21 @@
     var table = h("table", { class: "cards-sm", id: "ev-table" }, h("thead", null, h("tr", null, ["col.hora", "col.origen", "col.accion", "col.actor", "col.destino", "col.exposicion"].map(function (k) { return h("th", { scope: "col", text: t(k) }); }), h("th", { scope: "col" }, h("span", { class: "sr-only", text: t("col.json") })))), h("tbody"));
     wrap.appendChild(card(null, null, [h("div", { class: "toolbar" }, h("div", { class: "field" }, h("label", { for: "src-filter", text: t("ev.fuente") }), sel), h("div", { class: "field" }, h("label", { for: "ev-q", text: t("ev.filtro") }), q), count),
       h("div", { class: "table-wrap", tabindex: "0", role: "region", "aria-label": t("ev.h1") }, table)]));
+    if (state.bundle.imports) wrap.appendChild(h("div", { class: "mt" }, sourcesCard(state.bundle.imports)));
     setTimeout(fillEvents, 0);
     return wrap;
+  }
+  /* Procedencia: qué fichero aportó qué, con su formato, activo y registros omitidos. */
+  function sourcesCard(report) {
+    return card(t("ev.fuentes"), t("ev.fuentesS", { n: report.length }), h("ul", { class: "list", id: "ev-sources" }, report.map(function (r) {
+      var meta = [r.label || t("imp.errFormato")];
+      if (!r.error) meta.push(tn(r.kind === "events" ? "imp.nEventos" : "imp.nHallazgos", r.count));
+      if (r.skipped) meta.push(tn("imp.nOmitidos", r.skipped));
+      if (r.asset) meta.push(t("ev.activo", { a: r.asset }));
+      return h("li", { class: "row-item" + (r.error ? " bad" : "") }, icon(r.error ? "file-x" : "file-check"),
+        h("div", { class: "grow" }, h("b", { class: "mono", text: r.file }), h("p", { class: "sub", text: meta.join(" · ") }),
+          r.error ? h("p", { class: "imp-err", text: errorText(r.error) }) : null));
+    })));
   }
   function fillEvents() {
     var D = state.D, tb = $("#ev-table tbody"); if (!tb) return;
@@ -888,7 +902,7 @@
         h("td", { "data-label": t("col.accion"), text: (e.event || {}).action || "" }),
         h("td", { "data-label": t("col.actor"), text: (e.actor || {}).user_name || "" }),
         h("td", { "data-label": t("col.destino"), text: (e.target || {}).hostname || "" }),
-        h("td", { "data-label": t("col.exposicion") }, exp.length ? h("span", { class: "tag warn", text: exp.map(function (x) { return x.finding_id; }).join(", ") }) : "—"),
+        h("td", { "data-label": t("col.exposicion") }, exp.length ? h("span", { class: "tag warn", title: exp.map(function (x) { return x.finding_id; }).join("\n"), text: exp[0].finding_id + (exp.length > 1 ? " +" + (exp.length - 1) : "") }) : "—"),
         h("td", null, btn)));
       tb.appendChild(detail);
     });
@@ -924,10 +938,10 @@
 
   /* ---------------------------------------------------------------- Sin datos */
   function viewEmpty() {
-    return h("div", null, vhead("file-json", t("vacio.kicker"), t("vacio.h1"), t("vacio.lede")),
+    return h("div", null, vhead("file-up", t("vacio.kicker"), t("vacio.h1"), t("vacio.lede")),
       h("div", { class: "grid g2" },
-        card(t("vacio.abrir"), t("vacio.abrirS"), h("button", { type: "button", class: "btn primary press", onclick: function () { $("#file-input").click(); } }, icon("folder-open"), t("ui.abrirPaquete"))),
-        card(t("vacio.cli"), t("vacio.cliS"), h("pre", { class: "formula", text: "python3 -m trama run --dashboard-js docs/data/bundle.js" }))));
+        card(t("vacio.abrir"), t("vacio.abrirS"), h("button", { type: "button", class: "btn primary press", onclick: function () { openImport(this); } }, icon("file-up"), t("ui.importar"))),
+        card(t("vacio.cli"), t("vacio.cliS"), h("pre", { class: "formula", text: "python3 -m trama run scan.xml security.jsonl access.log \\\n  --asset access.log=web01 -o caso.json" }))));
   }
 
   /* ---------------------------------------------------------------- render y navegación */
@@ -1077,11 +1091,14 @@
       h3("help.cobertura.t"); p("help.cobertura.p");
     } else if (tab === "datos") {
       h3("help.datos.t"); p("help.datos.p");
-      box.appendChild(h("pre", { class: "formula", text: "python3 -m trama run --events eventos.json --findings hallazgos.json \\\n  -o salida/caso.json --dashboard-js docs/data/bundle.js\npython3 -m trama verify salida/caso.json\npython3 -m trama rules" }));
+      box.appendChild(h("ul", null, GUIDE.map(function (g) { return h("li", null, h("b", { text: TRAMA_IMPORT.FORMATS[g[0]][0] + ": " }), h("span", { class: "mono", text: g[2] })); })));
+      p("help.datos.activo");
+      h3("help.cli.t"); p("help.cli.p");
+      box.appendChild(h("pre", { class: "formula", text: "python3 -m trama import scan.xml security.jsonl access.log\npython3 -m trama run scan.xml security.jsonl access.log \\\n  --asset access.log=web01 -o caso.json\npython3 -m trama verify caso.json" }));
       p("help.datos.abrir");
       h3("help.privacidad.t"); p("help.privacidad.p");
     } else if (tab === "atajos") {
-      var keys = [["Ctrl K · /", "k.buscar"], ["1 – 7", "k.vistas"], ["L", "k.lente"], ["J · K", "k.incidentes"], ["V", "k.verificar"], ["T", "k.tema"], ["O", "k.abrir"], ["[", "k.lateral"], ["?", "k.ayuda"], ["Esc", "k.cerrar"]];
+      var keys = [["Ctrl K · /", "k.buscar"], ["1 – 7", "k.vistas"], ["L", "k.lente"], ["J · K", "k.incidentes"], ["V", "k.verificar"], ["T", "k.tema"], ["I", "k.importar"], ["O", "k.abrir"], ["[", "k.lateral"], ["?", "k.ayuda"], ["Esc", "k.cerrar"]];
       box.appendChild(h("div", { class: "keys" }, keys.map(function (k) { return h("div", null, h("span", { text: t(k[1]) }), h("kbd", { text: k[0] })); })));
     } else if (tab === "glosario") {
       var terms = ["custodia", "sello", "merkle", "incidente", "regla", "hallazgo", "ioc", "ttd", "permanencia", "cobertura", "nc", "nis2"];
@@ -1118,6 +1135,7 @@
     var reset = h("button", { type: "button", class: "btn sm press", onclick: function () {
       if (reset.getAttribute("data-armed")) {
         try { localStorage.removeItem("trama-prefs"); localStorage.removeItem("trama-perfil"); } catch (e) { /* */ }
+        forget();
         prefs = {}; profile = { rol: "blue" }; toast(t("toast.borrado"));
         root.setAttribute("data-density", "comfortable"); root.removeAttribute("data-motion");
         dlg.close(); renderChrome(); render(); return;
@@ -1128,9 +1146,11 @@
       h("div", { class: "field" }, h("span", { class: "lbl", text: t("set.density") }), radios("density", ["comfortable", "compact"], root.getAttribute("data-density") || "comfortable", function (v) { root.setAttribute("data-density", v); prefs.density = v; save("trama-prefs", prefs); })),
       h("div", { class: "field" }, h("span", { class: "lbl", text: t("set.motion") }), radios("motion", ["system", "reduce"], prefs.motion === "reduce" ? "reduce" : "system", function (v) { prefs.motion = v; save("trama-prefs", prefs); if (v === "reduce") root.setAttribute("data-motion", "reduce"); else root.removeAttribute("data-motion"); })),
       h("div", { class: "field" }, h("span", { class: "lbl", text: t("set.paquete") }), h("div", { class: "btn-row" },
-        h("button", { type: "button", class: "btn sm press", onclick: function () { dlg.close(); $("#file-input").click(); } }, icon("folder-open"), t("ui.abrirPaquete")),
+        h("button", { type: "button", class: "btn sm press", onclick: function () { dlg.close(); openImport(opener || $("#settings-btn")); } }, icon("file-up"), t("ui.importar")),
+        state.bundle ? h("button", { type: "button", class: "btn sm press", onclick: exportBundle }, icon("download"), t("ui.exportar")) : null,
         validBundle(ORIGINAL) ? h("button", { type: "button", class: "btn sm press", onclick: function () { useBundle(ORIGINAL, null); dlg.close(); toast(t("toast.demo")); } }, icon("play"), t("set.demo")) : null)),
-      h("div", { class: "field" }, h("span", { class: "lbl", text: t("set.datos") }), h("p", { class: "sub", text: t("set.datosP") }), h("div", { class: "btn-row" }, reset))
+      h("div", { class: "field" }, h("span", { class: "lbl", text: t("set.datos") }), h("p", { class: "sub", text: t("set.datosP") }), h("div", { class: "btn-row" },
+        h("button", { type: "button", class: "btn sm press", id: "set-forget", onclick: function () { forget().then(function () { toast(t("toast.olvidado"), "database"); }); } }, icon("database"), t("set.olvidar")), reset))
     ], h("span", { text: t("set.pie") }));
     openDialog(dlg, opener || $("#settings-btn"));
   }
@@ -1178,7 +1198,7 @@
           row("user-round", t("ui.perfil"), (profile.nombre || t("perfil.anonimo")) + " · " + t("lens." + lens() + ".rol"), function () { openProfile(opener); }),
           row("sliders-horizontal", t("ui.ajustes"), null, function () { openSettings(opener); }),
           row("circle-question-mark", t("ui.ayuda"), null, openHelp),
-          row("folder-open", t("ui.abrirPaquete"), null, function () { $("#file-input").click(); }))),
+          row("file-up", t("ui.importar"), t("more.importarS"), function () { openImport(opener); }))),
       h("section", { class: "more-sec", "aria-labelledby": "more-p" }, h("h3", { class: "more-k", id: "more-p", text: t("more.prefs") }),
         h("div", { class: "group prefs" },
           h("div", { class: "pref" }, h("span", { class: "gt", id: "more-lang" }, h("b", { text: t("ui.idioma") })),
@@ -1190,27 +1210,266 @@
     if (!dlg.open) openDialog(dlg, opener); else hydrate(dlg);
   }
 
+  /* ---------------------------------------------------------------- importar datos
+   * Los ficheros se leen y se correlacionan en este navegador con importers.js y engine.js,
+   * el mismo código que la CLI (tests/test_parity.py). */
+  var MAX_FILE = 50 * 1024 * 1024;
+  var imp = { items: [], assets: {}, report: [], busy: false };
+  var GUIDE = [
+    ["windows", "Security.evtx", "evtx_dump -o jsonl Security.evtx > security.jsonl · wevtutil qe Security /f:xml > security.xml · Winlogbeat (NDJSON)"],
+    ["auditd", "/var/log/audit/audit.log", "ausearch --raw > audit.log"],
+    ["access_log", "access.log", "nginx o Apache, formato combined o common"],
+    ["suricata", "eve.json", "/var/log/suricata/eve.json (eventos http y alert)"],
+    ["nmap", "scan.xml", "nmap -sV -oX scan.xml objetivo"],
+    ["nessus", "scan.nessus", "Export → Nessus"],
+    ["nuclei", "nuclei.jsonl", "nuclei -l objetivos.txt -jsonl -o nuclei.jsonl"],
+    ["burp", "burp.xml", "Issues → Report selected issues → XML"],
+    ["bloodhound", "users.json", "SharpHound o bloodhound-python (users.json)"],
+    ["linpeas", "linpeas.txt", "linpeas.sh | tee linpeas.txt · getcap -r / 2>/dev/null · find / -perm -4000 -ls"]
+  ];
+  /* Plural correcto en ES y EN: clave + "1" para una unidad. */
+  function tn(key, n) { return t(key + (n === 1 ? "1" : ""), { n: n }); }
+  function fmtSize(n) { return n >= 1048576 ? (n / 1048576).toFixed(1) + "\u00a0MB" : n >= 1024 ? Math.round(n / 1024) + "\u00a0KB" : n + "\u00a0B"; }
+  /* Igual que pipeline.read_text: UTF-16 con BOM (exportaciones de Windows) o UTF-8 con o sin BOM. */
+  function readText(file) {
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onerror = function () { reject(r.error); };
+      r.onload = function () {
+        var b = new Uint8Array(r.result), enc = "utf-8";
+        if (b[0] === 0xFF && b[1] === 0xFE) enc = "utf-16le"; else if (b[0] === 0xFE && b[1] === 0xFF) enc = "utf-16be";
+        resolve(new TextDecoder(enc).decode(b));
+      };
+      r.readAsArrayBuffer(file);
+    });
+  }
+  function isBundleText(text) {
+    return /^\s*\{/.test(text) && window.TRAMA_IMPORT && TRAMA_IMPORT.detect(text, "") === "trama_bundle";
+  }
+  /** Entrada única para ficheros (selector, arrastre, botón del lateral): un paquete ya generado se abre; lo demás va a Importar. */
+  function takeFiles(list) {
+    var files = Array.prototype.slice.call(list || []);
+    if (!files.length) return;
+    if (files.length === 1 && files[0].size <= MAX_FILE && /\.json$/i.test(files[0].name)) {
+      readText(files[0]).then(function (text) {
+        if (isBundleText(text)) { openBundleText(text, files[0].name); return; }
+        var b = null; try { b = JSON.parse(text); } catch (e) { b = null; }
+        if (b && b.format === "yrd-ecosistema") { toast(t("toast.sobre"), "info"); return; }
+        addFiles(files);
+      }, function () { toast(t("imp.errLectura"), "triangle-alert"); });
+      return;
+    }
+    addFiles(files);
+  }
+  function openBundleText(text, name) {
+    var b = null;
+    try { b = JSON.parse(text); } catch (e) { b = null; }
+    if (!validBundle(b)) { toast(t("toast.invalido"), "triangle-alert"); return false; }
+    if ($("#dlg-import").open) $("#dlg-import").close();
+    useBundle(b, name.slice(0, 60));
+    remember(b, name.slice(0, 60));
+    toast(t("toast.cargado", { f: name.slice(0, 60) }), "file-json");
+    return true;
+  }
+  function addFiles(files) {
+    var pending = files.map(function (f) {
+      var item = { name: f.name.slice(0, 200), size: f.size, text: null, error: null };
+      if (f.size > MAX_FILE) { item.error = t("imp.errGrande"); return Promise.resolve(item); }
+      return readText(f).then(function (text) { item.text = text; return item; }, function () { item.error = t("imp.errLectura"); return item; });
+    });
+    openImport();
+    Promise.all(pending).then(function (items) {
+      items.forEach(function (it) {
+        imp.items = imp.items.filter(function (x) { return x.name !== it.name; });
+        imp.items.push(it);
+      });
+      analyse();
+      paintImport();
+      var st = $("#imp-status"); if (st) st.textContent = t("imp.anadidos", { n: items.length });
+    });
+  }
+  /* Vista previa: la misma importación que se correlacionará, para ver formato, recuento y activo de cada fichero. */
+  function analyse() {
+    var files = imp.items.filter(function (x) { return x.text !== null; }).map(function (x) { return [x.name, x.text]; });
+    imp.report = files.length ? TRAMA_IMPORT.importFiles(files, imp.assets)[2] : [];
+  }
+  function entryOf(name) { return imp.report.filter(function (r) { return r.file === name; })[0] || null; }
+  function importable() { return imp.report.filter(function (r) { return !r.error; }); }
+  function errorText(msg) {
+    if (/^es un paquete/.test(msg)) return t("imp.errPaquete");
+    if (/^formato no reconocido/.test(msg)) return t("imp.errFormato");
+    if (/DTD o entidades/.test(msg)) return t("imp.errDtd");
+    if (/supera 50 MB/.test(msg)) return t("imp.errGrande");
+    return lang() === "es" ? msg.charAt(0).toUpperCase() + msg.slice(1) : t("imp.errContenido");
+  }
+  function fileRow(it) {
+    var e = it.error ? null : entryOf(it.name), err = it.error || (e && e.error) || null;
+    var def = e && e.format ? TRAMA_IMPORT.FORMATS[e.format] : null;
+    var warn = !err && e && e.warning;
+    var ic = err ? "file-x" : warn ? "triangle-alert" : "file-check";
+    var meta = [];
+    if (def) meta.push(e.label);
+    meta.push(fmtSize(it.size));
+    if (e && !err) {
+      meta.push(tn(e.kind === "events" ? "imp.nEventos" : "imp.nHallazgos", e.count));
+      if (e.skipped) meta.push(tn("imp.nOmitidos", e.skipped));
+    }
+    var body = h("div", { class: "grow" }, h("b", { class: "mono", text: it.name }), h("p", { class: "sub", text: meta.join(" · ") }));
+    if (err) body.appendChild(h("p", { class: "imp-err", text: errorText(err) }));
+    if (err && /^es un paquete/.test(err)) {
+      body.appendChild(h("button", { type: "button", class: "btn sm press mt", onclick: function () { openBundleText(it.text, it.name); } }, icon("folder-open"), t("imp.abrirPaquete")));
+    }
+    if (def && def[3] && !err) {
+      var id = "imp-a-" + imp.items.indexOf(it);
+      var input = h("input", { class: "input", id: id, type: "text", autocomplete: "off", spellcheck: "false", maxlength: "255",
+        placeholder: t("imp.activoPh"), value: imp.assets[it.name] || e.asset || "",
+        onchange: function () {
+          var v = this.value.trim();
+          if (v) imp.assets[it.name] = v; else delete imp.assets[it.name];
+          analyse(); paintImport(id);
+        } });
+      body.appendChild(h("div", { class: "field imp-asset" }, h("label", { for: id, text: t(e.format === "auditd" ? "imp.activoAuditd" : "imp.activo") }), input,
+        warn ? h("p", { class: "sub", text: t("imp.sinActivo") }) : null));
+    }
+    return h("li", { class: "row-item imp-row" + (err ? " bad" : warn ? " warn" : "") }, icon(ic), body,
+      h("button", { type: "button", class: "icon-btn press", "aria-label": t("imp.quitar", { f: it.name }), title: t("imp.quitarT"), onclick: function () {
+        imp.items = imp.items.filter(function (x) { return x !== it; });
+        delete imp.assets[it.name];
+        analyse(); paintImport();
+        var st = $("#imp-status"); if (st) st.textContent = t("imp.quitado", { f: it.name });
+      } }, icon("trash-2")));
+  }
+  function guideTable() {
+    return h("details", { class: "imp-guide" }, h("summary", { class: "press" }, icon("info"), t("imp.guia")),
+      h("table", null, h("thead", null, h("tr", null, ["imp.g.fuente", "imp.g.fichero", "imp.g.como"].map(function (k) { return h("th", { scope: "col", text: t(k) }); }))),
+        h("tbody", null, GUIDE.map(function (g) {
+          return h("tr", null, h("td", { "data-label": t("imp.g.fuente"), text: TRAMA_IMPORT.FORMATS[g[0]][0] }), h("td", { "data-label": t("imp.g.fichero"), class: "mono", text: g[1] }),
+            h("td", { "data-label": t("imp.g.como"), class: "mono", text: g[2] }));
+        }))),
+      h("p", { class: "sub", text: t("imp.g.trama") }));
+  }
+  function paintImport(focusId) {
+    var dlg = $("#dlg-import"), box = $("#imp-body", dlg);
+    if (!box) return;
+    var hadFocus = box.contains(document.activeElement) || document.activeElement === document.body;
+    clear(box);
+    var dz = h("div", { class: "dz", id: "imp-dz" }, h("span", { class: "dz-i", "aria-hidden": "true" }, icon("file-up")),
+      h("div", null, h("b", { text: t("imp.soltar") }), h("p", { class: "sub", text: t("imp.formatos") })),
+      h("button", { type: "button", class: "btn press", id: "imp-pick", autofocus: true, onclick: function () { $("#imp-input").click(); } }, icon("folder-open"), t("imp.elegir")));
+    dz.addEventListener("dragover", function (e) { e.preventDefault(); e.stopPropagation(); dz.classList.add("over"); });
+    dz.addEventListener("dragleave", function () { dz.classList.remove("over"); });
+    dz.addEventListener("drop", function (e) { e.preventDefault(); e.stopPropagation(); dz.classList.remove("over"); if (e.dataTransfer) addFiles(Array.prototype.slice.call(e.dataTransfer.files)); });
+    box.appendChild(dz);
+    if (imp.items.length) {
+      var ok = importable(), ev = 0, fi = 0;
+      ok.forEach(function (r) { if (r.kind === "events") ev += r.count; else fi += r.count; });
+      box.appendChild(h("div", { class: "imp-sum" }, h("b", { text: t("imp.resumen", { e: ev, f: fi }) }),
+        h("span", { class: "sub", text: t("imp.ficheros", { n: ok.length, t: imp.items.length }) })));
+      box.appendChild(h("ul", { class: "list", id: "imp-list", "aria-label": t("imp.lista") }, imp.items.map(fileRow)));
+    }
+    box.appendChild(guideTable());
+    box.appendChild(h("label", { class: "check" }, h("input", { type: "checkbox", id: "imp-remember", checked: prefs.remember === false ? null : true,
+      onchange: function () { prefs.remember = this.checked; save("trama-prefs", prefs); } }), h("span", null, h("b", { text: t("imp.recordar") }), h("small", { text: t("imp.recordarS") }))));
+    box.appendChild(h("ol", { class: "steps", id: "imp-steps", hidden: true }));
+    box.appendChild(h("div", { class: "note bad", id: "imp-fail", hidden: true }));
+    hydrate(box);
+    var go = $("#imp-go", dlg);
+    if (go) go.disabled = imp.busy || !importable().length;
+    if (focusId && $("#" + focusId)) $("#" + focusId).focus();
+    else if (hadFocus && dlg.open) $("#imp-pick", dlg).focus();
+  }
+  function openImport(opener) {
+    var dlg = $("#dlg-import");
+    if (dlg.open) { paintImport(); return; }
+    dlgFrame(dlg, t("imp.titulo"), [
+      h("p", { class: "sub", text: t("imp.intro") }),
+      h("div", { id: "imp-body", class: "imp-body" }),
+      h("p", { class: "sr-only", id: "imp-status", role: "status", "aria-live": "polite" })
+    ], [h("span", { class: "imp-priv" }, icon("lock"), t("imp.privado")),
+      h("div", { class: "btn-row" }, h("button", { type: "button", class: "btn press", onclick: function () { dlg.close(); } }, t("imp.cancelar")),
+        h("button", { type: "button", class: "btn primary press", id: "imp-go", onclick: correlate }, icon("route"), t("imp.correlacionar")))]);
+    paintImport();
+    openDialog(dlg, opener || document.activeElement);
+  }
+  function stepRow(key, st) {
+    return h("li", { class: "step " + st, "data-step": key }, icon(st === "done" ? "circle-check" : st === "fail" ? "circle-x" : st === "run" ? "loader-circle" : "clock"),
+      h("span", { text: t("imp.paso." + key) }));
+  }
+  function correlate() {
+    if (imp.busy || !importable().length) return;
+    imp.busy = true;
+    var dlg = $("#dlg-import"), steps = $("#imp-steps", dlg), fail = $("#imp-fail", dlg), go = $("#imp-go", dlg);
+    var keys = ["detectar", "sellar", "guardar"], states = ["run", "wait", "wait"];
+    go.disabled = true; fail.hidden = true; steps.hidden = false;
+    function paint() { clear(steps); keys.forEach(function (k, i) { steps.appendChild(stepRow(k, states[i])); }); hydrate(steps); }
+    function next(fn) { paint(); setTimeout(fn, 30); }
+    function stop(err) {
+      imp.busy = false; states[states.indexOf("run")] = "fail"; paint();
+      fail.hidden = false; clear(fail).appendChild(icon("triangle-alert")); fail.appendChild(h("span", { text: t("imp.fallo", { e: String(err && err.message || err) }) }));
+      go.disabled = false; hydrate(fail);
+    }
+    var files = imp.items.filter(function (x) { return x.text !== null; }).map(function (x) { return [x.name, x.text]; }), r, bundle;
+    $("#imp-status").textContent = t("imp.procesando");
+    next(function () {
+      try { r = TRAMA_IMPORT.importFiles(files, imp.assets); } catch (e) { stop(e); return; }
+      states = ["done", "run", "wait"];
+      next(function () {
+        try { bundle = TRAMA_ENGINE.runImported(r[0], r[1], r[2]); } catch (e) { stop(e); return; }
+        states = ["done", "done", "run"];
+        next(function () {
+          var name = null;
+          var done = function () {
+            states = ["done", "done", "done"]; paint();
+            imp.busy = false; imp.items = []; imp.assets = {}; imp.report = [];
+            dlg.close();
+            useBundle(bundle, name);
+            location.hash = "#inicio";
+            toast(t("imp.listo", { i: bundle.correlation_results.total_incidents_correlated, e: bundle.normalized_events.length }), "route");
+          };
+          if (prefs.remember === false) done(); else remember(bundle, name).then(done, done);
+        });
+      });
+    });
+  }
+
+  /* El último análisis se guarda solo en este navegador (IndexedDB), si se ha pedido. */
+  var IDB = { name: "trama", store: "analisis", key: "ultimo" };
+  function idb(mode, fn) {
+    return new Promise(function (resolve, reject) {
+      var req;
+      try { req = indexedDB.open(IDB.name, 1); } catch (e) { reject(e); return; }
+      req.onupgradeneeded = function () { req.result.createObjectStore(IDB.store); };
+      req.onerror = function () { reject(req.error); };
+      req.onsuccess = function () {
+        var db = req.result, tx = db.transaction(IDB.store, mode), out = fn(tx.objectStore(IDB.store));
+        tx.oncomplete = function () { db.close(); resolve(out && out.result); };
+        tx.onerror = tx.onabort = function () { db.close(); reject(tx.error); };
+      };
+    });
+  }
+  function remember(b, name) {
+    if (prefs.remember === false || b === ORIGINAL) return Promise.resolve();
+    return idb("readwrite", function (s) { return s.put({ bundle: b, name: name, savedAt: new Date().toISOString() }, IDB.key); }).catch(function () { toast(t("imp.noGuardado"), "triangle-alert"); });
+  }
+  function forget() { return idb("readwrite", function (s) { return s.delete(IDB.key); }).catch(function () { /* sin almacenamiento */ }); }
+  function restore() {
+    return idb("readonly", function (s) { return s.get(IDB.key); }).then(function (rec) {
+      if (rec && validBundle(rec.bundle)) { useBundle(rec.bundle, rec.name); toast(t("imp.restaurado", { f: rec.name }), "history"); }
+    }, function () { /* sin IndexedDB (modo privado, file://) */ });
+  }
+  function exportBundle() {
+    var b = state.bundle; if (!b) return;
+    var stamp = (b.generated_at_utc || "").replace(/[-:]/g, "").replace("T", "-").slice(0, 13);
+    download("trama-paquete-" + (stamp || "export") + ".json", JSON.stringify(b, null, 2) + "\n", "application/json");
+    toast(t("toast.exportado"), "download");
+  }
+
   /* ---------------------------------------------------------------- ficheros */
   function useBundle(b, fileName) {
     state.bundle = b; state.D = derive(b); state.fileName = fileName;
     state.incident = 0; state.tampered = false; state.verify = null; state.q = ""; state.src = "";
     renderChrome(); render();
   }
-  function loadFile(file) {
-    if (!file) return;
-    if (file.size > 50 * 1024 * 1024) { toast(t("toast.grande"), "triangle-alert"); return; }
-    var r = new FileReader();
-    r.onload = function () {
-      var b = null;
-      try { b = JSON.parse(String(r.result)); } catch (e) { b = null; }
-      if (b && b.format === "yrd-ecosistema") { toast(t("toast.sobre"), "info"); return; }
-      if (!validBundle(b)) { toast(t("toast.invalido"), "triangle-alert"); return; }
-      useBundle(b, file.name.slice(0, 60));
-      toast(t("toast.cargado", { f: file.name.slice(0, 60) }), "file-json");
-    };
-    r.readAsText(file);
-  }
-
   /* ---------------------------------------------------------------- arranque */
   function toggleTheme() { setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark", true); }
   function toggleSide() {
@@ -1230,14 +1489,15 @@
     $("#help-btn").addEventListener("click", function () { openHelp(); });
     $("#settings-btn").addEventListener("click", function () { openSettings(this); });
     $("#account-btn").addEventListener("click", function () { openProfile(this); });
-    $("#pkg-btn").addEventListener("click", function () { $("#file-input").click(); });
+    $("#pkg-btn").addEventListener("click", function () { openImport(this); });
     $("#collapse-btn").addEventListener("click", toggleSide);
-    $("#file-input").addEventListener("change", function (e) { loadFile(e.target.files[0]); e.target.value = ""; });
+    $("#file-input").addEventListener("change", function (e) { takeFiles(e.target.files); e.target.value = ""; });
+    $("#imp-input").addEventListener("change", function (e) { addFiles(Array.prototype.slice.call(e.target.files)); e.target.value = ""; });
     wireDialogs();
     var drop = $("#drop");
     document.addEventListener("dragover", function (e) { if (e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], "Files") >= 0) { e.preventDefault(); drop.textContent = t("ui.suelta"); drop.hidden = false; } });
     document.addEventListener("dragleave", function (e) { if (e.relatedTarget === null) drop.hidden = true; });
-    document.addEventListener("drop", function (e) { e.preventDefault(); drop.hidden = true; if (e.dataTransfer && e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+    document.addEventListener("drop", function (e) { e.preventDefault(); drop.hidden = true; if (e.dataTransfer && e.dataTransfer.files.length) takeFiles(e.dataTransfer.files); });
     document.addEventListener("keydown", function (e) {
       var k = e.key, tag = (e.target.tagName || "").toLowerCase();
       if ((e.ctrlKey || e.metaKey) && (k === "k" || k === "K")) { e.preventDefault(); if ($("#dlg-search").open) $("#dlg-search").close(); else openSearch(); return; }
@@ -1246,6 +1506,7 @@
       else if (k >= "1" && k <= "7") location.hash = "#" + VIEWS[Number(k) - 1].id;
       else if (k === "t" || k === "T") toggleTheme();
       else if (k === "o" || k === "O") $("#file-input").click();
+      else if (k === "i" || k === "I") openImport();
       else if (k === "?") openHelp();
       else if (k === "[") toggleSide();
       else if ((k === "l" || k === "L") && state.bundle) { var i = LENSES.map(function (l) { return l.id; }).indexOf(lens()); setLens(LENSES[(i + 1) % LENSES.length].id); toast(t("toast.lente", { l: t("lens." + lens() + ".rol") }), lensDef(lens()).icon); }
@@ -1264,6 +1525,7 @@
     renderChrome();
     bind();
     onHash();
+    if (prefs.remember !== false) restore();
     if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) { if (!prefs.theme) { root.setAttribute("data-theme", e.matches ? "dark" : "light"); renderChrome(); } });
   }
   window.TRAMA = { t: t, lens: lens };

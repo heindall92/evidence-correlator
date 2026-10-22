@@ -569,3 +569,61 @@ dl.gloss dd { margin: 0; color: var(--ink-2); font-size: 13.5px; }
   .tiles { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .tile { flex-direction: row; justify-content: flex-start; min-height: 52px; padding: 0 16px; gap: 12px; font-size: 15px; }
 }
+
+/* Importar datos: zona de arrastre, ficheros con su formato detectado, activo y avance por fases. */
+.import-dlg .dlg { width: min(760px, calc(100vw - 32px)); }
+.imp-body { display: grid; gap: 14px; }
+.dz { display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: 18px; border: 1.5px dashed var(--line-2); background: var(--surface-2); transition: border-color .2s var(--ease-out), background-color .2s var(--ease-out); }
+.dz.over { border-color: var(--accent); background: var(--tint-2); }
+.dz > div { flex: 1; min-width: 0; }
+.dz b { display: block; font-size: 15px; }
+.dz-i { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--tint-2); color: var(--accent); flex: none; }
+.dz-i .ico { width: 22px; height: 22px; }
+.imp-sum { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; padding: 0 4px; }
+.imp-sum b { font-size: 14px; }
+.imp-row { align-items: flex-start; }
+.imp-row > .icon-btn { margin: -6px -8px 0 0; flex: none; }
+.imp-row.warn > .ico { color: var(--high); }
+.imp-row b.mono, #ev-sources b.mono { font-size: 13px; overflow-wrap: anywhere; }
+.imp-err { margin-top: 4px; color: var(--crit); font-size: 13px; overflow-wrap: anywhere; }
+.imp-asset { margin-top: 10px; max-width: 380px; }
+.imp-asset .input { height: 36px; font: 13px var(--mono); }
+.imp-guide { border-radius: 14px; background: var(--surface-2); padding: 0 14px; }
+.imp-guide summary { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; font-weight: 600; font-size: 13.5px; list-style: none; }
+.imp-guide summary::-webkit-details-marker { display: none; }
+.imp-guide summary .ico { color: var(--accent); width: 16px; height: 16px; }
+.imp-guide[open] summary { border-bottom: 1px solid var(--line); }
+.imp-guide table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 8px 0; }
+.imp-guide th { text-align: left; color: var(--muted); font-weight: 600; padding: 6px 8px 6px 0; }
+.imp-guide td { padding: 7px 8px 7px 0; border-top: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+.imp-guide td.mono { font: 11.5px/1.5 var(--mono); color: var(--ink-2); }
+.imp-guide > p { padding-bottom: 12px; }
+.check { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); cursor: pointer; }
+.check input { accent-color: var(--accent); width: 18px; height: 18px; margin: 1px 0 0; flex: none; }
+.check b { display: block; font-size: 14px; }
+.check small { display: block; color: var(--muted); font-size: 12.5px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.step { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+.step.run, .step.done { color: var(--text); }
+.step.done .ico { color: var(--ok); }
+.step.fail .ico { color: var(--crit); }
+.step.run .ico { color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .step.run .ico { animation: spin .9s linear infinite; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.note.bad .ico { color: var(--crit); }
+.imp-priv { display: inline-flex; align-items: center; gap: 6px; }
+.imp-priv .ico { width: 14px; height: 14px; color: var(--ok); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+@media (max-width: 767px) {
+  dialog.import-dlg[open] { inset: auto 0 0 0; margin: 0; width: 100vw; max-height: 94dvh; }
+  .import-dlg .dlg { width: 100vw; max-height: 92dvh; border-radius: 24px 24px 0 0; }
+  .dz { flex-wrap: wrap; }
+  .dz .btn { width: 100%; }
+  .import-dlg .dlg-f { flex-direction: column; align-items: stretch; padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+  .import-dlg .dlg-f .btn-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .imp-asset { max-width: none; }
+  .imp-guide thead { display: none; }
+  .imp-guide tr { display: grid; gap: 2px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .imp-guide td { border: 0; padding: 0; }
+  .imp-guide td:first-child { font-weight: 600; }
+}

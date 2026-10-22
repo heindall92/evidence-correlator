@@ -412,7 +412,12 @@
   }
   /** Igual que pipeline.run_files con ficheros: files = [[nombre, texto]], assets = {nombre: host}. */
   function runFiles(files, assets, opts) {
-    var r = global.TRAMA_IMPORT.importFiles(files, assets || {}), report = r[2];
+    var r = global.TRAMA_IMPORT.importFiles(files, assets || {});
+    return runImported(r[0], r[1], r[2], opts);
+  }
+  /** Segunda mitad de runFiles, para que la consola muestre el avance por fases. */
+  function runImported(events, findings, report, opts) {
+    var r = [events, findings];
     var failed = report.filter(function (x) { return x.error; });
     if (failed.length === report.length) {
       var e = new Error("ningún fichero se pudo importar: " + failed.map(function (x) { return x.file + " (" + x.error + ")"; }).join("; "));
@@ -426,7 +431,7 @@
   }
 
   global.TRAMA_ENGINE = {
-    VERSION: VERSION, runPipeline: runPipeline, runFiles: runFiles, verifyChain: verifyChain,
+    VERSION: VERSION, runPipeline: runPipeline, runFiles: runFiles, runImported: runImported, verifyChain: verifyChain,
     parseUtc: parseUtc, getNested: getNested, matchesStage: matchesStage
   };
 })(typeof window !== "undefined" ? window : globalThis);
