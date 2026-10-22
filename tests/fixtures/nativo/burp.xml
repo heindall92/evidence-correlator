@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<issues burpVersion="2024.1"><issue><serialNumber>1</serialNumber><type>5244416</type><name>Cookie without HttpOnly flag set</name>
+<host ip="10.0.0.10">https://srv01.lab.local</host><path>/login</path><location>/login</location><severity>Low</severity><confidence>Firm</confidence>
+<issueBackground>La cookie es accesible desde scripts.</issueBackground></issue>
+<issue><serialNumber>2</serialNumber><type>7340288</type><name>Content type incorrectly stated</name><host ip="10.0.0.10">https://srv01.lab.local</host><path>/</path><severity>Information</severity></issue></issues>

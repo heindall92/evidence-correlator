@@ -178,7 +178,7 @@
     "record_number": 149310,
     "event": {
       "category": "lateral_movement",
-      "action": "winrm_network_logon",
+      "action": "network_logon",
       "NativeEventID": 4624,
       "LogonType": 3,
       "outcome": "success",

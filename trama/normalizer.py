@@ -9,6 +9,10 @@ from .timeutil import parse_utc
 SCHEMA_VERSION = "1.0.0"
 
 
+def _is_ip(text):
+    return bool(text) and (text.replace(".", "").isdigit() or ":" in text)
+
+
 def _section(raw, key):
     value = raw.get(key)
     return value if isinstance(value, dict) else {}
@@ -22,27 +26,68 @@ class EvidenceNormalizer:
     def __init__(self, custody_chain, offensive_findings=None):
         self.custody = custody_chain
         self.offensive_findings = list(offensive_findings or [])
+        # Equivalencias entre nombre e IP de un activo, sacadas de los hallazgos que
+        # traen ambos (Nmap, Nessus): así casa un hallazgo de Nuclei por IP con un
+        # log web que solo conoce el nombre.
+        self.aliases = {}
+        for f in self.offensive_findings:
+            names = {x.lower() for x in (f.get("hostname"), f.get("ip")) if x}
+            names |= {n.split(".")[0] for n in list(names) if not _is_ip(n)}
+            if len(names) > 1:
+                group = set(names)
+                for n in names:
+                    group |= self.aliases.get(n, set())
+                for n in group:
+                    self.aliases[n] = group
 
-    def match_offensive_context(self, target_host, target_spn=None, target_bin=None):
+    def _keys(self, *names):
+        keys = set()
+        for n in names:
+            if not n:
+                continue
+            n = n.lower()
+            keys.add(n)
+            if not _is_ip(n):
+                keys.add(n.split(".")[0])
+            keys |= self.aliases.get(n, set())
+        keys.discard("unknown_host")
+        return keys
+
+    def match_offensive_context(self, target_host, target_spn=None, target_bin=None, target_ip=None,
+                                domain=None, parent_bin=None):
         """Hallazgos ofensivos que afectan al mismo activo.
 
-        Un hallazgo con SPN o binario concreto solo casa si el evento afecta a
-        ese SPN/binario; un hallazgo genérico de host casa con cualquier evento
-        de ese host.
+        - Host: mismo nombre (sin distinguir mayúsculas), mismo nombre corto
+          (``DC01`` frente a ``DC01.CORP.LOCAL``), misma IP o equivalencia
+          nombre-IP conocida por otro informe.
+        - Hallazgos de dominio (BloodHound, ``scope: domain``): cualquier evento
+          de un host o un actor de ese dominio.
+        - Un hallazgo con SPN o cuenta solo casa con eventos sobre esa cuenta o
+          ese SPN; uno con binario, con eventos de ese binario o de un proceso
+          hijo suyo; uno genérico de host, con cualquier evento del host.
         """
         matches = []
         host = (target_host or "").lower()
+        event_keys = self._keys(target_host, target_ip)
+        dom = (domain or "").lower()
+        spn = (target_spn or "").lower()
         for finding in self.offensive_findings:
-            f_host = (finding.get("hostname") or "").lower()
-            if not f_host or f_host != host:
-                continue
+            if finding.get("scope") == "domain":
+                f_dom = (finding.get("domain") or "").lower()
+                if not f_dom or not (host == f_dom or host.endswith("." + f_dom) or dom == f_dom
+                                     or dom == f_dom.split(".")[0]):
+                    continue
+            else:
+                if not (self._keys(finding.get("hostname"), finding.get("ip")) & event_keys):
+                    continue
             f_spn = finding.get("target_spn")
             f_bin = finding.get("binary_path")
             if f_spn:
-                if target_spn and f_spn.lower() == target_spn.lower():
+                names = {f_spn.lower()} | {x.lower() for x in finding.get("spns") or []}
+                if spn and spn in names:
                     matches.append(finding)
             elif f_bin:
-                if target_bin and f_bin == target_bin:
+                if f_bin in (target_bin, parent_bin):
                     matches.append(finding)
             else:
                 matches.append(finding)
@@ -70,7 +115,17 @@ class EvidenceNormalizer:
         target_host = tgt.get("hostname", "UNKNOWN_HOST")
         target_spn = tgt.get("target_user_or_spn")
         target_bin = proc.get("process_name")
-        exposures = self.match_offensive_context(target_host, target_spn, target_bin)
+        parent_bin = proc.get("parent_process_name")
+        exposures = self.match_offensive_context(target_host, target_spn, target_bin, tgt.get("ip"),
+                                                 actor.get("domain"), parent_bin)
+        # El log de auditd no trae las capabilities ni el bit SUID: se toman del
+        # hallazgo que describe ese binario (o el de su proceso padre).
+        capabilities = list(proc.get("capabilities") or [])
+        suid = bool(proc.get("suid_bit", False))
+        for f in exposures:
+            if f.get("binary_path") and f["binary_path"] in (target_bin, parent_bin):
+                capabilities += [c for c in f.get("capabilities") or [] if c not in capabilities]
+                suid = suid or bool(f.get("suid"))
 
         actor_user = actor.get("user_name", "anonymous")
         actor_domain = actor.get("domain", "LOCAL")
@@ -114,10 +169,11 @@ class EvidenceNormalizer:
             },
             "process_or_artifact": {
                 "process_name": target_bin,
+                "parent_process_name": parent_bin,
                 "command_line": proc.get("command_line"),
                 "EffectiveTicketEncryption": proc.get("EffectiveTicketEncryption"),
-                "suid_bit": bool(proc.get("suid_bit", False)),
-                "capabilities": list(proc.get("capabilities") or []),
+                "suid_bit": suid,
+                "capabilities": capabilities,
                 "file_sha256": proc.get("file_sha256"),
             },
             "offensive_posture_context": {

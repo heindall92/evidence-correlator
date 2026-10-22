@@ -5,10 +5,10 @@
   "author": "Yoandy Ramírez Delgado",
   "severity": "CRITICAL",
   "confidence": 0.94,
-  "description": "Detecta la enumeración de permisos SUID o capabilities por un usuario sin privilegios (o la ejecución de LinPEAS) seguida de la ejecución de un binario de GTFOBins que obtiene euid=0 (root).",
+  "description": "Detecta la enumeración de permisos SUID o capabilities por un usuario sin privilegios (o la ejecución de LinPEAS) seguida de un paso a root mediante un binario que LinPEAS o getcap señalaron como explotable.",
   "correlation": {
     "type": "temporal_sequence",
-    "window": "10m",
+    "window": "30m",
     "group_by": [
       "target.hostname",
       "actor.user_name"
@@ -23,18 +23,19 @@
         "predicates": {
           "field_contains_any": {
             "process_or_artifact.command_line": [
-              "find / -perm -4000",
-              "find / -perm -u=s",
-              "getcap -r /",
-              "linpeas"
+              "-perm -4000",
+              "-perm -u=s",
+              "getcap -r",
+              "linpeas",
+              "pspy"
             ]
           },
           "not_equals": {
-            "actor.uid": "0"
+            "actor.euid": "0"
           }
         },
         "extract": {
-          "low_priv_uid": "actor.uid",
+          "low_priv_user": "actor.user_name",
           "compromised_host": "target.hostname"
         }
       },
@@ -42,23 +43,21 @@
         "stage_id": "stage_2_suid_or_cap_exploitation",
         "source_type": "linux_auditd",
         "match": {
-          "event.category": "privilege_escalation",
-          "actor.uid": "$stage_1_privesc_enum.low_priv_uid",
-          "actor.euid": "0",
+          "event.action": [
+            "setuid_root_transition",
+            "privileged_execution"
+          ],
+          "actor.user_name": "$stage_1_privesc_enum.low_priv_user",
           "target.hostname": "$stage_1_privesc_enum.compromised_host"
         },
+        "posture_condition": {
+          "offensive_posture_context.known_exposures.finding_class": [
+            "dangerous_capability",
+            "suid_gtfobin"
+          ]
+        },
         "predicates": {
-          "require_suid_or_capabilities": true,
-          "field_in_list": {
-            "process_or_artifact.process_name": [
-              "/usr/bin/python3",
-              "/usr/bin/perl",
-              "/usr/bin/vim",
-              "/usr/bin/find",
-              "/usr/bin/bash",
-              "/usr/sbin/tar"
-            ]
-          }
+          "require_suid_or_capabilities": true
         }
       }
     ]

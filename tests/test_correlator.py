@@ -110,10 +110,22 @@ class RuleSemanticsTest(unittest.TestCase):
         self.assertEqual(run(ev, rule("CORR-AD-001"))["total_incidents_correlated"], 1)
 
     def test_suid_or_capability_required(self):
+        """Sin capability ni SUID (ni en el evento ni en el hallazgo del binario) no hay incidente."""
+        from tests.helpers import sample_findings
+        ev, findings = sample_events(), sample_findings()
+        ev[3]["process_or_artifact"]["capabilities"] = []
+        for f in findings:
+            f.pop("capabilities", None)
+        _, normalized = normalize_all(ev, findings)
+        self.assertEqual(EvidenceCorrelationEngine(rule("CORR-LNX-002")).evaluate_events(normalized)["total_incidents_correlated"], 0)
+        ev[3]["process_or_artifact"]["suid_bit"] = True
+        _, normalized = normalize_all(ev, findings)
+        self.assertEqual(EvidenceCorrelationEngine(rule("CORR-LNX-002")).evaluate_events(normalized)["total_incidents_correlated"], 1)
+
+    def test_capabilities_come_from_finding(self):
+        """auditd no registra capabilities: el hallazgo de LinPEAS sobre el binario las aporta."""
         ev = sample_events()
         ev[3]["process_or_artifact"]["capabilities"] = []
-        self.assertEqual(run(ev, rule("CORR-LNX-002"))["total_incidents_correlated"], 0)
-        ev[3]["process_or_artifact"]["suid_bit"] = True
         self.assertEqual(run(ev, rule("CORR-LNX-002"))["total_incidents_correlated"], 1)
 
     def test_capability_with_flags_suffix(self):
@@ -123,7 +135,7 @@ class RuleSemanticsTest(unittest.TestCase):
 
     def test_not_equals_root_enumeration_ignored(self):
         ev = sample_events()
-        ev[2]["actor"]["uid"] = "0"
+        ev[2]["actor"]["uid"] = ev[2]["actor"]["euid"] = "0"
         self.assertEqual(run(ev, rule("CORR-LNX-002"))["total_incidents_correlated"], 0)
 
     def test_contains_any_case_insensitive(self):
@@ -149,7 +161,8 @@ class RuleSemanticsTest(unittest.TestCase):
             e["target"]["target_user_or_spn"] = "svc_web"
             if i == 1:
                 e["actor"]["user_name"] = "svc_web"
-        findings = [{"finding_id": "AD-SPN-RC4-001", "hostname": "DC01.CORP.LOCAL", "target_spn": "svc_web"}]
+        findings = [{"finding_id": "AD-SPN-RC4-002", "finding_class": "kerberoastable_spn",
+                     "hostname": "DC01.CORP.LOCAL", "target_spn": "svc_web"}]
         from tests.helpers import sample_findings
         _, normalized = normalize_all(ev + extra, sample_findings() + findings)
         res = EvidenceCorrelationEngine(rule("CORR-AD-001")).evaluate_events(normalized)
