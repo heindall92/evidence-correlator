@@ -13,7 +13,7 @@
   <a href="LICENSE"><img alt="Licencia GPLv2" src="https://img.shields.io/badge/licencia-GPLv2-4169A1?style=flat"/></a>
   <img alt="Python 3.8 a 3.12" src="https://img.shields.io/badge/Python-3.8%E2%80%933.12-1A3DB8?style=flat&logo=python&logoColor=white"/>
   <img alt="Sin dependencias" src="https://img.shields.io/badge/dependencias-0-2E8B57?style=flat"/>
-  <img alt="120 pruebas" src="https://img.shields.io/badge/pruebas-120-2E8B57?style=flat"/>
+  <img alt="121 pruebas" src="https://img.shields.io/badge/pruebas-121-2E8B57?style=flat"/>
   <img alt="axe-core: 0 infracciones" src="https://img.shields.io/badge/axe--core-0%20infracciones-2E8B57?style=flat"/>
   <img alt="MITRE ATT&CK" src="https://img.shields.io/badge/MITRE-ATT%26CK-B42318?style=flat"/>
   <img alt="ENS RD 311/2022" src="https://img.shields.io/badge/ENS-RD%20311%2F2022-E07B39?style=flat"/>
@@ -160,6 +160,7 @@ Generadas con `python3 scripts/screenshots.py` (Playwright, Chromium headless, 1
 | Cumplimiento | <img src="docs/img/cumplimiento-light.png" width="300" alt="Cumplimiento en tema claro"/> | <img src="docs/img/cumplimiento-dark.png" width="300" alt="Cumplimiento en tema oscuro"/> | <img src="docs/img/cumplimiento-mobile.png" width="110" alt="Cumplimiento en móvil"/> |
 | Custodia | <img src="docs/img/custodia-light.png" width="300" alt="Custodia en tema claro"/> | <img src="docs/img/custodia-dark.png" width="300" alt="Custodia en tema oscuro"/> | <img src="docs/img/custodia-mobile.png" width="110" alt="Custodia en móvil"/> |
 | Eventos | <img src="docs/img/eventos-light.png" width="300" alt="Eventos en tema claro"/> | <img src="docs/img/eventos-dark.png" width="300" alt="Eventos en tema oscuro"/> | <img src="docs/img/eventos-mobile.png" width="110" alt="Eventos en móvil"/> |
+| Menú «Más» (móvil) | <img src="docs/img/mas-light.png" width="150" alt="Menú Más en tema claro: vistas en rejilla, cuenta y ayuda agrupadas, idioma y acentos"/> | <img src="docs/img/mas-dark.png" width="150" alt="Menú Más en tema oscuro"/> | |
 | Entidades | <img src="docs/img/entidades-light.png" width="300" alt="Entidades en tema claro"/> | <img src="docs/img/entidades-dark.png" width="300" alt="Entidades en tema oscuro"/> | <img src="docs/img/entidades-mobile.png" width="110" alt="Entidades en móvil"/> |
 
 ## Cómo funciona
@@ -295,7 +296,7 @@ python3 -m trama rules   [--rules DIR|F]
 
 ## Calidad
 
-**120 pruebas** con `unittest` (compatible con pytest), 17 de ellas en un Chromium real con axe-core.
+**121 pruebas** con `unittest` (compatible con pytest), 18 de ellas en un Chromium real con axe-core.
 
 | Conjunto | Pruebas | Qué cubre |
 |---|---:|---|
@@ -304,7 +305,7 @@ python3 -m trama rules   [--rules DIR|F]
 | `tests/test_pipeline_cli.py` | 15 | Paquete, `verify` con manipulaciones, script del dashboard seguro, CLI y `python -m` sin avisos |
 | `tests/test_static.py` | 20 | Redacción profesional con `scripts/redaccion.py` sobre interfaz, documentos, reglas, datos de ejemplo y CLI (y su sensibilidad frente a giros conocidos), logotipo propio, consola sin recursos remotos ni `fetch`, CSP estricta, `innerHTML` solo para iconos vendorizados, iconos existentes, tokens claro/oscuro y 7 acentos, movimiento reducido, paridad y cobertura ES/EN (más de 150 claves), constantes NIS2 24/72/1, datos de ejemplo al día |
 | `tests/test_normalizer.py` · `test_rules.py` · `test_timeutil.py` | 21 | Esquema y contexto ofensivo, carga y validación de reglas, tiempo compatible con 3.8 |
-| `tests/browser/` | 17 | axe (0 infracciones) en las 7 vistas, las 5 perspectivas y todos los diálogos, en claro, oscuro y 390 px; sin desbordamiento horizontal ni iconos vacíos; solo peticiones locales; un paquete con HTML no se ejecuta; paquetes no válidos rechazados; verificación y manipulación; decimales verificados en el navegador; reloj NIS2 de la demo; portapapeles; incidente resaltado en Trazabilidad; teclado y búsqueda; inglés; perfil; ajustes; fundido de tema coordinado; movimiento reducido |
+| `tests/browser/` | 18 | menú «Más» en móvil a 320 y 390 px; axe (0 infracciones) en las 7 vistas, las 5 perspectivas y todos los diálogos, en claro, oscuro y 390 px; sin desbordamiento horizontal ni iconos vacíos; solo peticiones locales; un paquete con HTML no se ejecuta; paquetes no válidos rechazados; verificación y manipulación; decimales verificados en el navegador; reloj NIS2 de la demo; portapapeles; incidente resaltado en Trazabilidad; teclado y búsqueda; inglés; perfil; ajustes; fundido de tema coordinado; movimiento reducido |
 
 **Redacción.** `scripts/redaccion.py` aplica las reglas de `linkedin-humanizer` adaptadas al español: vocabulario puntuado por densidad (3 marcadores en un párrafo obligan a reescribirlo), revelaciones, paralelismo negativo, tríadas escalonadas, frases cortadas para dar efecto, clichés, falsa sinceridad, rayas y emojis. Recorre la interfaz en ES y EN, los documentos, las reglas, los datos de ejemplo y los mensajes de la CLI; `python3 scripts/redaccion.py --avisos` muestra el informe completo.
 
@@ -359,7 +360,8 @@ Detalle y criterios de aceptación en [ROADMAP.md](ROADMAP.md).
 | Versión | Contenido |
 |---|---|
 | 0.2.0 ✅ | Nombre definitivo, consola nueva con cinco perspectivas, vista de trazabilidad, plazos NIS2 y verificación en el navegador sin falsos positivos con decimales |
-| **0.2.1** ✅ | Redacción profesional de toda la interfaz y la documentación, marca propia y prueba de estilo |
+| 0.2.1 ✅ | Redacción profesional de toda la interfaz y la documentación, marca propia y prueba de estilo |
+| **0.2.2** ✅ | Menú «Más» del móvil reorganizado según las pautas de iOS |
 | 0.3.0 | Firma Ed25519 del paquete (Python puro) y ejercicios guiados por perspectiva |
 | 0.4.0 | Importar hallazgos de CTEM-Nexus y ENS AD Auditor y exportar a Rosetta con el sobre `yrd-ecosistema` |
 | 0.5.0 | Entregables por rol: dossier de auditoría, informe de impacto, IOC en STIX 2.1 y borradores Sigma |
@@ -383,6 +385,7 @@ TRAMA forma parte de un conjunto de herramientas GRC y de seguridad de código a
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.2.2 | octubre de 2026 | Menú «Más» del móvil reorganizado: vistas en rejilla, cuenta y ayuda en lista agrupada, idioma segmentado y acentos repartidos; filas por debajo de 360 px. |
 | 0.2.1 | octubre de 2026 | Textos de la consola (ES y EN) y de la documentación reescritos con registro profesional, sin preguntas retóricas ni tuteo; «El Hilo» pasa a «Trazabilidad» y «lentes», a «perspectivas»; logotipo propio; prueba automática de redacción. |
 | 0.2.0 | octubre de 2026 | Nombre definitivo TRAMA; consola nueva con cinco perspectivas por rol, vista de trazabilidad, plazos NIS2, custodia bloque a bloque, ES/EN, 7 acentos, ajustes, perfil y ayuda; serialización canónica con números como en JavaScript, que elimina el falso positivo con `1.0`; `dataset` y resumen de reglas en el paquete. |
 | 0.1.0 | octubre de 2026 | Primera versión pública: paquete instalable, CLI con `run`, `verify` y `rules`, Merkle RFC 6962, verificación de eventos crudos y truncado, `group_by` efectivo. |

@@ -2,6 +2,19 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versiones según [SemVer](https://semver.org/lang/es/).
 
+## 0.2.2 · octubre de 2026
+
+### Cambiado
+- **Menú «Más» en móvil reorganizado** según las pautas de iOS. Antes era una lista de botones a ancho completo, con el idioma y los acentos alineados a la izquierda y huecos sin usar. Ahora tiene tres secciones con antetítulo:
+  - **Vistas:** rejilla de tres casillas con el icono sobre el nombre; la vista actual se marca con el acento.
+  - **Cuenta y ayuda:** lista agrupada con separadores y chevrones; el perfil muestra nombre y rol.
+  - **Preferencias:** idioma en un control segmentado a la derecha y los siete acentos repartidos de borde a borde.
+- Por debajo de 360 px de ancho, las vistas pasan a filas para que ningún nombre se corte.
+
+### Añadido
+- Prueba de navegador del menú «Más» a 320 y 390 px: estructura, sin textos cortados, acentos repartidos, axe sin infracciones y cierre al elegir una vista.
+- Capturas `mas-light.png` y `mas-dark.png`.
+
 ## 0.2.1 · octubre de 2026
 
 Revisión editorial de toda la plataforma para un registro de producto profesional, y marca propia.
