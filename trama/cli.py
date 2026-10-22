@@ -7,7 +7,7 @@ import sys
 from . import __version__
 from .branding import NAME, SLUG, TAGLINE
 from .pipeline import run_files, verify_bundle, write_bundle, write_dashboard_js
-from .rules import RuleError, load_rules
+from .rules import RuleError, load_rules, rules_js
 
 
 class Palette:
@@ -138,6 +138,14 @@ def cmd_rules(args, c, out):
     return 0
 
 
+def cmd_rules_js(args, c, out):
+    text = rules_js(load_rules(args.rules))
+    with open(args.output, "w", encoding="utf-8") as fh:
+        fh.write(text)
+    out.write("%s[✓]%s Reglas para la consola: %s\n" % (c.ok, c.reset, args.output))
+    return 0
+
+
 def build_parser():
     p = argparse.ArgumentParser(prog=SLUG, description="%s: %s" % (NAME, TAGLINE))
     p.add_argument("--version", action="version", version="%s %s" % (NAME, __version__))
@@ -175,6 +183,10 @@ def build_parser():
 
     ru = sub.add_parser("rules", parents=[common], help="valida y lista las reglas")
     ru.add_argument("--rules", help="directorio o fichero de reglas")
+
+    rj = sub.add_parser("rules-js", parents=[common], help="escribe las reglas para la consola (docs/assets/rules.js)")
+    rj.add_argument("--rules", help="directorio o fichero de reglas")
+    rj.add_argument("-o", "--output", default=os.path.join("docs", "assets", "rules.js"))
     return p
 
 
@@ -186,7 +198,8 @@ def main(argv=None, out=None):
     if args.command is None:  # sin subcomando: equivale a "run"
         args = parser.parse_args(argv + ["run"])
     c = Palette(use_color(args.color, out))
-    handlers = {"run": cmd_run, "import": cmd_import, "verify": cmd_verify, "rules": cmd_rules}
+    handlers = {"run": cmd_run, "import": cmd_import, "verify": cmd_verify, "rules": cmd_rules,
+                "rules-js": cmd_rules_js}
     try:
         return handlers[args.command](args, c, out)
     except (OSError, ValueError, RuleError) as exc:

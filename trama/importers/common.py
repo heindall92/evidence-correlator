@@ -62,6 +62,11 @@ def ms_from_iso(text):
     if not m:
         raise ImportError_("marca de tiempo no válida: %r" % (text,))
     y, mo, d, h, mi, s, frac, tz = m.groups()
+    if not (1970 <= int(y) and 1 <= int(mo) <= 12 and 1 <= int(d) <= calendar.monthrange(int(y), int(mo))[1]
+            and int(h) <= 23 and int(mi) <= 59 and int(s) <= 59):
+        # Fecha imposible (mes 13, 31 de febrero, 25:00) o anterior a 1970 (el 1601 de las fechas nulas de
+        # Windows): se rechaza en lugar de desbordarla a otro día.
+        raise ImportError_("marca de tiempo no válida: %r" % (text,))
     ms = calendar.timegm((int(y), int(mo), int(d), int(h), int(mi), int(s), 0, 0, 0)) * 1000
     ms += int(((frac or "") + "000")[:3])
     if tz and tz not in ("Z", "z"):

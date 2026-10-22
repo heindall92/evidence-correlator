@@ -4,13 +4,15 @@ Transforma eventos crudos (Windows EVTX, Linux auditd, logs web) en un esquema
 común, los sella en la cadena de custodia y los enriquece con la postura
 ofensiva conocida (hallazgos de pentest previos sobre el mismo activo).
 """
+import re
+
 from .timeutil import parse_utc
 
 SCHEMA_VERSION = "1.0.0"
 
 
 def _is_ip(text):
-    return bool(text) and (text.replace(".", "").isdigit() or ":" in text)
+    return bool(text) and (bool(re.match(r"^[0-9]+$", text.replace(".", ""))) or ":" in text)
 
 
 def _section(raw, key):

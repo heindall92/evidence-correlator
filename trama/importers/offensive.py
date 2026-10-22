@@ -205,7 +205,7 @@ _SUID_LINE = re.compile(r"^-[rwxsS-]{2}[sS][rwxsStT-]{6}\s.*?\s(/\S+)$")
 
 def _gtfo(path):
     base = os.path.basename(path)
-    return base in GTFOBINS or re.sub(r"[[0-9].]+$", "", base) in GTFOBINS
+    return base in GTFOBINS or re.sub(r"[0-9.]+$", "", base) in GTFOBINS
 
 
 def parse_linpeas(text, source_file, asset=None):

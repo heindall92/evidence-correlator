@@ -175,6 +175,8 @@ class OffensiveTest(unittest.TestCase):
                          [("dangerous_capability", "/usr/bin/python3.11"), ("suid_gtfobin", "/usr/bin/find")])
         self.assertEqual(f[0]["hostname"], "srv01")
         self.assertEqual(f[0]["capabilities"], ["cap_setuid"])
+        # python3.11 es el GTFOBin «python» con versión: con cap_setuid es crítico.
+        self.assertEqual(f[0]["severity"], "CRITICAL")
 
 
 class SecurityTest(unittest.TestCase):
@@ -193,6 +195,21 @@ class SecurityTest(unittest.TestCase):
                 parse_file(text("nmap.xml"), "nmap.xml")
         finally:
             imp.MAX_BYTES = old
+
+    def test_impossible_dates_skip_only_that_record(self):
+        for bad in ("2026-13-01T00:00:00Z", "2026-02-31T00:00:00Z", "2026-10-21T24:00:00Z", "1601-01-01T00:00:00Z"):
+            with self.subTest(fecha=bad), self.assertRaises(ImportError_):
+                iso(bad)
+        self.assertEqual(iso("2024-02-29T23:59:59Z"), "2024-02-29T23:59:59.000Z")
+        xml = ('<Events><Event><System><EventID>4688</EventID><TimeCreated SystemTime="2026-10-21T08:00:00Z"/>'
+               '<Computer>ws01</Computer></System></Event><Event><System><EventID>4688</EventID>'
+               '<TimeCreated SystemTime="2026-13-40T00:00:00Z"/><Computer>ws01</Computer></System></Event></Events>')
+        _, _, events, skipped = parse_file(xml, "ws01.xml", fmt="windows")
+        self.assertEqual((len(events), skipped), (1, 1))
+        log = ('10.0.0.5 - - [21/Oct/2026:08:00:00 +0200] "GET / HTTP/1.1" 200 1 "-" "-"\n'
+               '10.0.0.5 - - [31/Feb/2026:08:00:00 +0200] "GET / HTTP/1.1" 200 1 "-" "-"\n')
+        _, _, events, skipped = parse_file(log, "web.log", "web01")
+        self.assertEqual((len(events), skipped), (1, 1))
 
     def test_helpers(self):
         self.assertEqual(iso("2026-10-21T10:42:11.5+02:00"), "2026-10-21T08:42:11.500Z")
